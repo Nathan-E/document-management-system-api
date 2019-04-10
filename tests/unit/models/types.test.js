@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import {
   Type
-} from '../../../models/roles';
+} from '../../../models/types';
 import mongoose from 'mongoose';
 
 describe('types mongoose model', () => {
