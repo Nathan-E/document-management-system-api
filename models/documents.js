@@ -25,8 +25,8 @@ const documentSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    minlength: 10,
-    maxlength: 1024,
+    minlength: 255,
+    maxlength: 32768,
     required: true,
   },
   createdAt: {
@@ -53,4 +53,20 @@ const documentSchema = new mongoose.Schema({
 
 const Document = mongoose.model('Document', documentSchema);
 
-export { Document };
+const validate = document => {
+  const schema = {
+    title: Joi.string().min(10).required(),
+    typeId: Joi.string().required(),
+    ownerId: Joi.string().required(),
+    content: Joi.string().min(255).max(32768).required(),
+    ownerRole: Joi.string().required(),
+    accessRight: Joi.string(),
+    modifiedAt: Joi.date(),
+    userStatus: Joi.boolean(),
+    deleted: Joi.boolean
+  }
+
+  return Joi.validate(document, schema);
+}
+
+export { Document, validate };
