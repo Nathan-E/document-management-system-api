@@ -25,5 +25,5 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   const roles = await Role.find().sort('title');
   
-  res.send(roles)
-})
+  res.send(roles);
+});
