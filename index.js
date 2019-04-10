@@ -1,4 +1,6 @@
 import express from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 
@@ -6,9 +8,9 @@ const app = express();
 app.use(express.json);
 
 //app PORT
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 
 //app listens on the specified PORT
-app.listen(port, () => {
-  console.log(`Listining on port ${port}`);
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port), () => console.log(`Listening on port ${port}...`);
+}
