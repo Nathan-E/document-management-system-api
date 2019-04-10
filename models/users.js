@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 1024
   },
+  deleted:{
+    type: Boolean,
+    default: false
+  }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -50,7 +54,8 @@ const validate = user => {
     role_id: Joi.objectId().required(),
     username: Joi.string().min(5).max(25).required(),
     email: Joi.string().required().email(),
-    password: Joi.string().min(5).max(225).required()
+    password: Joi.string().min(5).max(225).required(),
+    deleted: Joi.boolean()
   }
 
   return Joi.validate(user, schema);
