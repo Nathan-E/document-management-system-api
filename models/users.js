@@ -40,3 +40,16 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('User', userSchema);
+
+const validate = user => {
+  const schema = {
+    firstname: Joi.string().min(5).max(50).required(),
+    lastname: Joi.string().min(5).max(50).required(),
+    role_id: Joi.objectId().required(),
+    username: Joi.string().min(5).max(25).required(),
+    email: Joi.string().required().email(),
+    password: Joi.string().min(5).max(225).required()
+  }
+
+  return Joi.validate(user, schema);
+};
