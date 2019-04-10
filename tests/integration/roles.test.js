@@ -3,6 +3,8 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { Role } from '../../models/roles';
 import app from '../../index';
+import { expression } from '@babel/template';
+import { exportAllDeclaration } from '@babel/types';
 
 let server;
 
@@ -21,8 +23,21 @@ describe('/api/v1/roles', () => {
     server.close();
   });
   describe('GET /', () => {
-    it('should return all the roles', () => {
+    it('should return all the roles', async () => {
+      const roles = [{
+        title: 'admin'
+      },{
+        title: 'regular'
+      }];
       
+      await Role.collection.insertMany(roles);
+
+      const response = await request(server).get('/api/v1/roles');
+
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(2);
+      expect(response.body.some(g => g.name === 'genre1')).toBeTruthy();
+      expect(response.body.some(g => g.name === 'genre2')).toBeTruthy();
     });
   });
 });
