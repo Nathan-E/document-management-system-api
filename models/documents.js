@@ -9,19 +9,15 @@ const documentSchema = new mongoose.Schema({
     minlength: 10,
     maxlength: 255
   },
-  type: {
-    id: {
-      type: mongoose.Schema.Types.ObjectId(),
+  type_id: {
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'Type',
       required: true
-    }
   },
-  owner: {
-    id: {
-      type: mongoose.Schema.Types.ObjectId(),
+  owner_id: {
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
-    }
   },
   ownerRole: {
     type: String,
@@ -56,3 +52,5 @@ const documentSchema = new mongoose.Schema({
 });
 
 const Document = mongoose.model('Document', documentSchema);
+
+export { Document };
