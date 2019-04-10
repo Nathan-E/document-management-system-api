@@ -24,4 +24,4 @@ const validate = role => {
   return Joi.validate(roleSchema, schema);
 }
 
-export { Role, validate};
+export { Role, roleSchema, validate };
