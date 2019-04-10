@@ -4,7 +4,7 @@
   "description": "document managemant system(API)",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "export NODE_ENV=test && jest --coverage --watchAll --verbose"
   },
   "repository": {
     "type": "git",
