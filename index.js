@@ -9,7 +9,7 @@ const app = express();
 let db = process.env.DATABASE;
 let jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
-if (process.env.NODE_ENV === test) db = process.env.TEST_DATABASE;
+if (process.env.NODE_ENV === 'test') db = process.env.TEST_DATABASE;
 
 //middlewares
 app.use(express.json);
