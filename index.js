@@ -11,6 +11,6 @@ app.use(express.json);
 const port = process.env.PORT;
 
 //app listens on the specified PORT
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port), () => console.log(`Listening on port ${port}...`);
+}
