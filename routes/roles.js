@@ -27,3 +27,5 @@ router.get('/', async (req, res) => {
   
   res.send(roles);
 });
+
+export { router as rolesRouter };
