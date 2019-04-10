@@ -5,13 +5,12 @@ describe('document model', () => {
   it('should return a document', () => {
     const payload = {
       title: 'Evaluation of EOR in sandstone reservoirs',
-      type: {
-        id: mongoose.Types.ObjectId()
+      type_id: {
+        _id: mongoose.Types.ObjectId()
       },
-      createdAt: Date.now(),
       content: new Array(100).join('a'),
-      owner: {
-        id: mongoose.Types.ObjectId()
+      owner_id: {
+        _id: mongoose.Types.ObjectId()
       },
       ownerRole: 'Admin',
       accessRight: 'private',
