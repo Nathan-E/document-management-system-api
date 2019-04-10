@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import Joi from 'joi';
 
-const newDocument = new mongoose.Schema({
+const documentSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -54,3 +54,5 @@ const newDocument = new mongoose.Schema({
     default: false
   }
 });
+
+const Document = mongoose.model('Document', documentSchema);
