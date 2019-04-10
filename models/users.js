@@ -1,7 +1,13 @@
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import Joi from 'joi';
-import { roleSchema } from '../models/roles';
+import dotenv from 'dotenv';
+dotenv.config();
+import {
+  roleSchema
+} from '../models/roles';
 
+//User Schema
 const userSchema = new mongoose.Schema({
   firstname: {
     type: String,
@@ -39,14 +45,32 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 1024
   },
-  deleted:{
+  deleted: {
+    type: Boolean,
+    default: false
+  },
+  isAdmin: {
     type: Boolean,
     default: false
   }
 });
 
+
+//Generates User token
+userSchema.methods.generateAuthToken = function() {
+  const token = jwt.sign({
+    _id: this._id,
+    isAdmin: this.isAdmin
+  }, process.env.JWT_PRIVATE_KEY, {
+    expiresIn: 60 * 60
+  });
+  return token;
+}
+
+//User Model
 const User = mongoose.model('User', userSchema);
 
+//Validates the user payload
 const validate = user => {
   const schema = {
     firstname: Joi.string().min(5).max(50).required(),
@@ -61,4 +85,7 @@ const validate = user => {
   return Joi.validate(user, schema);
 };
 
-export { User, validate };
+export {
+  User,
+  validate
+};
