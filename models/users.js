@@ -29,6 +29,8 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    minlength: 5,
+    maxlength: 255,
     unique: true
   },
   password: {
@@ -53,3 +55,5 @@ const validate = user => {
 
   return Joi.validate(user, schema);
 };
+
+export { User, validate };
