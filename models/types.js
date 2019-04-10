@@ -10,3 +10,5 @@ const typeSchema = new mongoose.Schema({
     required: true
   }
 });
+
+const Type = mongoose.model('Type', typeSchema);
