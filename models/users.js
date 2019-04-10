@@ -1,6 +1,8 @@
+import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import Joi from 'joi';
-import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 import {
   roleSchema
 } from '../models/roles';
@@ -53,8 +55,9 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+
 //Generates User token
-userSchema.methods.generateAuthToken = () => {
+userSchema.methods.generateAuthToken = function() {
   const token = jwt.sign({
     _id: this._id,
     isAdmin: this.isAdmin

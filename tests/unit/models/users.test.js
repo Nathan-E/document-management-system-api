@@ -1,6 +1,9 @@
 import {
   User
-} from '../../../models/users';
+}
+from '../../../models/users';
+import jwt from 'jsonwebtoken';
+import _ from 'lodash';
 import mongoose from 'mongoose';
 
 describe('User mongoose model', () => {
@@ -21,5 +24,26 @@ describe('User mongoose model', () => {
 
     expect(newUser).toBeInstanceOf(User);
     expect(newUser).toMatchObject(payload);
+  });
+  it('should return a valid JWT', () => {
+    const payload = {
+      _id: new mongoose.Types.ObjectId().toHexString(),
+      firstname: 'Chibueze',
+      lastname: 'Ikedi',
+      username: 'cikedi',
+      email: 'ikedichibueze@test.com',
+      role_id: {
+        _id: mongoose.Types.ObjectId()
+      },
+      password: '12345',
+      isAdmin: true
+    };
+
+    const user = new User(payload);
+
+    const token = user.generateAuthToken();
+
+    const decoded = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+    expect(decoded).toMatchObject(_.pick(payload, ['_id', 'isAdmin']));
   });
 });
