@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Joi from 'joi';
 import { roleSchema } from '../models/roles';
 
+//User Schema
 const userSchema = new mongoose.Schema({
   firstname: {
     type: String,
@@ -45,8 +46,10 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+//User Model
 const User = mongoose.model('User', userSchema);
 
+//Validates the user payload
 const validate = user => {
   const schema = {
     firstname: Joi.string().min(5).max(50).required(),
