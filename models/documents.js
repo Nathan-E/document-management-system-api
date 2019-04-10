@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Joi from 'joi';
 
+//Document Schema
 const documentSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -51,8 +52,10 @@ const documentSchema = new mongoose.Schema({
   }
 });
 
+//Document Model
 const Document = mongoose.model('Document', documentSchema);
 
+//Validates the document fields
 const validate = document => {
   const schema = {
     title: Joi.string().min(10).required(),
