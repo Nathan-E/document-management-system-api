@@ -10,14 +10,14 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/roles:
+ * /api/v1/role:
  *    get:
- *      summary: gets all roles.
- *      tags: [/api/v1/roles]
- *      description: This should return all roles
+ *      summary: gets all role.
+ *      tags: [/api/v1/role]
+ *      description: This should return all role
  *      responses:
  *        200:
- *          description: A list of roles
+ *          description: A list of role
  *          schema:
  *            type: string
  *        400:
@@ -26,17 +26,17 @@ const router = express.Router();
  *            type: string
  */
 router.get('/', async (req, res) => {
-  const roles = await Role.find().sort('title');
+  const role = await Role.find().sort('title');
 
-  res.send(roles);
+  res.send(role);
 });
 
 /**
  * @swagger
- * /api/v1/roles:
+ * /api/v1/role:
  *    post:
  *      summary: create a new role.
- *      tags: [/api/v1/roles]
+ *      tags: [/api/v1/role]
  *      consumes:
  *        - application/json
  *      description: This should create a new role
@@ -84,17 +84,17 @@ router.post('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/roles/{id}:
+ * /api/v1/role/{id}:
  *    put:
  *      summary: get the role with the id for update.
- *      tags: [/api/v1/roles]
+ *      tags: [/api/v1/role]
  *      consumes:
  *        - application/json
  *      description: This should update an existing role
  *      parameters:
  *        - in: path
  *          name: id
- *          description: The ID of the genre to edit.
+ *          description: The ID of the role to edit.
  *        - in: body 
  *          name: title 
  *          description: The new title of the genre to be updated.
@@ -112,7 +112,7 @@ router.post('/', async (req, res) => {
  *            type: string
  *      responses:
  *        200:
- *          description: Roles updated successfully
+ *          description: role updated successfully
  *          schema:
  *            type: string
  *        400:
@@ -149,6 +149,14 @@ router.put('/:id', async (req, res) => {
   }, {
     new: true
   });
+  if (!role) return res.status(404).send('The role with the given ID was not found.');
+
+  res.status(200).send(role);
+});
+
+router.get('/:id', async (req, res) => {
+  const role = await Role.findById(req.params.id);
+
   if (!role) return res.status(404).send('The role with the given ID was not found.');
 
   res.status(200).send(role);
