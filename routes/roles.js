@@ -2,6 +2,7 @@ import {
   Role,
   validate
 } from '../models/roles';
+import { roleController } from '../controllers/roles';
 import express from 'express';
 import { validateObjectId, auth, isAdmin } from '../middlewares/index';
 import mongoose from 'mongoose';
@@ -26,11 +27,7 @@ const router = express.Router();
  *          schema:
  *            type: string
  */
-router.get('/', [auth, isAdmin], async (req, res) => {
-  const role = await Role.find().sort('title');
-
-  res.send(role);
-});
+router.get('/', [auth, isAdmin], roleController.get);
 
 /**
  * @swagger
