@@ -3,7 +3,7 @@ import {
   validate
 } from '../models/roles';
 import express from 'express';
-import validateObjectId from '../middlewares/validateObjectId';
+import { validateObjectId, auth, isAdmin } from '../middlewares/index';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
@@ -26,7 +26,7 @@ const router = express.Router();
  *          schema:
  *            type: string
  */
-router.get('/', async (req, res) => {
+router.get('/', [auth, isAdmin], async (req, res) => {
   const role = await Role.find().sort('title');
 
   res.send(role);
@@ -63,7 +63,7 @@ router.get('/', async (req, res) => {
  *          schema:
  *            type: string
  */
-router.post('/', async (req, res) => {
+router.post('/', [auth, isAdmin],async (req, res) => {
   const {
     error
   } = validate(req.body);
@@ -129,7 +129,7 @@ router.post('/', async (req, res) => {
  *          schema:
  *            type: string
  */
-router.put('/:id', validateObjectId, async (req, res) => {
+router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
   const {
     error
   } = validate(req.body);
