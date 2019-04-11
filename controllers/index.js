@@ -1,3 +1,4 @@
 import { typeController } from './types'
+import { roleController } from './roles';
 
-export { typeController }
+export { typeController, roleController };
