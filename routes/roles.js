@@ -82,6 +82,52 @@ router.post('/', async (req, res) => {
   res.status(200).send('New role created!!!')
 });
 
+/**
+ * @swagger
+ * /api/v1/roles/{id}:
+ *    put:
+ *      summary: get the role with the id for update.
+ *      tags: [/api/v1/roles]
+ *      consumes:
+ *        - application/json
+ *      description: This should update an existing role
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the genre to edit.
+ *        - in: body 
+ *          name: title 
+ *          description: The new title of the genre to be updated.
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: integer
+ *          name:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description: Roles updated successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Could not update the genre
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        404:
+ *          description: Could not find  a role with the given ID 
+ *          schema:
+ *            type: string
+ */
 router.put('/:id', async (req, res) => {
   const {
     error
