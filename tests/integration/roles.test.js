@@ -88,12 +88,15 @@ describe('/api/v1/roles', () => {
     });
   });
   describe('POST /', () => {
-    it('should create a new role if it is unique', async () => {
+    it('should create a new role the user is an Admin', async () => {
       const role = {
         title: 'veteran'
       };
 
-      const response = await request(server).post('/api/v1/roles').send(role);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(role);
 
       const newRole = await Role.find({
         title: 'veteran'
