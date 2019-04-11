@@ -239,9 +239,12 @@ describe('/api/v1/types', () => {
       const id = mongoose.Types.ObjectId();
       const newTitle = 'Engineering';
 
-      const response = await request(server).put(`/api/v1/types/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/types/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(404);
     });
