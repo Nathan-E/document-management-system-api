@@ -78,4 +78,76 @@ router.post('/', async (req, res) => {
   res.status(200).send('New type created!!!')
 });
 
+/**
+ * @swagger
+ * /api/v1/role/{id}:
+ *    put:
+ *      summary: get the role with the id for update.
+ *      tags: [/api/v1/role]
+ *      consumes:
+ *        - application/json
+ *      description: This should update an existing role
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the role to edit.
+ *        - in: body 
+ *          name: title 
+ *          description: The new title of the role to be updated.
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: integer
+ *          name:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description: role updated successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Could not update the role
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        404:
+ *          description: Could not find  a role with the given ID 
+ *          schema:
+ *            type: string
+ */
+router.put('/:id', validateObjectId, async (req, res) => {
+  const {
+    error
+  } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let type = await Type.findOne({
+    title: req.body.title,
+  });
+  if (type) return res.status(400).send(`${req.body.title} already exist`);
+
+
+  type = await Type.findOneAndUpdate({
+    _id: req.params.id
+  }, {
+    $set: {
+      title: req.body.title
+    }
+  }, {
+    new: true
+  });
+  if (!type) return res.status(404).send('The role with the given ID was not found.');
+
+  res.status(200).send(type);
+});
+
 export { router as typesRouter }
