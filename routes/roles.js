@@ -31,6 +31,17 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   const { error } = validate(req.body);
   if(error) return res.status(400).send(error.details[0].message);
+  
+  let role = await Role.findOne({title: req.body.title});
+  if(role) return res.status(400).send(`${req.body.title} already exist`);
+
+  role = new Role({
+    title: req.body.title
+  });
+
+  await role.save();
+
+  res.status(200).send('New role created!!!')
 });
 
 export { router as rolesRouter };
