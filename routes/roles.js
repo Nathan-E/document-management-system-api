@@ -2,6 +2,7 @@ import {
   Role,
   validate
 } from '../models/roles';
+import { roleController } from '../controllers/roles';
 import express from 'express';
 import { validateObjectId, auth, isAdmin } from '../middlewares/index';
 import mongoose from 'mongoose';
@@ -24,13 +25,21 @@ const router = express.Router();
  *        400:
  *          description: Failed Request
  *          schema:
- *            type: string
+ *          type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *          type: string
+ *        403:
+ *          description: User no an Admin 
+ *          schema:
+ *          type: string 
+ *        404:
+ *          description: Could not find a type with the given ID 
+ *          schema:
+ *          type: string
  */
-router.get('/', [auth, isAdmin], async (req, res) => {
-  const role = await Role.find().sort('title');
-
-  res.send(role);
-});
+router.get('/', [auth, isAdmin], roleController.get);
 
 /**
  * @swagger
@@ -62,26 +71,20 @@ router.get('/', [auth, isAdmin], async (req, res) => {
  *          description: Could not create the role
  *          schema:
  *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *          type: string
+ *        403:
+ *          description: User no an Admin 
+ *          schema:
+ *          type: string 
+ *        404:
+ *          description: Could not find a type with the given ID 
+ *          schema:
+ *          type: string
  */
-router.post('/', [auth, isAdmin],async (req, res) => {
-  const {
-    error
-  } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  let role = await Role.findOne({
-    title: req.body.title
-  });
-  if (role) return res.status(400).send(`${req.body.title} already exist`);
-
-  role = new Role({
-    title: req.body.title
-  });
-
-  await role.save();
-
-  res.status(200).send('New role created!!!')
-});
+router.post('/', [auth, isAdmin], roleController.post);
 
 /**
  * @swagger
@@ -124,36 +127,16 @@ router.post('/', [auth, isAdmin],async (req, res) => {
  *          description: Unauthorized
  *          schema:
  *            type: string
+ *        403:
+ *          description: User no an Admin
+ *          schema:
+ *          type: string
  *        404:
  *          description: Could not find  a role with the given ID 
  *          schema:
  *            type: string
  */
-router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
-  const {
-    error
-  } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  let role = await Role.findOne({
-    title: req.body.title,
-  });
-  if (role) return res.status(400).send(`${req.body.title} already exist`);
-
-
-  role = await Role.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      title: req.body.title
-    }
-  }, {
-    new: true
-  });
-  if (!role) return res.status(404).send('The role with the given ID was not found.');
-
-  res.status(200).send(role);
-});
+router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
 
 /**
  * @swagger
@@ -191,13 +174,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
  *          schema:
  *            type: string
  */
-router.get('/:id', validateObjectId, async (req, res) => {
-  const role = await Role.findById(req.params.id);
-
-  if (!role) return res.status(404).send('The role with the given ID was not found.');
-
-  res.status(200).send(role);
-});
+router.get('/:id', validateObjectId, roleController.getById);
 
 export {
   router as rolesRouter
