@@ -57,7 +57,7 @@ describe('/api/v1/types', () => {
       expect(newType).not.toBeNull();
       expect(response.status).toBe(200);
     });
-    it('should return 400 if role already exist', async () => {
+    it('should return 400 if type already exist', async () => {
       const type = {
         title: 'science'
       }
@@ -67,6 +67,22 @@ describe('/api/v1/types', () => {
           title: 'science'
         }
       }]);
+
+      const response = await request(server).post('/api/v1/types').send(type);
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if the payload property, title is less than 5 characters', async () => {
+      const type = {
+        title: 'scie'
+      }
+
+      const response = await request(server).post('/api/v1/types').send(type);
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if the payload property, title is more than 25 characters', async () => {
+      const type = {
+        title: new Array(30).join('a')
+      }
 
       const response = await request(server).post('/api/v1/types').send(type);
       expect(response.status).toBe(400);
