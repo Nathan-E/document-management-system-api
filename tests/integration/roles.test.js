@@ -71,7 +71,7 @@ describe('/api/v1/roles', () => {
       const response = await request(server).post('/api/v1/roles').send(roles);
       expect(response.status).toBe(400);
     });
-    it('should return 400 if the payload is not valid', async () => {
+    it('should return 400 if the payload property, title is less than 4 characters', async () => {
       const role = {
         title: 'adm'
       }
@@ -98,6 +98,32 @@ describe('/api/v1/roles', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', newTitle);
+    });
+    it('should return 404 if an invalid id is passed', async () => {
+      const id = 1;
+      const newTitle = 'superAdmin';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(404);
+    });
+    it('should return 400 if the payload, title is less than 4 characterss', async () => {
+      const role = new Role({
+        title: 'cleaner'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'sup';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(400);
     });
   });
   describe('GET /:id', () => {
