@@ -116,7 +116,11 @@ describe('/api/v1/roles', () => {
         }
       }]);
 
-      const response = await request(server).post('/api/v1/roles').send(roles);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(roles);
+
       expect(response.status).toBe(400);
     });
     it('should return 400 if the payload property, title is less than 4 characters', async () => {
@@ -124,7 +128,11 @@ describe('/api/v1/roles', () => {
         title: 'adm'
       }
 
-      const response = await request(server).post('/api/v1/roles').send(role);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(role);
+        
       expect(response.status).toBe(400);
     });
     it('should return 400 if the payload property, title is more than 10 characters', async () => {
@@ -132,7 +140,11 @@ describe('/api/v1/roles', () => {
         title: new Array(12).join('a')
       }
 
-      const response = await request(server).post('/api/v1/roles').send(role);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(role);
+        
       expect(response.status).toBe(400);
     });
   });
