@@ -3,6 +3,7 @@ import {
   validate
 } from '../models/roles';
 import express from 'express';
+import validateObjectId from '../middlewares/validateObjectId';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
@@ -128,7 +129,7 @@ router.post('/', async (req, res) => {
  *          schema:
  *            type: string
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateObjectId, async (req, res) => {
   const {
     error
   } = validate(req.body);
