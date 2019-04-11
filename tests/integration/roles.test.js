@@ -76,10 +76,27 @@ describe('/api/v1/roles', () => {
       const response = await request(server).put(`/api/v1/roles/${id}`).send({
         title: newTitle
       });
-      
+
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', newTitle);
+    });
+  });
+  describe('GET /:id', () => {
+    it('should return an existing role', async () => {
+      const role = new Role({
+        title: 'amateur'
+      });
+
+      await role.save();
+
+      const id = role._id;
+
+      const response = await request(server).get(`/api/v1/roles/${id}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('title', role.title);
     });
   });
 });
