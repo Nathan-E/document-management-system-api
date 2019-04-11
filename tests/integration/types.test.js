@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import {
   Type
 } from '../../models/types';
+import { adminToken, regularToken } from './util'
 import app from '../../index';
 
 let server
@@ -48,7 +49,10 @@ describe('/api/v1/types', () => {
         title: 'journals'
       };
 
-      const response = await request(server).post('/api/v1/types').send(type);
+      const response = await request(server)
+        .post('/api/v1/types')
+        .set('x-auth-token', adminToken)
+        .send(type);
 
       const newType = await Type.find({
         title: 'journals'
@@ -56,6 +60,21 @@ describe('/api/v1/types', () => {
 
       expect(newType).not.toBeNull();
       expect(response.status).toBe(200);
+    });
+    it('should not create a new type if user is not logged in', async () => {
+      const type = {
+        title: 'journals1'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/types')
+        .send(type);
+
+      const newType = await Type.find({
+        title: 'journals'
+      });
+
+      expect(response.status).toBe(401);
     });
     it('should return 400 if type already exist', async () => {
       const type = {
