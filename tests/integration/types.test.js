@@ -42,4 +42,20 @@ describe('/api/v1/types', () => {
       expect(response.body.some(g => g.title === 'fashion')).toBeTruthy();
     });
   });
+  describe('POST /', () => {
+    it('should create a new type if it is unique', async () => {
+      const type = {
+        title: 'journals'
+      };
+
+      const response = await request(server).post('/api/v1/types').send(type);
+
+      const newType = await Type.find({
+        title: 'journals'
+      });
+
+      expect(newType).not.toBeNull();
+      expect(response.status).toBe(200);
+    });
+  });
 });
