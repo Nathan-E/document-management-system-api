@@ -184,7 +184,7 @@ describe('/api/v1/roles', () => {
     });
   });
   describe('PUT /:id', () => {
-    it('should update an existing role', async () => {
+    it('should update an existing role if the user is an Admin', async () => {
       const role = new Role({
         title: 'amateurs'
       });
@@ -194,7 +194,10 @@ describe('/api/v1/roles', () => {
       const id = role._id;
       const newTitle = 'superAdmin';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+      const response = await request(server)
+      .put(`/api/v1/roles/${id}`)
+      .set('x-auth-token', adminToken)
+      .send({
         title: newTitle
       });
 
