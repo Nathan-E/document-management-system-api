@@ -36,8 +36,8 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(2);
-      expect(response.body.some(g => g.name === 'genre1')).toBeTruthy();
-      expect(response.body.some(g => g.name === 'genre2')).toBeTruthy();
+      expect(response.body.some(g => g.title === 'admin')).toBeTruthy();
+      expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
   });
 });
