@@ -150,6 +150,42 @@ router.put('/:id', validateObjectId, async (req, res) => {
   res.status(200).send(type);
 });
 
+/**
+ * @swagger
+ * /api/v1/types/{id}:
+ *    get:
+ *      summary: gets a unique type with the passed id
+ *      tags: [/api/v1/types]
+ *      consumes:
+ *        - application/json
+ *      description: This should return an existing type with the given id
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the type requested.
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: integer
+ *          name:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description:  success
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Invalid ID
+ *          schema:
+ *            type: string
+ *        404:
+ *          description: Could not find  a type with the given ID 
+ *          schema:
+ *            type: string
+ */
 router.get('/:id', validateObjectId, async (req, res) => {
   const type = await Type.findById(req.params.id);
 
