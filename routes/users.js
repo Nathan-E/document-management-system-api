@@ -6,4 +6,4 @@ const router = express.Router();
 
 
 
-export { router };
+export { router as usersRouter };
