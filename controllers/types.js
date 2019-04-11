@@ -5,12 +5,14 @@ import {
 
 const typeController = {};
 
+//GET / contoller
 typeController.get = async (req, res) => {
   const type = await Type.find().sort('title');
 
   res.send(type);
 };
 
+//POST / contoller
 typeController.post = async (req, res) => {
   const {
     error
@@ -31,6 +33,7 @@ typeController.post = async (req, res) => {
   res.status(200).send('New type created!!!')
 };
 
+//PUT /:id controller
 typeController.put = async (req, res) => {
   const {
     error
@@ -57,6 +60,7 @@ typeController.put = async (req, res) => {
   res.status(200).send(type);
 };
 
+//GET /:id controller
 typeController.getById = async (req, res) => {
   const type = await Type.findById(req.params.id);
 
