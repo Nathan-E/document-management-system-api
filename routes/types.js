@@ -141,12 +141,6 @@ router.put('/:id', [validateObjectId, auth, isAdmin], typeController.put);
  *          schema:
  *            type: string
  */
-router.get('/:id', validateObjectId, async (req, res) => {
-  const type = await Type.findById(req.params.id);
-
-  if (!type) return res.status(404).send('The type with the given ID was not found.');
-
-  res.status(200).send(type);
-});
+router.get('/:id', validateObjectId, typeController.getById);
 
 export { router as typesRouter }
