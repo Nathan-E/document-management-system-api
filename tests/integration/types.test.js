@@ -192,5 +192,12 @@ describe('/api/v1/types', () => {
 
       expect(response.status).toBe(404);
     });
+    it('should return 404 if no type with the Id is found', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server).get(`/api/v1/types/${id}`);
+
+      expect(response.status).toBe(404);
+    });
   });
 });
