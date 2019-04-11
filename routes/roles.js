@@ -146,13 +146,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
  *          schema:
  *            type: string
  */
-router.get('/:id', validateObjectId, async (req, res) => {
-  const role = await Role.findById(req.params.id);
-
-  if (!role) return res.status(404).send('The role with the given ID was not found.');
-
-  res.status(200).send(role);
-});
+router.get('/:id', validateObjectId, );
 
 export {
   router as rolesRouter
