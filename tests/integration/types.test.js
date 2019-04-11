@@ -64,6 +64,23 @@ describe('/api/v1/types', () => {
       expect(newType).not.toBeNull();
       expect(response.status).toBe(200);
     });
+    it('should allow a regular user to create a new type if it is unique', async () => {
+      const type = {
+        title: 'journals3'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/types')
+        .set('x-auth-token', regularToken)
+        .send(type);
+
+      const newType = await Type.find({
+        title: 'journals3'
+      });
+
+      expect(newType).not.toBeNull();
+      expect(response.status).toBe(200);
+    });
     it('should not create a new type if user is not logged in', async () => {
       const type = {
         title: 'journals1'
@@ -79,7 +96,7 @@ describe('/api/v1/types', () => {
 
       expect(response.status).toBe(401);
     });
-    it('should not create a new type if tooken is invalid', async () => {
+    it('should not create a new type if token is invalid', async () => {
       const type = {
         title: 'journals2'
       };
