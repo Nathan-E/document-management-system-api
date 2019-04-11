@@ -21,7 +21,7 @@ const validate = role => {
     title: Joi.string().min(5).max(25).required()
   }
 
-  return Joi.validate(typeSchema, schema);
+  return Joi.validate(role, schema);
 }
 
 export { Type, validate};
