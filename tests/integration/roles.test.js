@@ -215,6 +215,25 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(404);
     });
+    it('should not update an existing role if the user is not an Admin', async () => {
+      const role = new Role({
+        title: 'amateu1'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superAdmi1';
+
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          title: newTitle
+        });
+
+      expect(response.status).toBe(403);
+    });
     it('should return 400 if the payload, title is less than 4 characterss', async () => {
       const role = new Role({
         title: 'cleaner'
