@@ -158,6 +158,16 @@ describe('/api/v1/types', () => {
       });
       expect(response.status).toBe(400);
     });
+    it('should return 404 if the passed id is not found', async () => {
+      const id = mongoose.Types.ObjectId();
+      const newTitle = 'Engineering';
+
+      const response = await request(server).put(`/api/v1/types/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(404);
+    });
   });
   describe('GET /:id', () => {
     it('should return an existing type', async () => {
