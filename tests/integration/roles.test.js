@@ -62,4 +62,23 @@ describe('/api/v1/roles', () => {
       expect(response.status).toBe(200);
     });
   });
+  describe('PUT /:id', () => {
+    it('should update an existing role', async () => {
+      const role = new Role({
+        title: 'amateur'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superAdmin';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('name', newName);
+    });
+  });
 });
