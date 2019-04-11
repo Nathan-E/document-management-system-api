@@ -129,7 +129,7 @@ router.post('/', [auth, isAdmin],async (req, res) => {
  *          schema:
  *            type: string
  */
-router.put('/:id', validateObjectId, async (req, res) => {
+router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
   const {
     error
   } = validate(req.body);
