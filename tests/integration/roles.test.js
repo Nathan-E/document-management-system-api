@@ -47,7 +47,7 @@ describe('/api/v1/roles', () => {
     });
   });
   describe('POST /', () => {
-    it('should create a new role if it is valid', async () => {
+    it('should create a new role if it is unique', async () => {
       const role = {
         title: 'veteran'
       }
