@@ -97,7 +97,7 @@ router.post('/', async (req, res) => {
  *          description: The ID of the role to edit.
  *        - in: body 
  *          name: title 
- *          description: The new title of the genre to be updated.
+ *          description: The new title of the role to be updated.
  *        - in: header
  *          name: x-auth-token
  *          description: An authorization token
@@ -116,7 +116,7 @@ router.post('/', async (req, res) => {
  *          schema:
  *            type: string
  *        400:
- *          description: Could not update the genre
+ *          description: Could not update the role
  *          schema:
  *            type: string
  *        401:
@@ -154,6 +154,42 @@ router.put('/:id', async (req, res) => {
   res.status(200).send(role);
 });
 
+/**
+ * @swagger
+ * /api/v1/roles/{id}:
+ *    get:
+ *      summary: gets a unique role with the passed id
+ *      tags: [/api/v1/roles]
+ *      consumes:
+ *        - application/json
+ *      description: This should return an existing role with the given id
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the role requested.
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: integer
+ *          name:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description:  success
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Invalid ID
+ *          schema:
+ *            type: string
+ *        404:
+ *          description: Could not find  a role with the given ID 
+ *          schema:
+ *            type: string
+ */
 router.get('/:id', async (req, res) => {
   const role = await Role.findById(req.params.id);
 
