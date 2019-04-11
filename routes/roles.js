@@ -146,7 +146,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
  *          schema:
  *            type: string
  */
-router.get('/:id', validateObjectId, );
+router.get('/:id', validateObjectId, roleController.getById);
 
 export {
   router as rolesRouter
