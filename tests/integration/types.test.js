@@ -71,10 +71,26 @@ describe('/api/v1/types', () => {
         .send(type);
 
       const newType = await Type.find({
-        title: 'journals'
+        title: 'journals1'
       });
 
       expect(response.status).toBe(401);
+    });
+    it('should not create a new type if tooken is invalid', async () => {
+      const type = {
+        title: 'journals2'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/types')
+        .set('x-auth-token', 'kbsbadjslbj')
+        .send(type);
+
+      const newType = await Type.find({
+        title: 'journals2'
+      });
+
+      expect(response.status).toBe(400);
     });
     it('should return 400 if type already exist', async () => {
       const type = {
