@@ -4,15 +4,28 @@ import mongoose from 'mongoose';
 import {
   Role
 } from '../../models/roles';
+import {
+  User
+} from '../../models/users'
 import app from '../../index';
-import {
-  expression
-} from '@babel/template';
-import {
-  exportAllDeclaration
-} from '@babel/types';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 let server;
+
+const payload = {
+  _id: mongoose.Types.ObjectId(),
+  isAdmin: true
+}
+
+const adminToken = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
+  expiresIn: 60 * 60
+});
+
+console.log(adminToken);
+const regularToken = new User().generateAuthToken();
+console.log(regularToken);
 
 describe('/api/v1/roles', () => {
   beforeAll(() => {
@@ -29,10 +42,10 @@ describe('/api/v1/roles', () => {
     server.close();
   });
   describe('GET /', () => {
-    it('should return all the roles', async () => {
+    it('should return all the roles if user is Admin', async () => {
       await Role.collection.bulkWrite([{
         insertOne: {
-          title: 'Sadmin'
+          title: 'dmins'
         }
       }, {
         insertOne: {
@@ -40,21 +53,50 @@ describe('/api/v1/roles', () => {
         },
       }]);
 
-      const response = await request(server).get('/api/v1/roles');
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(2);
-      expect(response.body.some(g => g.title === 'Sadmin')).toBeTruthy();
+      expect(response.body.some(g => g.title === 'dmins')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
+    });
+    it('should 403 if user is not an Admin', async () => {
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(403);
+    });
+    it('should 401 if user is not logged in', async () => {
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .send();
+
+      expect(response.status).toBe(401);
+    });
+    it('should 400 if token is invalid', async () => {
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .set('x-auth-token', 'qdehpdH')
+        .send();
+
+      expect(response.status).toBe(400);
     });
   });
   describe('POST /', () => {
-    it('should create a new role if it is unique', async () => {
+    it('should create a new role the user is an Admin', async () => {
       const role = {
         title: 'veteran'
       };
 
-      const response = await request(server).post('/api/v1/roles').send(role);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(role);
 
       const newRole = await Role.find({
         title: 'veteran'
@@ -62,6 +104,41 @@ describe('/api/v1/roles', () => {
 
       expect(newRole).not.toBeNull();
       expect(response.status).toBe(200);
+    });
+    it('should not create a new role the user is not an Admin', async () => {
+      const role = {
+        title: 'veteran1'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', regularToken)
+        .send(role);
+
+      expect(response.status).toBe(403);
+    });
+    it('should not create a new role the user is not logged in', async () => {
+      const role = {
+        title: 'veteran2'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .send(role);
+
+      expect(response.status).toBe(401);
+    });
+    it('should not create a new role the token is invalid', async () => {
+      const role = {
+        title: 'veteran3'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', 'regularToken')
+        .send(role);
+
+      expect(response.status).toBe(400);
     });
     it('should return 400 if role already exist', async () => {
       const roles = {
@@ -74,7 +151,11 @@ describe('/api/v1/roles', () => {
         }
       }]);
 
-      const response = await request(server).post('/api/v1/roles').send(roles);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(roles);
+
       expect(response.status).toBe(400);
     });
     it('should return 400 if the payload property, title is less than 4 characters', async () => {
@@ -82,20 +163,28 @@ describe('/api/v1/roles', () => {
         title: 'adm'
       }
 
-      const response = await request(server).post('/api/v1/roles').send(role);
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(role);
+
       expect(response.status).toBe(400);
     });
     it('should return 400 if the payload property, title is more than 10 characters', async () => {
       const role = {
         title: new Array(12).join('a')
       }
-      
-      const response = await request(server).post('/api/v1/roles').send(role);
+
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send(role);
+
       expect(response.status).toBe(400);
     });
   });
   describe('PUT /:id', () => {
-    it('should update an existing role', async () => {
+    it('should update an existing role if the user is an Admin', async () => {
       const role = new Role({
         title: 'amateurs'
       });
@@ -105,9 +194,12 @@ describe('/api/v1/roles', () => {
       const id = role._id;
       const newTitle = 'superAdmin';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
@@ -117,11 +209,70 @@ describe('/api/v1/roles', () => {
       const id = 1;
       const newTitle = 'superAdmin';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(404);
+    });
+    it('should not update an existing role if the user is not an Admin', async () => {
+      const role = new Role({
+        title: 'amateu1'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superAdmi1';
+
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          title: newTitle
+        });
+
+      expect(response.status).toBe(403);
+    });
+    it('should not update an existing role if the user is not logged in', async () => {
+      const role = new Role({
+        title: 'amateu12'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superAdmi1';
+
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .send({
+          title: newTitle
+        });
+
+      expect(response.status).toBe(401);
+    });
+    it('should not update an existing role if the token is invalid', async () => {
+      const role = new Role({
+        title: 'amateu3'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superAdmi1';
+
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', 'ajhfhdfsah')
+        .send({
+          title: newTitle
+        });
+
+      expect(response.status).toBe(400);
     });
     it('should return 400 if the payload, title is less than 4 characterss', async () => {
       const role = new Role({
@@ -133,9 +284,12 @@ describe('/api/v1/roles', () => {
       const id = role._id;
       const newTitle = 'sup';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(400);
     });
@@ -149,9 +303,12 @@ describe('/api/v1/roles', () => {
       const id = role._id;
       const newTitle = 'superadmins';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(400);
     });
@@ -175,18 +332,24 @@ describe('/api/v1/roles', () => {
       const id = roleTwo._id;
       const newRole = 'admins';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newRole
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newRole
+        });
       expect(response.status).toBe(400);
     });
     it('should return 404 if the passed id is not found', async () => {
       const id = mongoose.Types.ObjectId();
       const newTitle = 'superAdm';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(404);
     });
