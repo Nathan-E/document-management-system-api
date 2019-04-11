@@ -1,4 +1,5 @@
 import { Type, validate } from '../models/types';
+import { typeController } from '../controllers/index'
 import express from 'express';
 import { validateObjectId, auth, isAdmin} from '../middlewares/index';
 
@@ -21,11 +22,7 @@ const router = express.Router();
  *          schema:
  *            type: string
  */
-router.get('/', async (req, res) => {
-  const type = await Type.find().sort('title');
-
-  res.send(type);
-});
+router.get('/', typeController.get);
 
 /**
  * @swagger
@@ -57,26 +54,12 @@ router.get('/', async (req, res) => {
  *          description: Could not create the type
  *          schema:
  *            type: string
+ *        401:
+ *          description: Access denied.No token provided
+ *          schema:
+ *            type: string
  */
-router.post('/', [auth],async (req, res) => {
-  const {
-    error
-  } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  let type = await Type.findOne({
-    title: req.body.title
-  });
-  if (type) return res.status(400).send(`${req.body.title} already exist`);
-
-  type = new Type({
-    title: req.body.title
-  });
-
-  await type.save();
-
-  res.status(200).send('New type created!!!')
-});
+router.post('/', [auth], typeController.post);
 
 /**
  * @swagger
@@ -119,36 +102,16 @@ router.post('/', [auth],async (req, res) => {
  *          description: Unauthorized
  *          schema:
  *            type: string
+ *        403:
+ *          description: User no an Admin
+ *          schema:
+ *          type: string
  *        404:
  *          description: Could not find  a type with the given ID 
  *          schema:
  *            type: string
  */
-router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
-  const {
-    error
-  } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  let type = await Type.findOne({
-    title: req.body.title,
-  });
-  if (type) return res.status(400).send(`${req.body.title} already exist`);
-
-
-  type = await Type.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      title: req.body.title
-    }
-  }, {
-    new: true
-  });
-  if (!type) return res.status(404).send('The type with the given ID was not found.');
-
-  res.status(200).send(type);
-});
+router.put('/:id', [validateObjectId, auth, isAdmin], typeController.put);
 
 /**
  * @swagger
@@ -186,12 +149,6 @@ router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
  *          schema:
  *            type: string
  */
-router.get('/:id', validateObjectId, async (req, res) => {
-  const type = await Type.findById(req.params.id);
-
-  if (!type) return res.status(404).send('The type with the given ID was not found.');
-
-  res.status(200).send(type);
-});
+router.get('/:id', validateObjectId, typeController.getById);
 
 export { router as typesRouter }
