@@ -63,17 +63,7 @@ describe('/api/v1/roles', () => {
       expect(response.body.some(g => g.title === 'dmins')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
-    it('should not return all the roles if user is not Admin', async () => {
-      await Role.collection.bulkWrite([{
-        insertOne: {
-          title: 'Adans'
-        }
-      }, {
-        insertOne: {
-          title: 'regulr'
-        },
-      }]);
-
+    it('should 401 if user is not logged in', async () => {
       const response = await request(server)
         .get('/api/v1/roles')
         .set('x-auth-token', regularToken)
