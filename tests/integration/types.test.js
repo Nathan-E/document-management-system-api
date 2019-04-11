@@ -88,7 +88,7 @@ describe('/api/v1/types', () => {
 
       const id = type._id;
 
-      const response = await request(server).get(`/api/v1/roles/${id}`);
+      const response = await request(server).get(`/api/v1/types/${id}`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
