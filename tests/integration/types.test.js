@@ -117,6 +117,22 @@ describe('/api/v1/types', () => {
 
       expect(response.status).toBe(404);
     });
+    it('should return 400 if the payload, title is less than 5 characterss', async () => {
+      const type = new Type({
+        title: 'nature'
+      });
+
+      await type.save();
+
+      const id = type._id;
+      const newTitle = 'nat';
+
+      const response = await request(server).put(`/api/v1/types/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('GET /:id', () => {
     it('should return an existing type', async () => {
