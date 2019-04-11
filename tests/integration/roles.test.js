@@ -167,7 +167,7 @@ describe('/api/v1/roles', () => {
         .post('/api/v1/roles')
         .set('x-auth-token', adminToken)
         .send(role);
-        
+
       expect(response.status).toBe(400);
     });
     it('should return 400 if the payload property, title is more than 10 characters', async () => {
@@ -195,11 +195,11 @@ describe('/api/v1/roles', () => {
       const newTitle = 'superAdmin';
 
       const response = await request(server)
-      .put(`/api/v1/roles/${id}`)
-      .set('x-auth-token', adminToken)
-      .send({
-        title: newTitle
-      });
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
@@ -209,9 +209,12 @@ describe('/api/v1/roles', () => {
       const id = 1;
       const newTitle = 'superAdmin';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(404);
     });
@@ -281,9 +284,12 @@ describe('/api/v1/roles', () => {
       const id = role._id;
       const newTitle = 'sup';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(400);
     });
@@ -297,9 +303,12 @@ describe('/api/v1/roles', () => {
       const id = role._id;
       const newTitle = 'superadmins';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(400);
     });
@@ -323,18 +332,24 @@ describe('/api/v1/roles', () => {
       const id = roleTwo._id;
       const newRole = 'admins';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newRole
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newRole
+        });
       expect(response.status).toBe(400);
     });
     it('should return 404 if the passed id is not found', async () => {
       const id = mongoose.Types.ObjectId();
       const newTitle = 'superAdm';
 
-      const response = await request(server).put(`/api/v1/roles/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(404);
     });
