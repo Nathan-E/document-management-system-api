@@ -168,8 +168,8 @@ describe('/api/v1/types', () => {
         .put(`/api/v1/types/${id}`)
         .set('x-auth-token', adminToken)
         .send({
-        title: newTitle
-      });
+          title: newTitle
+        });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
@@ -183,8 +183,8 @@ describe('/api/v1/types', () => {
         .put(`/api/v1/types/${id}`)
         .set('x-auth-token', adminToken)
         .send({
-        title: newTitle
-      });
+          title: newTitle
+        });
 
       expect(response.status).toBe(404);
     });
@@ -198,9 +198,12 @@ describe('/api/v1/types', () => {
       const id = type._id;
       const newTitle = 'nat';
 
-      const response = await request(server).put(`/api/v1/types/${id}`).send({
-        title: newTitle
-      });
+      const response = await request(server)
+        .put(`/api/v1/types/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
+          title: newTitle
+        });
 
       expect(response.status).toBe(400);
     });
