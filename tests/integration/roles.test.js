@@ -61,6 +61,16 @@ describe('/api/v1/roles', () => {
       expect(newRole).not.toBeNull();
       expect(response.status).toBe(200);
     });
+    it('should return 400 if role already exist', async () => {
+      const roles = [{
+        title: 'admin'
+      }, {
+        title: 'admin'
+      }];
+
+      const response = await request(server).post('/api/v1/roles').send(roles);
+      expect(response.status).toBe(400);
+    });
   });
   describe('PUT /:id', () => {
     it('should update an existing role', async () => {
