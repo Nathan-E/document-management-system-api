@@ -63,7 +63,7 @@ router.get('/', [auth, isAdmin], async (req, res) => {
  *          schema:
  *            type: string
  */
-router.post('/', async (req, res) => {
+router.post('/', [auth, isAdmin],async (req, res) => {
   const {
     error
   } = validate(req.body);
