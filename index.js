@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { rolesRouter } from './routes/index';
+import { rolesRouter, typesRouter } from './routes/index';
 dotenv.config();
 
 const app = express();
@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === 'test') db = process.env.TEST_DATABASE;
 //middlewares
 app.use(express.json());
 app.use('/api/v1/roles', rolesRouter);
+app.use('/api/v1/types', typesRouter);
 
 
 
