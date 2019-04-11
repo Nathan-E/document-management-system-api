@@ -58,4 +58,24 @@ describe('/api/v1/types', () => {
       expect(response.status).toBe(200);
     });
   });
+  describe('PUT /:id', () => {
+    it('should update an existing type', async () => {
+      const type = new Type({
+        title: 'fashions'
+      });
+
+      await type.save();
+
+      const id = type._id;
+      const newTitle = 'dressing';
+
+      const response = await request(server).put(`/api/v1/types/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('title', newTitle);
+    });
+  });
 });
