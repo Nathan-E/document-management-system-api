@@ -168,6 +168,16 @@ describe('/api/v1/roles', () => {
       });
       expect(response.status).toBe(400);
     });
+    it('should return 404 if the passed id is not found', async () => {
+      const id = mongoose.Types.ObjectId();
+      const newTitle = 'superAdmin';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('GET /:id', () => {
     it('should return an existing role', async () => {
