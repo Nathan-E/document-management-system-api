@@ -4,15 +4,28 @@ import mongoose from 'mongoose';
 import {
   Role
 } from '../../models/roles';
+import {
+  User
+} from '../../models/users'
 import app from '../../index';
-import {
-  expression
-} from '@babel/template';
-import {
-  exportAllDeclaration
-} from '@babel/types';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 let server;
+
+const payload = {
+  _id: mongoose.Types.ObjectId(),
+  isAdmin: true
+}
+
+const adminToken = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
+  expiresIn: 60 * 60
+});
+
+console.log(adminToken);
+const regularToken = new User().generateAuthToken();
+console.log(regularToken);
 
 describe('/api/v1/roles', () => {
   beforeAll(() => {
@@ -29,10 +42,10 @@ describe('/api/v1/roles', () => {
     server.close();
   });
   describe('GET /', () => {
-    it('should return all the roles', async () => {
+    it('should return all the roles if user is Admin', async () => {
       await Role.collection.bulkWrite([{
         insertOne: {
-          title: 'Sadmin'
+          title: 'dmins'
         }
       }, {
         insertOne: {
@@ -40,11 +53,14 @@ describe('/api/v1/roles', () => {
         },
       }]);
 
-      const response = await request(server).get('/api/v1/roles');
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .set('x-auth-token', adminToken)
+        .send();
 
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(2);
-      expect(response.body.some(g => g.title === 'Sadmin')).toBeTruthy();
+      expect(response.body.some(g => g.title === 'dmins')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
   });
@@ -89,7 +105,7 @@ describe('/api/v1/roles', () => {
       const role = {
         title: new Array(12).join('a')
       }
-      
+
       const response = await request(server).post('/api/v1/roles').send(role);
       expect(response.status).toBe(400);
     });
