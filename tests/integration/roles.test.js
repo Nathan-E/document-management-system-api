@@ -30,13 +30,15 @@ describe('/api/v1/roles', () => {
   });
   describe('GET /', () => {
     it('should return all the roles', async () => {
-      const roles = [{
-        title: 'admin'
+      await Role.collection.bulkWrite([{
+        insertOne: {
+          title: 'admin'
+        }
       }, {
-        title: 'regular'
-      }];
-
-      await Role.collection.insertMany(roles);
+        insertOne: {
+          title: 'regular'
+        },
+      }]);
 
       const response = await request(server).get('/api/v1/roles');
 
@@ -83,7 +85,7 @@ describe('/api/v1/roles', () => {
   describe('PUT /:id', () => {
     it('should update an existing role', async () => {
       const role = new Role({
-        title: 'amateur'
+        title: 'amateurs'
       });
 
       await role.save();
@@ -125,11 +127,52 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(400);
     });
+    it('should return 400 if the payload, title is less than 4 characterss', async () => {
+      const role = new Role({
+        title: 'cleaners'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superadmins';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if role already exist', async () => {
+      await Role.collection.bulkWrite([{
+        insertOne: {
+          title: 'admins'
+        }
+      }, {
+        insertOne: {
+          title: 'regulars'
+        }
+      }]);
+
+      const roleTwo = new Role({
+        title: 'clean'
+      });
+
+      await roleTwo.save();
+
+      const id = roleTwo._id;
+      const newRole = 'admins';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newRole
+      });
+      expect(response.status).toBe(400);
+    });
   });
   describe('GET /:id', () => {
     it('should return an existing role', async () => {
       const role = new Role({
-        title: 'amateur'
+        title: 'amateu'
       });
 
       await role.save();
