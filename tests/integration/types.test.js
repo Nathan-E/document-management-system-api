@@ -164,7 +164,10 @@ describe('/api/v1/types', () => {
       const id = type._id;
       const newTitle = 'dressing';
 
-      const response = await request(server).put(`/api/v1/types/${id}`).send({
+      const response = await request(server)
+        .put(`/api/v1/types/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
         title: newTitle
       });
 
@@ -176,7 +179,10 @@ describe('/api/v1/types', () => {
       const id = 1;
       const newTitle = 'social';
 
-      const response = await request(server).put(`/api/v1/types/${id}`).send({
+      const response = await request(server)
+        .put(`/api/v1/types/${id}`)
+        .set('x-auth-token', adminToken)
+        .send({
         title: newTitle
       });
 
