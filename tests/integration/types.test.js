@@ -57,6 +57,20 @@ describe('/api/v1/types', () => {
       expect(newType).not.toBeNull();
       expect(response.status).toBe(200);
     });
+    it('should return 400 if role already exist', async () => {
+      const type = {
+        title: 'science'
+      }
+
+      await Type.collection.bulkWrite([{
+        insertOne: {
+          title: 'science'
+        }
+      }]);
+
+      const response = await request(server).post('/api/v1/types').send(type);
+      expect(response.status).toBe(400);
+    });
   });
   describe('PUT /:id', () => {
     it('should update an existing type', async () => {
