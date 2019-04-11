@@ -5,12 +5,14 @@ import {
 
 const roleController = {};
 
+//GET / controller
 roleController.get = async (req, res) => {
   const role = await Role.find().sort('title');
 
   res.send(role);
 };
 
+//POST / controller
 roleController.post = async (req, res) => {
   const {
     error
@@ -31,6 +33,7 @@ roleController.post = async (req, res) => {
   res.status(200).send('New role created!!!')
 };
 
+//PUT /:id controller
 roleController.put = async (req, res) => {
   const {
     error
@@ -57,7 +60,7 @@ roleController.put = async (req, res) => {
   res.status(200).send(role);
 };
 
-
+//GET /:id controller
 roleController.getById = async (req, res) => {
   const role = await Role.findById(req.params.id);
 
