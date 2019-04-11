@@ -76,9 +76,10 @@ describe('/api/v1/roles', () => {
       const response = await request(server).put(`/api/v1/roles/${id}`).send({
         title: newTitle
       });
-
+      
+      expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
-      expect(response.body).toHaveProperty('name', newName);
+      expect(response.body).toHaveProperty('title', newTitle);
     });
   });
 });
