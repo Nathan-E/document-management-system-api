@@ -105,6 +105,22 @@ describe('/api/v1/roles', () => {
       expect(newRole).not.toBeNull();
       expect(response.status).toBe(200);
     });
+    it('should not create a new role the user is not an Admin', async () => {
+      const role = {
+        title: 'veteran1'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .set('x-auth-token', regularToken)
+        .send(role);
+
+      const newRole = await Role.find({
+        title: 'veteran1'
+      });
+
+      expect(response.status).toBe(403);
+    });
     it('should return 400 if role already exist', async () => {
       const roles = {
         title: 'admin'
@@ -144,7 +160,7 @@ describe('/api/v1/roles', () => {
         .post('/api/v1/roles')
         .set('x-auth-token', adminToken)
         .send(role);
-        
+
       expect(response.status).toBe(400);
     });
   });
