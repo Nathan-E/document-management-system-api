@@ -4,7 +4,10 @@ import mongoose from 'mongoose';
 import {
   Type
 } from '../../models/types';
-import { adminToken, regularToken } from './util'
+import {
+  adminToken,
+  regularToken
+} from './util'
 import app from '../../index';
 
 let server
@@ -103,7 +106,10 @@ describe('/api/v1/types', () => {
         }
       }]);
 
-      const response = await request(server).post('/api/v1/types').send(type);
+      const response = await request(server)
+        .post('/api/v1/types')
+        .set('x-auth-token', adminToken)
+        .send(type);
       expect(response.status).toBe(400);
     });
     it('should return 400 if the payload property, title is less than 5 characters', async () => {
