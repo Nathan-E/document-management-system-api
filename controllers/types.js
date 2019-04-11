@@ -55,6 +55,14 @@ typeController.put = async (req, res) => {
   if (!type) return res.status(404).send('The type with the given ID was not found.');
 
   res.status(200).send(type);
-}
+};
+
+typeController.getById = async (req, res) => {
+  const type = await Type.findById(req.params.id);
+
+  if (!type) return res.status(404).send('The type with the given ID was not found.');
+
+  res.status(200).send(type);
+};
 
 export { typeController };
