@@ -234,6 +234,24 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(403);
     });
+    it('should not update an existing role if the user is not logged in', async () => {
+      const role = new Role({
+        title: 'amateu12'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superAdmi1';
+
+      const response = await request(server)
+        .put(`/api/v1/roles/${id}`)
+        .send({
+          title: newTitle
+        });
+
+      expect(response.status).toBe(401);
+    });
     it('should return 400 if the payload, title is less than 4 characterss', async () => {
       const role = new Role({
         title: 'cleaner'
