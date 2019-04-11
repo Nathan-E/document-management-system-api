@@ -107,6 +107,16 @@ describe('/api/v1/types', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', newTitle);
     });
+    it('should return 404 if an invalid id is passed', async () => {
+      const id = 1;
+      const newTitle = 'social';
+
+      const response = await request(server).put(`/api/v1/types/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(404);
+    });
   });
   describe('GET /:id', () => {
     it('should return an existing type', async () => {
