@@ -25,7 +25,7 @@ describe('/api/v1/roles', () => {
 
   });
   afterAll(async () => {
-    await Role.remove();
+    await Role.deleteMany();
     server.close();
   });
   describe('GET /', () => {
@@ -50,11 +50,9 @@ describe('/api/v1/roles', () => {
     it('should create a new role if it is unique', async () => {
       const role = {
         title: 'veteran'
-      }
+      };
 
-      const response = await request(server)
-        .post('/api/v1/roles')
-        .send(role);
+      const response = await request(server).post('/api/v1/roles').send(role);
 
       const newRole = await Role.find({
         title: 'veteran'
