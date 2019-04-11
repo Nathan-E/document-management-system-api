@@ -28,4 +28,9 @@ router.get('/', async (req, res) => {
   res.send(roles);
 });
 
+router.post('/', async (req, res) => {
+  const { error } = validate(req.body);
+  if(error) return res.status(400).send(error.details[0].message);
+});
+
 export { router as rolesRouter };
