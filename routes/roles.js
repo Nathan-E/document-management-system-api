@@ -25,7 +25,19 @@ const router = express.Router();
  *        400:
  *          description: Failed Request
  *          schema:
- *            type: string
+ *          type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *          type: string
+ *        403:
+ *          description: User no an Admin 
+ *          schema:
+ *          type: string 
+ *        404:
+ *          description: Could not find a type with the given ID 
+ *          schema:
+ *          type: string
  */
 router.get('/', [auth, isAdmin], roleController.get);
 
@@ -59,6 +71,18 @@ router.get('/', [auth, isAdmin], roleController.get);
  *          description: Could not create the role
  *          schema:
  *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *          type: string
+ *        403:
+ *          description: User no an Admin 
+ *          schema:
+ *          type: string 
+ *        404:
+ *          description: Could not find a type with the given ID 
+ *          schema:
+ *          type: string
  */
 router.post('/', [auth, isAdmin], roleController.post);
 
@@ -103,6 +127,10 @@ router.post('/', [auth, isAdmin], roleController.post);
  *          description: Unauthorized
  *          schema:
  *            type: string
+ *        403:
+ *          description: User no an Admin
+ *          schema:
+ *          type: string
  *        404:
  *          description: Could not find  a role with the given ID 
  *          schema:
