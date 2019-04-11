@@ -30,19 +30,21 @@ describe('/api/v1/roles', () => {
   });
   describe('GET /', () => {
     it('should return all the roles', async () => {
-      const roles = [{
-        title: 'admin'
+      await Role.collection.bulkWrite([{
+        insertOne: {
+          title: 'Sadmin'
+        }
       }, {
-        title: 'regular'
-      }];
-
-      await Role.collection.insertMany(roles);
+        insertOne: {
+          title: 'regular'
+        },
+      }]);
 
       const response = await request(server).get('/api/v1/roles');
 
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(2);
-      expect(response.body.some(g => g.title === 'admin')).toBeTruthy();
+      expect(response.body.some(g => g.title === 'Sadmin')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
   });
@@ -61,11 +63,33 @@ describe('/api/v1/roles', () => {
       expect(newRole).not.toBeNull();
       expect(response.status).toBe(200);
     });
+    it('should return 400 if role already exist', async () => {
+      const roles = {
+        title: 'admin'
+      }
+
+      await Role.collection.bulkWrite([{
+        insertOne: {
+          title: 'admin'
+        }
+      }]);
+
+      const response = await request(server).post('/api/v1/roles').send(roles);
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if the payload property, title is less than 4 characters', async () => {
+      const role = {
+        title: 'adm'
+      }
+
+      const response = await request(server).post('/api/v1/roles').send(role);
+      expect(response.status).toBe(400);
+    });
   });
   describe('PUT /:id', () => {
     it('should update an existing role', async () => {
       const role = new Role({
-        title: 'amateur'
+        title: 'amateurs'
       });
 
       await role.save();
@@ -81,11 +105,88 @@ describe('/api/v1/roles', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', newTitle);
     });
+    it('should return 404 if an invalid id is passed', async () => {
+      const id = 1;
+      const newTitle = 'superAdmin';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(404);
+    });
+    it('should return 400 if the payload, title is less than 4 characterss', async () => {
+      const role = new Role({
+        title: 'cleaner'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'sup';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if the payload, title is less than 4 characterss', async () => {
+      const role = new Role({
+        title: 'cleane'
+      });
+
+      await role.save();
+
+      const id = role._id;
+      const newTitle = 'superadmins';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if role already exist', async () => {
+      await Role.collection.bulkWrite([{
+        insertOne: {
+          title: 'admins'
+        }
+      }, {
+        insertOne: {
+          title: 'regulars'
+        }
+      }]);
+
+      const roleTwo = new Role({
+        title: 'clean'
+      });
+
+      await roleTwo.save();
+
+      const id = roleTwo._id;
+      const newRole = 'admins';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newRole
+      });
+      expect(response.status).toBe(400);
+    });
+    it('should return 404 if the passed id is not found', async () => {
+      const id = mongoose.Types.ObjectId();
+      const newTitle = 'superAdm';
+
+      const response = await request(server).put(`/api/v1/roles/${id}`).send({
+        title: newTitle
+      });
+
+      expect(response.status).toBe(404);
+    });
   });
   describe('GET /:id', () => {
     it('should return an existing role', async () => {
       const role = new Role({
-        title: 'amateur'
+        title: 'amate'
       });
 
       await role.save();
@@ -97,6 +198,20 @@ describe('/api/v1/roles', () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', role.title);
+    });
+    it('should return 404 if an invalid id is passed', async () => {
+      const id = 1;
+
+      const response = await request(server).get(`/api/v1/roles/${id}`);
+
+      expect(response.status).toBe(404);
+    });
+    it('should return 404 if no role with the Id is found', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server).get(`/api/v1/roles/${id}`);
+
+      expect(response.status).toBe(404);
     });
   });
 });
