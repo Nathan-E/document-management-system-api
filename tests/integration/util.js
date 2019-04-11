@@ -1,6 +1,8 @@
 import {
   User
-} from '../../models/users'
+}
+from '../../models/users';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
