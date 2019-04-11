@@ -4,28 +4,10 @@ import mongoose from 'mongoose';
 import {
   Role
 } from '../../models/roles';
-import {
-  User
-} from '../../models/users'
+import { adminToken, regularToken } from './util';
 import app from '../../index';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-dotenv.config();
 
 let server;
-
-const payload = {
-  _id: mongoose.Types.ObjectId(),
-  isAdmin: true
-}
-
-const adminToken = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
-  expiresIn: 60 * 60
-});
-
-console.log(adminToken);
-const regularToken = new User().generateAuthToken();
-console.log(regularToken);
 
 describe('/api/v1/roles', () => {
   beforeAll(() => {

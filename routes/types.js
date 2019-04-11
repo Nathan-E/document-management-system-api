@@ -1,6 +1,6 @@
 import { Type, validate } from '../models/types';
 import express from 'express';
-import validateObjectId from '../middlewares/validateObjectId';
+import { validateObjectId, auth, isAdmin} from '../middlewares/index';
 
 const router = express.Router();
 
@@ -58,7 +58,7 @@ router.get('/', async (req, res) => {
  *          schema:
  *            type: string
  */
-router.post('/', async (req, res) => {
+router.post('/', [auth],async (req, res) => {
   const {
     error
   } = validate(req.body);
@@ -124,7 +124,7 @@ router.post('/', async (req, res) => {
  *          schema:
  *            type: string
  */
-router.put('/:id', validateObjectId, async (req, res) => {
+router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
   const {
     error
   } = validate(req.body);
