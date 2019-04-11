@@ -78,6 +78,14 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(401);
     });
+    it('should 400 if token is invalid', async () => {
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .set('x-auth-token', 'qdehpdH')
+        .send();
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('POST /', () => {
     it('should create a new role if it is unique', async () => {
