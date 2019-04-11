@@ -28,6 +28,37 @@ router.get('/', async (req, res) => {
   res.send(roles);
 });
 
+/**
+ * @swagger
+ * /api/v1/roles:
+ *    post:
+ *      summary: create a new role.
+ *      tags: [/api/v1/roles]
+ *      consumes:
+ *        - application/json
+ *      description: This should create a new role
+ *      parameters:
+ *        - in: body
+ *          name: payload
+ *          description: should contain the role's title
+ *      schema:
+ *        type: object
+ *        required:
+ *          - title
+ *        properties:
+ *          title:
+ *            type: string
+ *            example: admin
+ *      responses:
+ *        200:
+ *          description: Role created successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Could not create the role
+ *          schema:
+ *            type: string
+ */
 router.post('/', async (req, res) => {
   const { error } = validate(req.body);
   if(error) return res.status(400).send(error.details[0].message);
