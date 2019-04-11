@@ -108,31 +108,7 @@ router.post('/', [auth, isAdmin], roleController.post);
  *          schema:
  *            type: string
  */
-router.put('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
-  const {
-    error
-  } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  let role = await Role.findOne({
-    title: req.body.title,
-  });
-  if (role) return res.status(400).send(`${req.body.title} already exist`);
-
-
-  role = await Role.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      title: req.body.title
-    }
-  }, {
-    new: true
-  });
-  if (!role) return res.status(404).send('The role with the given ID was not found.');
-
-  res.status(200).send(role);
-});
+router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
 
 /**
  * @swagger
