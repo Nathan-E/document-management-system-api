@@ -63,13 +63,20 @@ describe('/api/v1/roles', () => {
       expect(response.body.some(g => g.title === 'dmins')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
-    it('should 401 if user is not logged in', async () => {
+    it('should 403 if user is not an Admin', async () => {
       const response = await request(server)
         .get('/api/v1/roles')
         .set('x-auth-token', regularToken)
         .send();
 
       expect(response.status).toBe(403);
+    });
+    it('should 401 if user is not logged in', async () => {
+      const response = await request(server)
+        .get('/api/v1/roles')
+        .send();
+
+      expect(response.status).toBe(401);
     });
   });
   describe('POST /', () => {
