@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { rolesRouter } from './routes/index';
 dotenv.config();
 
 const app = express();
@@ -12,7 +13,9 @@ let jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 if (process.env.NODE_ENV === 'test') db = process.env.TEST_DATABASE;
 
 //middlewares
-app.use(express.json);
+app.use(express.json());
+app.use('/api/v1/roles', rolesRouter);
+
 
 
 //database connection
@@ -31,7 +34,7 @@ const port = process.env.PORT;
 
 //app listens on the specified PORT
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(port), () => console.log(`Listening on port ${port}...`);
+  app.listen(port, () => console.log(`Listening on port ${port}...`));
 }
 
 export default app;
