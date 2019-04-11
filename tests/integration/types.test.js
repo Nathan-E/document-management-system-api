@@ -128,7 +128,11 @@ describe('/api/v1/types', () => {
         title: new Array(30).join('a')
       }
 
-      const response = await request(server).post('/api/v1/types').send(type);
+      const response = await request(server)
+        .post('/api/v1/types')
+        .set('x-auth-token', adminToken)
+        .send(type);
+
       expect(response.status).toBe(400);
     });
   });
