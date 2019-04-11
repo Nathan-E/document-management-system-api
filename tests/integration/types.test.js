@@ -78,4 +78,21 @@ describe('/api/v1/types', () => {
       expect(response.body).toHaveProperty('title', newTitle);
     });
   });
+  describe('GET /:id', () => {
+    it('should return an existing type', async () => {
+      const type = new Type({
+        title: 'footwear'
+      });
+
+      await type.save();
+
+      const id = type._id;
+
+      const response = await request(server).get(`/api/v1/roles/${id}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('title', type.title);
+    });
+  });
 });
