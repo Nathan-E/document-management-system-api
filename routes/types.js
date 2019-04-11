@@ -1,4 +1,5 @@
 import { Type, validate } from '../models/types';
+import { typeController } from '../controllers/index'
 import express from 'express';
 import { validateObjectId, auth, isAdmin} from '../middlewares/index';
 
@@ -21,11 +22,7 @@ const router = express.Router();
  *          schema:
  *            type: string
  */
-router.get('/', async (req, res) => {
-  const type = await Type.find().sort('title');
-
-  res.send(type);
-});
+router.get('/', typeController.get);
 
 /**
  * @swagger
