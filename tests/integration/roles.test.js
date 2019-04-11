@@ -121,6 +121,21 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(403);
     });
+    it('should not create a new role the user is not logged in', async () => {
+      const role = {
+        title: 'veteran2'
+      };
+
+      const response = await request(server)
+        .post('/api/v1/roles')
+        .send(role);
+
+      const newRole = await Role.find({
+        title: 'veteran2'
+      });
+
+      expect(response.status).toBe(401);
+    });
     it('should return 400 if role already exist', async () => {
       const roles = {
         title: 'admin'
