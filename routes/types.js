@@ -54,6 +54,10 @@ router.get('/', typeController.get);
  *          description: Could not create the type
  *          schema:
  *            type: string
+ *        401:
+ *          description: Access denied.No token provided
+ *          schema:
+ *            type: string
  */
 router.post('/', [auth], typeController.post);
 
@@ -98,6 +102,10 @@ router.post('/', [auth], typeController.post);
  *          description: Unauthorized
  *          schema:
  *            type: string
+ *        403:
+ *          description: User no an Admin
+ *          schema:
+ *          type: string
  *        404:
  *          description: Could not find  a type with the given ID 
  *          schema:
