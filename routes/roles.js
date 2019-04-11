@@ -1,4 +1,7 @@
-import { Role, validate } from '../models/roles';
+import {
+  Role,
+  validate
+} from '../models/roles';
 import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
@@ -24,7 +27,7 @@ const router = express.Router();
  */
 router.get('/', async (req, res) => {
   const roles = await Role.find().sort('title');
-  
+
   res.send(roles);
 });
 
@@ -60,11 +63,15 @@ router.get('/', async (req, res) => {
  *            type: string
  */
 router.post('/', async (req, res) => {
-  const { error } = validate(req.body);
-  if(error) return res.status(400).send(error.details[0].message);
-  
-  let role = await Role.findOne({title: req.body.title});
-  if(role) return res.status(400).send(`${req.body.title} already exist`);
+  const {
+    error
+  } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let role = await Role.findOne({
+    title: req.body.title
+  });
+  if (role) return res.status(400).send(`${req.body.title} already exist`);
 
   role = new Role({
     title: req.body.title
@@ -75,4 +82,23 @@ router.post('/', async (req, res) => {
   res.status(200).send('New role created!!!')
 });
 
-export { router as rolesRouter };
+router.put('/:id', async (req, res) => {
+  const {
+    error
+  } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const role = await Role.findByIdAndUpdate(req.params.id, {
+    title: req.body.title,
+  }, {
+    new: true
+  });
+
+  if (!role) return res.status(404).send('The role with the given ID was not found.');
+
+  res.status(200).send(role);
+});
+
+export {
+  router as rolesRouter
+};
