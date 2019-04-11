@@ -8,7 +8,7 @@ const router = express.Router();
  * @swagger
  * /api/v1/type:
  *    get:
- *      summary: gets all role.
+ *      summary: gets all type.
  *      tags: [/api/v1/types]
  *      description: This should return all types
  *      responses:
@@ -29,17 +29,17 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/role:
+ * /api/v1/type:
  *    post:
- *      summary: create a new role.
- *      tags: [/api/v1/role]
+ *      summary: create a new type.
+ *      tags: [/api/v1/type]
  *      consumes:
  *        - application/json
- *      description: This should create a new role
+ *      description: This should create a new type
  *      parameters:
  *        - in: body
  *          name: payload
- *          description: should contain the role's title
+ *          description: should contain the type's title
  *      schema:
  *        type: object
  *        required:
@@ -50,11 +50,11 @@ router.get('/', async (req, res) => {
  *            example: admin
  *      responses:
  *        200:
- *          description: Role created successfully
+ *          description: type created successfully
  *          schema:
  *            type: string
  *        400:
- *          description: Could not create the role
+ *          description: Could not create the type
  *          schema:
  *            type: string
  */
@@ -80,20 +80,20 @@ router.post('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/role/{id}:
+ * /api/v1/types/{id}:
  *    put:
- *      summary: get the role with the id for update.
- *      tags: [/api/v1/role]
+ *      summary: get the type with the id for update.
+ *      tags: [/api/v1/types]
  *      consumes:
  *        - application/json
- *      description: This should update an existing role
+ *      description: This should update an existing type
  *      parameters:
  *        - in: path
  *          name: id
- *          description: The ID of the role to edit.
+ *          description: The ID of the type to edit.
  *        - in: body 
  *          name: title 
- *          description: The new title of the role to be updated.
+ *          description: The new title of the type to be updated.
  *        - in: header
  *          name: x-auth-token
  *          description: An authorization token
@@ -108,11 +108,11 @@ router.post('/', async (req, res) => {
  *            type: string
  *      responses:
  *        200:
- *          description: role updated successfully
+ *          description: type updated successfully
  *          schema:
  *            type: string
  *        400:
- *          description: Could not update the role
+ *          description: Could not update the type
  *          schema:
  *            type: string
  *        401:
@@ -120,7 +120,7 @@ router.post('/', async (req, res) => {
  *          schema:
  *            type: string
  *        404:
- *          description: Could not find  a role with the given ID 
+ *          description: Could not find  a type with the given ID 
  *          schema:
  *            type: string
  */
@@ -145,9 +145,11 @@ router.put('/:id', validateObjectId, async (req, res) => {
   }, {
     new: true
   });
-  if (!type) return res.status(404).send('The role with the given ID was not found.');
+  if (!type) return res.status(404).send('The type with the given ID was not found.');
 
   res.status(200).send(type);
 });
+
+
 
 export { router as typesRouter }
