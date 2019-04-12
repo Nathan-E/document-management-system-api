@@ -104,6 +104,22 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(400);
     });
+      it('should create not a new user if the role already exist', async () => {
+        const payload2 = {
+          firstname: 'Chinwah',
+          lastname: 'Natwdman',
+          role: 'regufjf',
+          username: 'nac2h323w',
+          email: 'chibueze370@test.com',
+          password: '12345'
+        }
+
+        const response = await request(server)
+          .post('/api/v1/users/signup')
+          .send(payload2);
+
+        expect(response.status).toBe(400);
+      });
   });
   describe('POST /login', () => {
     it('should login in signed up user', async () => {
