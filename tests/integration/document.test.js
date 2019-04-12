@@ -23,7 +23,8 @@ import {
 } from './util';
 import app from '../../index';
 
-let server
+let server;
+let user;
 
 describe('/api/v1/users', () => {
   beforeAll(async () => {
@@ -74,7 +75,7 @@ describe('/api/v1/users', () => {
       password: hashedPassword
     };
 
-    const user = await new User(payload);
+    user = await new User(payload);
 
     await user.save();
   });
