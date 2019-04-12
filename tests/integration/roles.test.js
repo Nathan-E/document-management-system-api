@@ -4,23 +4,26 @@ import mongoose from 'mongoose';
 import {
   Role
 } from '../../models/roles';
-import { adminToken, regularToken } from './util';
+import {
+  adminToken,
+  regularToken
+} from './util';
 import app from '../../index';
 
 let server;
 
 describe('/api/v1/roles', () => {
-  beforeAll(() => {
+  beforeAll(async () => {
     server = app;
-      await Role.collection.bulkWrite([{
-        insertOne: {
-          title: 'admin'
-        }
-      }, {
-        insertOne: {
-          title: 'regular'
-        },
-      }]);
+    await Role.collection.bulkWrite([{
+      insertOne: {
+        title: 'admin'
+      }
+    }, {
+      insertOne: {
+        title: 'regular'
+      },
+    }]);
   });
   beforeEach(() => {
 
@@ -41,10 +44,10 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(2);
-      expect(response.body.some(g => g.title === 'dmins')).toBeTruthy();
+      expect(response.body.some(g => g.title === 'admin')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
-    it('should 403 if user is not an Admin', async () => {
+    it('should return 403 if user is not an Admin', async () => {
       const response = await request(server)
         .get('/api/v1/roles')
         .set('x-auth-token', regularToken)
@@ -69,7 +72,7 @@ describe('/api/v1/roles', () => {
     });
   });
   describe('POST /', () => {
-    it('should create a new role the user is an Admin', async () => {
+    it('should create a new role if the user is an Admin', async () => {
       const role = {
         title: 'veteran'
       };
@@ -98,7 +101,7 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(403);
     });
-    it('should not create a new role the user is not logged in', async () => {
+    it('should not create a new role if the Admin is not logged in', async () => {
       const role = {
         title: 'veteran2'
       };
@@ -125,12 +128,6 @@ describe('/api/v1/roles', () => {
       const roles = {
         title: 'admin'
       }
-
-      await Role.collection.bulkWrite([{
-        insertOne: {
-          title: 'admin'
-        }
-      }]);
 
       const response = await request(server)
         .post('/api/v1/roles')
@@ -173,7 +170,7 @@ describe('/api/v1/roles', () => {
       await role.save();
 
       const id = role._id;
-      const newTitle = 'superAdmin';
+      const newTitle = 'sup-admin';
 
       const response = await request(server)
         .put(`/api/v1/roles/${id}`)
@@ -188,13 +185,12 @@ describe('/api/v1/roles', () => {
     });
     it('should return 404 if an invalid id is passed', async () => {
       const id = 1;
-      const newTitle = 'superAdmin';
 
       const response = await request(server)
         .put(`/api/v1/roles/${id}`)
         .set('x-auth-token', adminToken)
         .send({
-          title: newTitle
+          title: 'superAdmin'
         });
 
       expect(response.status).toBe(404);
