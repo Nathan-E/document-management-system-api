@@ -32,7 +32,9 @@ router.post('/signup', async (req, res) => {
   });
   if (user) return res.status(400).send('User already exist');
 
-  const role = await Role.findOne({title: req.body.role});
+  const role = await Role.findOne({
+    title: req.body.role
+  });
   if (!role) return res.status(400).send('Invalid role.');
 
   const salt = await bcrypt.genSalt(10);
@@ -85,7 +87,7 @@ router.get('/', [auth, isAdmin], async (req, res) => {
   res.send(user);
 });
 
-router.get('/:id', [auth], async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
   const user = await User.findById(req.params.id);
 
   if (!user) return res.status(404).send('The user with the given ID was not found.');
@@ -93,14 +95,52 @@ router.get('/:id', [auth], async (req, res) => {
   res.send(user);
 });
 
+router.put('/:id', async (req, res) => {
+  const {
+    error
+  } = validateUpdate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-function validateLogin(req) {
+  let user = await User.findById(req.params.id);
+  if (!user) return res.status(400).send('User does not exist');
+
+  const salt = await bcrypt.genSalt(10);
+  const password = req.body.password ? await bcrypt.hash(req.body.password, salt) : user.password;
+
+  user = await User.findOneAndUpdate({
+    _id: req.params.id
+  }, {
+    $set: {
+      firstname: req.body.firstname || user.firstname,
+      lastname: req.body.lastname || user.lastname,
+      password: password
+    }
+  }, {
+    new: true
+  });
+  if (!user) return res.status(404).send('The user with the given ID was not found.');
+
+  res.status(200).send(user);
+});
+
+
+const validateLogin = req => {
   const schema = {
     email: Joi.string().required().email(),
     password: Joi.required()
   };
   return Joi.validate(req, schema);
 }
+
+const validateUpdate = user => {
+  const schema = {
+    firstname: Joi.string().min(5).max(50),
+    lastname: Joi.string().min(5).max(50),
+    password: Joi.string().min(5).max(225),
+  }
+
+  return Joi.validate(user, schema);
+};
 
 export {
   router as usersRouter
