@@ -329,6 +329,18 @@ describe('/api/v1/users', () => {
 
         expect(response.status).toBe(400);
       });
+      it('should not update if the user does not exist', async () => {
+        const id = mongoose.Types.ObjectId();
+
+        const response = await request(server)
+          .put(`/api/v1/users/${id}`)
+          .set('x-auth-token', regularToken)
+          .send({
+            firstname: 'Samuel'
+          });
+
+        expect(response.status).toBe(400);
+      });
   });
   describe('DELETE /:id', () => {
     it('should delete a user if the user exist', async () => {
