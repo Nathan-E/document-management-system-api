@@ -36,49 +36,9 @@ router.get('/', [auth, isAdmin], async (req, res) => {
 
 router.get('/:id', [validateObjectId, auth], userController.getById);
 
-router.put('/:id', validateObjectId, async (req, res) => {
-  const {
-    error
-  } = validateUpdate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+router.put('/:id', validateObjectId, userController.put);
 
-  let user = await User.findById(req.params.id);
-  if (!user || user.deleted) return res.status(400).send('User does not exist');
-
-  const salt = await bcrypt.genSalt(10);
-  const password = req.body.password ? await bcrypt.hash(req.body.password, salt) : user.password;
-
-  user = await User.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      firstname: req.body.firstname || user.firstname,
-      lastname: req.body.lastname || user.lastname,
-      password: password
-    }
-  }, {
-    new: true
-  });
-
-  res.status(200).send(user);
-});
-
-router.delete('/:id', [validateObjectId, auth], async (req, res) => {
-  let user = await User.findById(req.params.id);
-  if (!user || user.deleted) return res.status(400).send('User does not exist');
-
-  user = await User.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      deleted: true
-    }
-  }, {
-    new: true
-  });
-
-  res.status(200).send(user);
-});
+router.delete('/:id', [validateObjectId, auth], userController.delete);
 
 
 const validateLogin = req => {

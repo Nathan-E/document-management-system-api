@@ -77,7 +77,51 @@ userController.getById = async (req, res) => {
   if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
 
   res.send(user);
-}
+};
+
+userController.put = async (req, res) => {
+  const {
+    error
+  } = validateUpdate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let user = await User.findById(req.params.id);
+  if (!user || user.deleted) return res.status(400).send('User does not exist');
+
+  const salt = await bcrypt.genSalt(10);
+  const password = req.body.password ? await bcrypt.hash(req.body.password, salt) : user.password;
+
+  user = await User.findOneAndUpdate({
+    _id: req.params.id
+  }, {
+    $set: {
+      firstname: req.body.firstname || user.firstname,
+      lastname: req.body.lastname || user.lastname,
+      password: password
+    }
+  }, {
+    new: true
+  });
+
+  res.status(200).send(user);
+};
+
+userController.delete = async (req, res) => {
+  let user = await User.findById(req.params.id);
+  if (!user || user.deleted) return res.status(400).send('User does not exist');
+
+  user = await User.findOneAndUpdate({
+    _id: req.params.id
+  }, {
+    $set: {
+      deleted: true
+    }
+  }, {
+    new: true
+  });
+
+  res.status(200).send(user);
+};
 
 
 
