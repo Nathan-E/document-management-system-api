@@ -4,7 +4,7 @@ import Joi from 'joi';
 const validateDocument = document => {
   const schema = {
     title: Joi.string().min(10).required(),
-    typeId: Joi.string().required(),
+    type: Joi.string().required(),
     ownerId: Joi.string().required(),
     content: Joi.string().min(255).max(32768).required(),
     ownerRole: Joi.string().required(),
@@ -15,8 +15,8 @@ const validateDocument = document => {
   }
 
   return Joi.validate(document, schema);
-};
+}
 
 export {
   validateDocument
-};
+}
