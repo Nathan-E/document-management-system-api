@@ -51,7 +51,7 @@ describe('/api/v1/users', () => {
       }
 
       const response = await request(server)
-        .post('/api/v1/users')
+        .post('/api/v1/users/signup')
         .send(payload);
 
       await Role.remove({});
