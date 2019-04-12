@@ -25,24 +25,32 @@ import app from '../../index';
 
 let server;
 let user;
+let token;
 
 describe('/api/v1/users', () => {
   beforeAll(async () => {
     server = app;
-    await Role.collection.insertMany([{
-      title: 'admin'
-    }, {
-      title: 'regular'
-    }]);
+
+    const admin = new Role({
+      title: 'adminX',
+    });
+
+    await admin.save();
+
+    const regular = new Role({
+      title: 'regularX',
+    });
+
+    await regular.save();
 
     await Access.collection.insertMany([{
-      name: 'admin',
+      name: 'adminX',
       level: 1
     }, {
-      name: 'private',
+      name: 'regularX',
       level: 2
     }, {
-      name: 'regular',
+      name: 'private',
       level: 3
     }, {
       name: 'public',
@@ -69,13 +77,15 @@ describe('/api/v1/users', () => {
     const payload = {
       firstname: 'ChibuezE',
       lastname: 'NathaN',
-      role: mongoose.Types.ObjectId(),
+      role: regular._id,
       username: 'nachi1LL',
       email: 'chibuezj3555@test.com',
       password: hashedPassword
     };
 
     user = await new User(payload);
+
+    token = user.generateAuthToken();
 
     await user.save();
   });
@@ -87,6 +97,7 @@ describe('/api/v1/users', () => {
     await User.deleteMany({});
     await Type.deleteMany({})
     await Document.deleteMany({});
+    await Access.deleteMany({});
     server.close();
   });
 
@@ -96,18 +107,48 @@ describe('/api/v1/users', () => {
       const document = {
         title: 'Natural Gas Processing',
         type: 'thesis',
-        ownerId: user._id,
+        accessRight: 'regularX',
         content: new Array(25).join('hi'),
-        ownerRole: 'regular'
       }
 
-      const response  = await request(server)
+      const response = await request(server)
         .post('/api/v1/documents')
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', token)
         .send(document);
 
       expect(response.status).toBe(200);
-      expect(response.body.type).toBe('thesis');
     });
-  })
+  });
+  describe('GET /', () => {
+    it('should return all document if user is signed in', async () => {
+
+      const payload1 = {
+        title: title,
+        type_id: type._id,
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 'public',
+        userStatus: user.deleted,
+      }
+
+      const payload2 = {
+        title: title,
+        type_id: type._id,
+        owner_id: user._id,
+        ownerRole: regularX,
+        content: new Array(15).join('a'),
+        accessRight: 'public',
+        userStatus: user.deleted,
+
+      }
+
+      const response = await request(server)
+        .post('/api/v1/documents')
+        .set('x-auth-token', token)
+        .send(document);
+
+      expect(response.status).toBe(200);
+    });
+  });
 });
