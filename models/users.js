@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     minlength: 5,
     maxlength: 50
   },
-  role_id: {
+  role: {
     type: roleSchema,
     required: true
   },
