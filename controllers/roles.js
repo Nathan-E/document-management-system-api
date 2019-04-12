@@ -1,8 +1,7 @@
 import {
-  Role,
-  validate
+  Role
 } from '../models/roles';
-
+import { validateRole } from '../validations/roles';
 const roleController = {};
 
 //GET / controller
@@ -16,7 +15,7 @@ roleController.get = async (req, res) => {
 roleController.post = async (req, res) => {
   const {
     error
-  } = validate(req.body);
+  } = validateRole(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let role = await Role.findOne({
@@ -37,7 +36,7 @@ roleController.post = async (req, res) => {
 roleController.put = async (req, res) => {
   const {
     error
-  } = validate(req.body);
+  } = validateRole(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let role = await Role.findOne({
