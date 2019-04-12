@@ -12,6 +12,15 @@ let server;
 describe('/api/v1/roles', () => {
   beforeAll(() => {
     server = app;
+      await Role.collection.bulkWrite([{
+        insertOne: {
+          title: 'admin'
+        }
+      }, {
+        insertOne: {
+          title: 'regular'
+        },
+      }]);
   });
   beforeEach(() => {
 
@@ -25,16 +34,6 @@ describe('/api/v1/roles', () => {
   });
   describe('GET /', () => {
     it('should return all the roles if user is Admin', async () => {
-      await Role.collection.bulkWrite([{
-        insertOne: {
-          title: 'dmins'
-        }
-      }, {
-        insertOne: {
-          title: 'regular'
-        },
-      }]);
-
       const response = await request(server)
         .get('/api/v1/roles')
         .set('x-auth-token', adminToken)
