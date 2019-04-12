@@ -14,8 +14,9 @@ describe('User mongoose model', () => {
       lastname: 'Ikedi',
       username: 'cikedi',
       email: 'ikedichibueze@test.com',
-      role_id: {
-        _id: mongoose.Types.ObjectId()
+      role: {
+        _id: mongoose.Types.ObjectId(),
+        title: 'adminO'
       },
       password: '12345'
     };
@@ -32,8 +33,9 @@ describe('User mongoose model', () => {
       lastname: 'Ikedi',
       username: 'cikedi',
       email: 'ikedichibueze@test.com',
-      role_id: {
-        _id: mongoose.Types.ObjectId()
+      role: {
+        _id: mongoose.Types.ObjectId(),
+        title: 'regularO'
       },
       password: '12345',
       isAdmin: true
