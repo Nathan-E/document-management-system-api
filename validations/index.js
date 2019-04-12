@@ -1,3 +1,4 @@
 import { usersValidator } from './users';
+import { validateType } from './types';
 
-export { usersValidator };
+export { usersValidator, validateType };
