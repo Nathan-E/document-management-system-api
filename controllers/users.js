@@ -43,6 +43,52 @@ userController.signup = async (req, res) => {
   await user.save();
 
   res.send('New user created!!!');
+};
+
+userController.login = async (req, res) => {
+  const {
+    error
+  } = validateLogin(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let user = await User.findOne({
+    email: req.body.email
+  });
+  if (!user) return res.status(400).send('Invalid email or password');
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send('Invalid email or password.');
+
+  const token = user.generateAuthToken();
+
+  res.setHeader('x-auth-token', token);
+  res.send('User logged in');
+};
+
+userController.logout = async (req, res) => {
+  delete req.headers['x-auth-token'];
+
+  res.send('User logged out');
+};
+
+
+
+const validateLogin = req => {
+  const schema = {
+    email: Joi.string().required().email(),
+    password: Joi.required()
+  };
+  return Joi.validate(req, schema);
 }
+
+const validateUpdate = user => {
+  const schema = {
+    firstname: Joi.string().min(5).max(50),
+    lastname: Joi.string().min(5).max(50),
+    password: Joi.string().min(5).max(225),
+  }
+
+  return Joi.validate(user, schema);
+};
 
 export { userController }
