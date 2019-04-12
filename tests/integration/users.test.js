@@ -139,23 +139,24 @@ describe('/api/v1/users', () => {
     });
   });
   describe('GET /:id', () => {
-    it('should return a user if user the user exist', async () => {
+    it('should return a user if the user exist', async () => {
       const salt = await bcrypt.genSalt(10);
       const password1 = '12345';
       const hashedPassword1 = await bcrypt.hash(password1, salt);
 
 
       const payload = {
-        _id: 1,
         firstname: 'Chibueze4',
         lastname: 'Nathan4',
-        role: 'regular1',
+        role: mongoose.Types.ObjectId(),
         username: 'nachi123',
         email: 'chibueze34@test.com',
         password: hashedPassword1
       };
 
       const user = await new User(payload);
+
+      await user.save();
 
       const response = await request(server)
         .get(`/api/v1/users/${user._id}`)
