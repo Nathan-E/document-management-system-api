@@ -82,7 +82,7 @@ router.post('/logout', async (req, res) => {
 
 
 router.get('/', [auth, isAdmin], async (req, res) => {
-  const user = await User.find().sort('name');
+  const user = await User.find().sort('firstname');
 
   res.send(user);
 });
