@@ -15,13 +15,4 @@ const roleSchema = new mongoose.Schema({
 //Role Model
 const Role = mongoose.model('Role', roleSchema);
 
-//validation function for the role schema
-const validate = role => {
-  const schema = {
-    title: Joi.string().min(4).max(10).required()
-  }
-
-  return Joi.validate(role, schema);
-}
-
-export { Role, roleSchema, validate };
+export { Role, roleSchema };

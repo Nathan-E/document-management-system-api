@@ -1,7 +1,7 @@
 import {
-  Type,
-  validate
+  Type
 } from '../models/types';
+import { validateType } from '../validations/index';
 
 const typeController = {};
 
@@ -16,7 +16,7 @@ typeController.get = async (req, res) => {
 typeController.post = async (req, res) => {
   const {
     error
-  } = validate(req.body);
+  } = validateType(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let type = await Type.findOne({
@@ -37,7 +37,7 @@ typeController.post = async (req, res) => {
 typeController.put = async (req, res) => {
   const {
     error
-  } = validate(req.body);
+  } = validateType(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let type = await Type.findOne({
