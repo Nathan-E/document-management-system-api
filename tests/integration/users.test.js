@@ -43,8 +43,8 @@ describe('/api/v1/users', () => {
         firstname: 'Chibueze',
         lastname: 'Nathan',
         role: 'regular1',
-        username: 'nachi',
-        email: 'chibueze6@test.com',
+        username: 'nachip',
+        email: 'chibuezp@test.com',
         password: '12345'
       }
 
@@ -53,6 +53,72 @@ describe('/api/v1/users', () => {
         .send(payload);
 
       expect(response.status).toBe(200);
+    });
+    it('should create not a new user if the input field are invalid', async () => {
+      const payload = {
+        firstname: 'Chi',
+        lastname: 'Nath2an',
+        role: 'regular1',
+        username: 'nac2hi',
+        email: 'chibu',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload);
+
+      expect(response.status).toBe(400);
+    });
+    it('should create not a new user if the user already exist', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze1545',
+        lastname: 'Nathan1545',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi12675',
+        email: 'chibueze323555@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const payload2 = {
+        firstname: 'Chinwah',
+        lastname: 'Natwdman',
+        role: 'regular1',
+        username: 'nac2hiww',
+        email: 'chibueze323555@test.com',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload2);
+
+      expect(response.status).toBe(400);
+    });
+    it('should create not a new user if the role already exist', async () => {
+      const payload2 = {
+        firstname: 'Chinwah',
+        lastname: 'Natwdman',
+        role: 'regufjf',
+        username: 'nac2h323w',
+        email: 'chibueze370@test.com',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload2);
+
+      expect(response.status).toBe(400);
     });
   });
   describe('POST /login', () => {
@@ -87,6 +153,62 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.header['x-auth-token']).not.toBe(null);
     });
+    it('should not login in an invalid user', async () => {
+      const credentials = {
+        email: 'qwerty@gmail.com',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
+
+      expect(response.status).toBe(400);
+      expect(response.header['x-auth-token']).not.toBe(null);
+    });
+    it('should not login in signed up user if passwaord is not valid', async () => {
+      const salt = await bcrypt.genSalt(10);
+
+      const password = '12345'
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const payload = {
+        firstname: 'Chibueze1',
+        lastname: 'Nathan1',
+        role: 'regular1',
+        username: 'nachi1',
+        email: 'chibueze1@test.com',
+        password: hashedPassword
+      }
+
+      await User.collection.insertOne(payload);
+
+      const token = await new User(payload).generateAuthToken();
+
+      const credentials = {
+        email: payload.email,
+        password: 'password'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
+
+      expect(response.status).toBe(400);
+      expect(response.header['x-auth-token']).not.toBe(null);
+    });
+    it('should not login in signed up user if  valid email and password is not provided', async () => {
+      const credentials = {
+        email: 'jhdkdl',
+        password: 'password'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('POST /logout', () => {
     it('should logout a user', async () => {
@@ -103,33 +225,6 @@ describe('/api/v1/users', () => {
   });
   describe('GET /', () => {
     it('should return all the user if user is Admin', async () => {
-      const salt = await bcrypt.genSalt(10);
-
-      const password1 = '12345';
-      const password2 = '12345';
-
-      const hashedPassword1 = await bcrypt.hash(password1, salt);
-      const hashedPassword2 = await bcrypt.hash(password2, salt);
-
-
-      await User.collection.insertMany([{
-        _id: 1,
-        firstname: 'Chibueze3',
-        lastname: 'Nathan3',
-        role: 'regular1',
-        username: 'nachi12',
-        email: 'chibueze3@test.com',
-        password: hashedPassword1
-      }, {
-        _id: 2,
-        firstname: 'Chibueze4',
-        lastname: 'Nathan4',
-        role: 'regular1',
-        username: 'nachi13',
-        email: 'chibueze3@test.com',
-        password: hashedPassword2
-      }]);
-
       const response = await request(server)
         .get('/api/v1/users')
         .set('x-auth-token', adminToken)
@@ -165,6 +260,16 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return 404 if the user does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .get(`/api/v1/users/${id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(404);
+    });
   });
   describe('PUT /:id', () => {
     it('should update a user if the user exist', async () => {
@@ -189,10 +294,84 @@ describe('/api/v1/users', () => {
       const response = await request(server)
         .put(`/api/v1/users/${user._id}`)
         .set('x-auth-token', regularToken)
-        .send({firstname: 'Samuel'});
+        .send({
+          firstname: 'Samuel'
+        });
 
       expect(response.status).toBe(200);
       expect(response.body.firstname).toBe('Samuel');
+    });
+    it('should hash the password before save it', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze54',
+        lastname: 'Nathan54',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi1267',
+        email: 'chibueze3235@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const password2 = '123456'
+
+      const response = await request(server)
+        .put(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          password: password2
+        });
+
+      const hashedPassword2 = await bcrypt.hash(password2, salt);
+
+      expect(response.status).toBe(200);
+    });
+    it('should not update a user if the payload contains invalid fields', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze54',
+        lastname: 'Nathan54',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi1e267',
+        email: 'chibueze31235@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const response = await request(server)
+        .put(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          firstname: 'Sam'
+        });
+
+      expect(response.status).toBe(400);
+    });
+    it('should not update if the user does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .put(`/api/v1/users/${id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          firstname: 'Samuel'
+        });
+
+      expect(response.status).toBe(400);
     });
   });
   describe('DELETE /:id', () => {
@@ -221,6 +400,16 @@ describe('/api/v1/users', () => {
         .send();
 
       expect(response.status).toBe(200);
+    });
+    it('should return 400 if user does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .delete(`/api/v1/users/${id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(400);
     });
   });
 });
