@@ -71,6 +71,12 @@ userController.logout = async (req, res) => {
   res.send('User logged out');
 };
 
+userController.get = async (req, res) => {
+  const user = await User.find().sort('firstname');
+
+  res.send(user);
+}
+
 userController.getById = async (req, res) => {
   const user = await User.findById(req.params.id);
 
