@@ -301,46 +301,78 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.body.firstname).toBe('Samuel');
     });
-      it('should not update a user if the payload contains invalid fields', async () => {
-        const salt = await bcrypt.genSalt(10);
-        const password1 = '12345';
-        const hashedPassword1 = await bcrypt.hash(password1, salt);
+    it('should hash the password before save it', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
 
 
-        const payload = {
-          firstname: 'Chibueze54',
-          lastname: 'Nathan54',
-          role: mongoose.Types.ObjectId(),
-          username: 'nachi1e267',
-          email: 'chibueze31235@test.com',
-          password: hashedPassword1
-        };
+      const payload = {
+        firstname: 'Chibueze54',
+        lastname: 'Nathan54',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi1267',
+        email: 'chibueze3235@test.com',
+        password: hashedPassword1
+      };
 
-        const user = await new User(payload);
+      const user = await new User(payload);
 
-        await user.save();
+      await user.save();
 
-        const response = await request(server)
-          .put(`/api/v1/users/${user._id}`)
-          .set('x-auth-token', regularToken)
-          .send({
-            firstname: 'Sam'
-          });
+      const password2 = '123456'
 
-        expect(response.status).toBe(400);
-      });
-      it('should not update if the user does not exist', async () => {
-        const id = mongoose.Types.ObjectId();
+      const response = await request(server)
+        .put(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          password: password2
+        });
 
-        const response = await request(server)
-          .put(`/api/v1/users/${id}`)
-          .set('x-auth-token', regularToken)
-          .send({
-            firstname: 'Samuel'
-          });
+      const hashedPassword2 = await bcrypt.hash(password2, salt);
 
-        expect(response.status).toBe(400);
-      });
+      expect(response.status).toBe(200);
+    });
+    it('should not update a user if the payload contains invalid fields', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze54',
+        lastname: 'Nathan54',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi1e267',
+        email: 'chibueze31235@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const response = await request(server)
+        .put(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          firstname: 'Sam'
+        });
+
+      expect(response.status).toBe(400);
+    });
+    it('should not update if the user does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .put(`/api/v1/users/${id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          firstname: 'Samuel'
+        });
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('DELETE /:id', () => {
     it('should delete a user if the user exist', async () => {
