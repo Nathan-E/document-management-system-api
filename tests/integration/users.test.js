@@ -195,4 +195,32 @@ describe('/api/v1/users', () => {
       expect(response.body.firstname).toBe('Samuel');
     });
   });
+  describe('DELETE /:id', () => {
+    it('should delete a user if the user exist', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze545',
+        lastname: 'Nathan545',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi12675',
+        email: 'chibueze32355@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const response = await request(server)
+        .delete(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+  });
 });
