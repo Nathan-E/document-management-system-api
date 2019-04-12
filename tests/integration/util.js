@@ -7,16 +7,22 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const payload = {
+const adminPayload = {
   _id: mongoose.Types.ObjectId(),
   isAdmin: true
 }
 
-const adminToken = jwt.sign(payload, process.env.JWT_PRIVATE_KEY, {
+const adminToken = jwt.sign(adminPayload, process.env.JWT_PRIVATE_KEY, {
   expiresIn: 60 * 60
 });
 
-const regularToken = new User().generateAuthToken();
+const nonAdminPayload = {
+  _id: mongoose.Types.ObjectId(),
+  isAdmin: false
+}
+const regularToken = jwt.sign(nonAdminPayload, process.env.JWT_PRIVATE_KEY, {
+  expiresIn: 60 * 60
+});
 
 export {
   adminToken,
