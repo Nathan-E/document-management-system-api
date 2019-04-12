@@ -60,7 +60,7 @@ describe('/api/v1/users', () => {
     });
   });
   describe('POST /login', () => {
-    it('should create a new user if the input field are valid', async () => {
+    it('should login in signed up user', async () => {
       const salt = await bcrypt.genSalt(10);
 
       const password = '12345'
@@ -94,6 +94,16 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(200);
       expect(response.header['x-auth-token']).toBe(token);
+    });
+  });
+  describe('POST /logout', () => {
+      it('should logout a user', async () => {
+      const response = await request(server)
+        .post('/api/v1/users/logout')
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.header['x-auth-token']).toBe(undefined);
     });
   });
 });
