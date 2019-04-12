@@ -401,5 +401,15 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return 400 if user does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .delete(`/api/v1/users/${id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
   });
 });
