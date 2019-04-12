@@ -109,4 +109,50 @@ describe('/api/v1/users', () => {
       expect(response.header['x-auth-token']).toBe(undefined);
     });
   });
+  describe('GET /', () => {
+    it('should return all the user if user is Admin', async () => {
+      const salt = await bcrypt.genSalt(10);
+
+      const password1 = '12345'
+      const password2 = '12345'
+
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+      const hashedPassword2 = await bcrypt.hash(password2, salt);
+
+      await User.collection.bulkWrite([{
+        insertOne: {
+          firstname: 'Chibueze3',
+          lastname: 'Nathan3',
+          role: {
+            _id: mongoose.Types.ObjectId(),
+            title: 'dearer'
+          },
+          username: 'nachi12',
+          email: 'chibueze3@test.com',
+          password: hashedPassword1
+        }
+      }, {
+        insertOne: {
+          firstname: 'Chibueze4',
+          lastname: 'Nathan4',
+          role: {
+            _id: mongoose.Types.ObjectId(),
+            title: 'dear'
+          },
+          username: 'nachi13',
+          email: 'chibueze3@test.com',
+          password: hashedPassword2
+        }
+      }]);
+
+      const response = await request(server)
+        .get('/api/v1/users')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body.some(g => g.username === 'nachi12')).toBeTruthy();
+      expect(response.body.some(g => g.username === 'nachi13')).toBeTruthy();
+    });
+  });
 });
