@@ -16,6 +16,7 @@ import {
 } from '../models/roles';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
+import joi from 'joi';
 
 const router = express.Router();
 
@@ -52,6 +53,16 @@ router.post('/signup', async (req, res) => {
 
   res.send('New user created!!!');
 });
+
+function validate(req) {
+  const schema = {
+    email: Joi.string().required().email(),
+    password: Joi.string().min(5).max(255).required()
+  };
+
+  return Joi.validate(req, schema);
+}
+
 
 export {
   router as usersRouter
