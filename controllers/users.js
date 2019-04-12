@@ -12,6 +12,7 @@ import Joi from 'joi';
 
 const userController = {};
 
+// POST /signup
 userController.signup = async (req, res) => {
   const {
     error
@@ -45,6 +46,7 @@ userController.signup = async (req, res) => {
   res.send('New user created!!!');
 };
 
+// POST /login
 userController.login = async (req, res) => {
   const {
     error
@@ -65,6 +67,7 @@ userController.login = async (req, res) => {
   res.send('User logged in');
 };
 
+// POST /logout
 userController.logout = async (req, res) => {
   delete req.headers['x-auth-token'];
 
@@ -77,6 +80,7 @@ userController.get = async (req, res) => {
   res.send(user);
 }
 
+// GET /:id
 userController.getById = async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -85,6 +89,7 @@ userController.getById = async (req, res) => {
   res.send(user);
 };
 
+// PUT /:id
 userController.put = async (req, res) => {
   const {
     error
@@ -112,6 +117,7 @@ userController.put = async (req, res) => {
   res.status(200).send(user);
 };
 
+// DELETE /:id
 userController.delete = async (req, res) => {
   let user = await User.findById(req.params.id);
   if (!user || user.deleted) return res.status(400).send('User does not exist');
@@ -149,4 +155,4 @@ const validateUpdate = user => {
   return Joi.validate(user, schema);
 };
 
-export { userController }
+export { userController };
