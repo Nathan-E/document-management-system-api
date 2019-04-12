@@ -102,7 +102,7 @@ describe('/api/v1/users', () => {
       }
 
       const response  = await request(server)
-        .post('/api/v1/document')
+        .post('/api/v1/documents')
         .set('x-auth-token', regularToken)
         .send(document);
 
