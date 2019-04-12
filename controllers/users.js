@@ -1,9 +1,7 @@
 import {
-  User,
-  validate
+  User
 } from '../models/users';
-import express from 'express';
-import { validateObjectId, auth, isAdmin } from '../middlewares/index';
+import { usersValidator } from '../validations/index';
 import { Role } from '../models/roles';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
@@ -16,7 +14,7 @@ const userController = {};
 userController.signup = async (req, res) => {
   const {
     error
-  } = validate(req.body);
+  } = usersValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await User.findOne({
@@ -50,7 +48,7 @@ userController.signup = async (req, res) => {
 userController.login = async (req, res) => {
   const {
     error
-  } = validateLogin(req.body);
+  } = usersValidator.validateLogin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await User.findOne({
@@ -94,7 +92,7 @@ userController.getById = async (req, res) => {
 userController.put = async (req, res) => {
   const {
     error
-  } = validateUpdate(req.body);
+  } = usersValidator.validateUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await User.findById(req.params.id);
@@ -134,26 +132,6 @@ userController.delete = async (req, res) => {
   });
 
   res.status(200).send(user);
-};
-
-
-
-const validateLogin = req => {
-  const schema = {
-    email: Joi.string().required().email(),
-    password: Joi.required()
-  };
-  return Joi.validate(req, schema);
-}
-
-const validateUpdate = user => {
-  const schema = {
-    firstname: Joi.string().min(5).max(50),
-    lastname: Joi.string().min(5).max(50),
-    password: Joi.string().min(5).max(225),
-  }
-
-  return Joi.validate(user, schema);
 };
 
 export { userController };

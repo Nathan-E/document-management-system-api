@@ -58,7 +58,7 @@ const userSchema = new mongoose.Schema({
 
 
 //Generates User token
-userSchema.methods.generateAuthToken = function() {
+userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign({
     _id: this._id,
     isAdmin: this.isAdmin
@@ -71,22 +71,6 @@ userSchema.methods.generateAuthToken = function() {
 //User Model
 const User = mongoose.model('User', userSchema);
 
-//Validates the user payload
-const validate = user => {
-  const schema = {
-    firstname: Joi.string().min(5).max(50).required(),
-    lastname: Joi.string().min(5).max(50).required(),
-    role: Joi.string().required(),
-    username: Joi.string().min(5).max(25).required(),
-    email: Joi.string().required().email(),
-    password: Joi.string().min(5).max(225).required(),
-    deleted: Joi.boolean()
-  }
-
-  return Joi.validate(user, schema);
-};
-
 export {
-  User,
-  validate
+  User
 };
