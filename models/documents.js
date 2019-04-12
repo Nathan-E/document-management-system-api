@@ -25,7 +25,6 @@ const documentSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    minlength: 255,
     maxlength: 32768,
     required: true,
   },
