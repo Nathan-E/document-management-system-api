@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import Joi from 'joi';
 import { rolesRouter, typesRouter, usersRouter } from './routes/index';
 dotenv.config();
 
@@ -17,6 +18,9 @@ app.use(express.json());
 app.use('/api/v1/roles', rolesRouter);
 app.use('/api/v1/types', typesRouter);
 app.use('/api/v1/users', usersRouter);
+
+
+Joi.objectId = require('joi-objectid')(Joi);
 
 
 
