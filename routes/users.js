@@ -87,22 +87,22 @@ router.get('/', [auth, isAdmin], async (req, res) => {
   res.send(user);
 });
 
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', [validateObjectId, auth], async (req, res) => {
   const user = await User.findById(req.params.id);
 
-  if (!user) return res.status(404).send('The user with the given ID was not found.');
+  if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
 
   res.send(user);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateObjectId, async (req, res) => {
   const {
     error
   } = validateUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await User.findById(req.params.id);
-  if (!user) return res.status(400).send('User does not exist');
+  if (!user || user.deleted) return res.status(400).send('User does not exist');
 
   const salt = await bcrypt.genSalt(10);
   const password = req.body.password ? await bcrypt.hash(req.body.password, salt) : user.password;
@@ -114,6 +114,24 @@ router.put('/:id', async (req, res) => {
       firstname: req.body.firstname || user.firstname,
       lastname: req.body.lastname || user.lastname,
       password: password
+    }
+  }, {
+    new: true
+  });
+  if (!user) return res.status(404).send('The user with the given ID was not found.');
+
+  res.status(200).send(user);
+});
+
+router.delete('/:id', [validateObjectId, auth], async (req, res) => {
+  let user = await User.findById(req.params.id);
+  if (!user || user.deleted) return res.status(400).send('User does not exist');
+
+  user = await User.findOneAndUpdate({
+    _id: req.params.id
+  }, {
+    $set: {
+      deleted: true
     }
   }, {
     new: true
