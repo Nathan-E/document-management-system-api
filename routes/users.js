@@ -23,7 +23,7 @@ const router = express.Router();
  *      parameters:
  *        - in: body
  *          name: payload
- *          description: should contain the user's name, email and password, role, username.
+ *          description: should contain the user's name, email and password, user, username.
  *      schema:
  *        type: object
  *        required:
@@ -39,7 +39,7 @@ const router = express.Router();
  *            type: string
  *          lastname:
  *            type: string
- *          role:
+ *          user:
  *            type: string
  *      responses:
  *        200:
@@ -162,8 +162,57 @@ router.get('/', [auth, isAdmin], userController.get);
  */
 router.get('/:id', [validateObjectId, auth], userController.getById);
 
+/**
+ * @swagger
+ * /api/v1/users:
+ *    put:
+ *      summary: gets a users.
+ *      tags: [/api/v1/users]
+ *      description: This should return a user
+ *      responses:
+ *        200:
+ *          description: User Updated
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Failed Request
+ *          schema:
+ *            type: string
+ */
 router.put('/:id', validateObjectId, userController.put);
 
+/**
+ * @swagger
+ * /api/v1/users/{id}:
+ *    delete:
+ *      summary: delete user with the passed id
+ *      tags: [/api/v1/users]
+ *      consumes:
+ *        - application/json
+ *      description: This should delete an existing user with the given id
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the user requested.
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: integer
+ *          name:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description:  success
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Invalid ID
+ *          schema:
+ *            type: string
+ */
 router.delete('/:id', [validateObjectId, auth], userController.delete);
 
 export {
