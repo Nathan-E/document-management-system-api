@@ -105,8 +105,8 @@ describe('/api/v1/users', () => {
     it('should return all the user if user is Admin', async () => {
       const salt = await bcrypt.genSalt(10);
 
-      const password1 = '12345'
-      const password2 = '12345'
+      const password1 = '12345';
+      const password2 = '12345';
 
       const hashedPassword1 = await bcrypt.hash(password1, salt);
       const hashedPassword2 = await bcrypt.hash(password2, salt);
@@ -136,8 +136,32 @@ describe('/api/v1/users', () => {
         .send();
 
       expect(response.status).toBe(200);
-      // expect(response.body.some(g => g.username === 'nachi12')).toBeTruthy();
-      // expect(response.body.some(g => g.username === 'nachi13')).toBeTruthy();
+    });
+  });
+  describe('GET /:id', () => {
+    it('should return a user if user the user exist', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        _id: 1,
+        firstname: 'Chibueze4',
+        lastname: 'Nathan4',
+        role: 'regular1',
+        username: 'nachi123',
+        email: 'chibueze34@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      const response = await request(server)
+        .get(`/api/v1/users/${user._id}`)
+        .send();
+
+      expect(response.status).toBe(200);
     });
   });
 });
