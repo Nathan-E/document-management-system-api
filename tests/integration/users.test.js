@@ -23,14 +23,13 @@ describe('/api/v1/users', () => {
   });
   beforeEach(async () => {});
   afterEach(async () => {
-    await Role.deleteMany();
-    await User.deleteMany();
+    await Role.deleteMany({});
+    await User.deleteMany({});
 
   });
   afterAll(async () => {
-    await Role.deleteMany();
-    await User.deleteMany();
-    db.Role.drop()
+    await Role.deleteMany({});
+    await User.deleteMany({});
     server.close();
   });
   describe('POST /signup', () => {
@@ -54,8 +53,6 @@ describe('/api/v1/users', () => {
         .post('/api/v1/users/signup')
         .send(payload);
 
-      await Role.remove({});
-
       expect(response.status).toBe(200);
     });
   });
@@ -70,7 +67,7 @@ describe('/api/v1/users', () => {
         firstname: 'Chibueze1',
         lastname: 'Nathan1',
         role: {
-          _id: mongoose.Types.ObjectId(),
+          _id: '5cae93882cf626bff4175b6e',
           title: 'dearest'
         },
         username: 'nachi1',
@@ -88,12 +85,13 @@ describe('/api/v1/users', () => {
         email: payload.email,
         password: password
       }
+
       const response = await request(server)
         .post('/api/v1/users/login')
         .send(credentials);
 
       expect(response.status).toBe(200);
-      expect(response.header['x-auth-token']).toBe(token);
+      expect(response.header['x-auth-token']).not.toBe(null);
     });
   });
   describe('POST /logout', () => {
@@ -119,31 +117,30 @@ describe('/api/v1/users', () => {
       const hashedPassword1 = await bcrypt.hash(password1, salt);
       const hashedPassword2 = await bcrypt.hash(password2, salt);
 
-      await User.collection.bulkWrite([{
-        insertOne: {
-          firstname: 'Chibueze3',
-          lastname: 'Nathan3',
-          role: {
-            _id: mongoose.Types.ObjectId(),
-            title: 'dearer'
-          },
-          username: 'nachi12',
-          email: 'chibueze3@test.com',
-          password: hashedPassword1
-        }
-      }, {
-        insertOne: {
-          firstname: 'Chibueze4',
-          lastname: 'Nathan4',
-          role: {
-            _id: mongoose.Types.ObjectId(),
-            title: 'dear'
-          },
-          username: 'nachi13',
-          email: 'chibueze3@test.com',
-          password: hashedPassword2
-        }
-      }]);
+
+      await User.collection.insertOne({
+        _id: 1,
+        firstname: 'Chibueze3',
+        lastname: 'Nathan3',
+        role: {
+          title: 'cearer'
+        },
+        username: 'nachi12',
+        email: 'chibueze3@test.com',
+        password: hashedPassword1
+      });
+
+      await User.collection.insertOne({
+        _id: 2,
+        firstname: 'Chibueze4',
+        lastname: 'Nathan4',
+        role: {
+          title: 'dear'
+        },
+        username: 'nachi13',
+        email: 'chibueze3@test.com',
+        password: hashedPassword2
+      });
 
       const response = await request(server)
         .get('/api/v1/users')
