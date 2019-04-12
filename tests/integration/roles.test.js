@@ -15,24 +15,19 @@ let server;
 describe('/api/v1/roles', () => {
   beforeAll(async () => {
     server = app;
-    await Role.collection.bulkWrite([{
-      insertOne: {
-        title: 'admin'
-      }
+  });
+  beforeEach(async () => {
+    await Role.collection.insertMany([{
+      title: 'admin'
     }, {
-      insertOne: {
-        title: 'regular'
-      },
+      title: 'regular'
     }]);
   });
-  beforeEach(() => {
-
-  });
-  afterEach(() => {
-
+  afterEach(async () => {
+    await Role.deleteMany({});
   });
   afterAll(async () => {
-    await Role.deleteMany();
+    await Role.deleteMany({});
     server.close();
   });
   describe('GET /', () => {
@@ -43,7 +38,6 @@ describe('/api/v1/roles', () => {
         .send();
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(2);
       expect(response.body.some(g => g.title === 'admin')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
