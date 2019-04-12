@@ -75,6 +75,12 @@ router.post('/login', async (req, res) => {
   res.send('User logged in');
 });
 
+router.post('/logout', async (req, res) => {
+  delete req.headers['x-auth-token'];
+
+  res.send('User logged out');
+});
+
 function validateLogin(req) {
   const schema = {
     email: Joi.string().required().email(),
