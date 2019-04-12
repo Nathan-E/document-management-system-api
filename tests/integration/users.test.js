@@ -160,9 +160,39 @@ describe('/api/v1/users', () => {
 
       const response = await request(server)
         .get(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
         .send();
 
       expect(response.status).toBe(200);
+    });
+  });
+  describe('PUT /:id', () => {
+    it('should update a user if the user exist', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze54',
+        lastname: 'Nathan54',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi1267',
+        email: 'chibueze305@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const response = await request(server)
+        .put(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', regularToken)
+        .send({firstname: 'Samuel'});
+
+      expect(response.status).toBe(200);
+      expect(response.body.firstname).toBe('Samuel');
     });
   });
 });
