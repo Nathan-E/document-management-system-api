@@ -260,6 +260,16 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return 404 if the user does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .get(`/api/v1/users/${id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(404);
+    });
   });
   describe('PUT /:id', () => {
     it('should update a user if the user exist', async () => {
