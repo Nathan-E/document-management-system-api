@@ -54,6 +54,56 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should create not a new user if the input field are invalid', async () => {
+      const payload = {
+        firstname: 'Chi',
+        lastname: 'Nath2an',
+        role: 'regular1',
+        username: 'nac2hi',
+        email: 'chibu',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload);
+
+      expect(response.status).toBe(400);
+    });
+    it('should create not a new user if the user already exist', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+      const payload = {
+        firstname: 'Chibueze1545',
+        lastname: 'Nathan1545',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi12675',
+        email: 'chibueze323555@test.com',
+        password: hashedPassword1
+      };
+
+      const user = await new User(payload);
+
+      await user.save();
+
+      const payload2 = {
+        firstname: 'Chinwah',
+        lastname: 'Natwdman',
+        role: 'regular1',
+        username: 'nac2hiww',
+        email: 'chibueze323555@test.com',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload2);
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('POST /login', () => {
     it('should login in signed up user', async () => {
@@ -103,33 +153,6 @@ describe('/api/v1/users', () => {
   });
   describe('GET /', () => {
     it('should return all the user if user is Admin', async () => {
-      const salt = await bcrypt.genSalt(10);
-
-      const password1 = '12345';
-      const password2 = '12345';
-
-      const hashedPassword1 = await bcrypt.hash(password1, salt);
-      const hashedPassword2 = await bcrypt.hash(password2, salt);
-
-
-      await User.collection.insertMany([{
-        _id: 1,
-        firstname: 'Chibueze3',
-        lastname: 'Nathan3',
-        role: 'regular1',
-        username: 'nachi12',
-        email: 'chibueze3@test.com',
-        password: hashedPassword1
-      }, {
-        _id: 2,
-        firstname: 'Chibueze4',
-        lastname: 'Nathan4',
-        role: 'regular1',
-        username: 'nachi13',
-        email: 'chibueze3@test.com',
-        password: hashedPassword2
-      }]);
-
       const response = await request(server)
         .get('/api/v1/users')
         .set('x-auth-token', adminToken)
@@ -189,7 +212,9 @@ describe('/api/v1/users', () => {
       const response = await request(server)
         .put(`/api/v1/users/${user._id}`)
         .set('x-auth-token', regularToken)
-        .send({firstname: 'Samuel'});
+        .send({
+          firstname: 'Samuel'
+        });
 
       expect(response.status).toBe(200);
       expect(response.body.firstname).toBe('Samuel');
