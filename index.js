@@ -2,7 +2,11 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Joi from 'joi';
-import { rolesRouter, typesRouter, usersRouter } from './routes/index';
+import {
+  rolesRouter,
+  typesRouter,
+  usersRouter
+} from './routes/index';
 dotenv.config();
 
 const app = express();
