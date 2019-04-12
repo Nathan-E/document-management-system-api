@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send('Invalid email or password.');
-  
+
   const token = user.generateAuthToken();
 
   res.setHeader('x-auth-token', token);
@@ -80,6 +80,14 @@ router.post('/logout', async (req, res) => {
 
   res.send('User logged out');
 });
+
+
+router.get('/', [auth, isAdmin], async (req, res) => {
+  const user = await User.find().sort('title');
+
+  res.send(user);
+});
+
 
 function validateLogin(req) {
   const schema = {
