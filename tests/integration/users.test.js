@@ -97,9 +97,12 @@ describe('/api/v1/users', () => {
     });
   });
   describe('POST /logout', () => {
-      it('should logout a user', async () => {
+    it('should logout a user', async () => {
+      const token = adminToken;
+
       const response = await request(server)
         .post('/api/v1/users/logout')
+        .set('x-auth-token', token)
         .send();
 
       expect(response.status).toBe(200);
