@@ -153,6 +153,19 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.header['x-auth-token']).not.toBe(null);
     });
+      it('should not login in an invalid user', async () => {
+        const credentials = {
+          email: 'qwerty@gmail.com',
+          password: '12345'
+        }
+
+        const response = await request(server)
+          .post('/api/v1/users/login')
+          .send(credentials);
+
+        expect(response.status).toBe(400);
+        expect(response.header['x-auth-token']).not.toBe(null);
+      });
   });
   describe('POST /logout', () => {
     it('should logout a user', async () => {
