@@ -55,21 +55,4 @@ const documentSchema = new mongoose.Schema({
 //Document Model
 const Document = mongoose.model('Document', documentSchema);
 
-//Validates the document fields
-const validate = document => {
-  const schema = {
-    title: Joi.string().min(10).required(),
-    typeId: Joi.string().required(),
-    ownerId: Joi.string().required(),
-    content: Joi.string().min(255).max(32768).required(),
-    ownerRole: Joi.string().required(),
-    accessRight: Joi.string(),
-    modifiedAt: Joi.date(),
-    userStatus: Joi.boolean(),
-    deleted: Joi.boolean
-  }
-
-  return Joi.validate(document, schema);
-}
-
-export { Document, validate };
+export { Document };
