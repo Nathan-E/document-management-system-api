@@ -104,22 +104,22 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(400);
     });
-      it('should create not a new user if the role already exist', async () => {
-        const payload2 = {
-          firstname: 'Chinwah',
-          lastname: 'Natwdman',
-          role: 'regufjf',
-          username: 'nac2h323w',
-          email: 'chibueze370@test.com',
-          password: '12345'
-        }
+    it('should create not a new user if the role already exist', async () => {
+      const payload2 = {
+        firstname: 'Chinwah',
+        lastname: 'Natwdman',
+        role: 'regufjf',
+        username: 'nac2h323w',
+        email: 'chibueze370@test.com',
+        password: '12345'
+      }
 
-        const response = await request(server)
-          .post('/api/v1/users/signup')
-          .send(payload2);
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload2);
 
-        expect(response.status).toBe(400);
-      });
+      expect(response.status).toBe(400);
+    });
   });
   describe('POST /login', () => {
     it('should login in signed up user', async () => {
@@ -153,50 +153,62 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.header['x-auth-token']).not.toBe(null);
     });
-      it('should not login in an invalid user', async () => {
-        const credentials = {
-          email: 'qwerty@gmail.com',
-          password: '12345'
-        }
+    it('should not login in an invalid user', async () => {
+      const credentials = {
+        email: 'qwerty@gmail.com',
+        password: '12345'
+      }
 
-        const response = await request(server)
-          .post('/api/v1/users/login')
-          .send(credentials);
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
 
-        expect(response.status).toBe(400);
-        expect(response.header['x-auth-token']).not.toBe(null);
-      });
-      it('should not login in signed up user if passwaord is not valid', async () => {
-        const salt = await bcrypt.genSalt(10);
+      expect(response.status).toBe(400);
+      expect(response.header['x-auth-token']).not.toBe(null);
+    });
+    it('should not login in signed up user if passwaord is not valid', async () => {
+      const salt = await bcrypt.genSalt(10);
 
-        const password = '12345'
-        const hashedPassword = await bcrypt.hash(password, salt);
+      const password = '12345'
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-        const payload = {
-          firstname: 'Chibueze1',
-          lastname: 'Nathan1',
-          role: 'regular1',
-          username: 'nachi1',
-          email: 'chibueze1@test.com',
-          password: hashedPassword
-        }
+      const payload = {
+        firstname: 'Chibueze1',
+        lastname: 'Nathan1',
+        role: 'regular1',
+        username: 'nachi1',
+        email: 'chibueze1@test.com',
+        password: hashedPassword
+      }
 
-        await User.collection.insertOne(payload);
+      await User.collection.insertOne(payload);
 
-        const token = await new User(payload).generateAuthToken();
+      const token = await new User(payload).generateAuthToken();
 
-        const credentials = {
-          email: payload.email,
-          password: 'password'
-        }
+      const credentials = {
+        email: payload.email,
+        password: 'password'
+      }
 
-        const response = await request(server)
-          .post('/api/v1/users/login')
-          .send(credentials);
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
 
-        expect(response.status).toBe(400);
-        expect(response.header['x-auth-token']).not.toBe(null);
-      });
+      expect(response.status).toBe(400);
+      expect(response.header['x-auth-token']).not.toBe(null);
+    });
+    it('should not login in signed up user if  valid email and password is not provided', async () => {
+      const credentials = {
+        email: 'jhdkdl',
+        password: 'password'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('POST /logout', () => {
     it('should logout a user', async () => {
