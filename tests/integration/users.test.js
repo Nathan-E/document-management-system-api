@@ -166,6 +166,37 @@ describe('/api/v1/users', () => {
         expect(response.status).toBe(400);
         expect(response.header['x-auth-token']).not.toBe(null);
       });
+      it('should not login in signed up user if passwaord is not valid', async () => {
+        const salt = await bcrypt.genSalt(10);
+
+        const password = '12345'
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const payload = {
+          firstname: 'Chibueze1',
+          lastname: 'Nathan1',
+          role: 'regular1',
+          username: 'nachi1',
+          email: 'chibueze1@test.com',
+          password: hashedPassword
+        }
+
+        await User.collection.insertOne(payload);
+
+        const token = await new User(payload).generateAuthToken();
+
+        const credentials = {
+          email: payload.email,
+          password: 'password'
+        }
+
+        const response = await request(server)
+          .post('/api/v1/users/login')
+          .send(credentials);
+
+        expect(response.status).toBe(400);
+        expect(response.header['x-auth-token']).not.toBe(null);
+      });
   });
   describe('POST /logout', () => {
     it('should logout a user', async () => {
