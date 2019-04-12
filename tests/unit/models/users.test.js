@@ -9,15 +9,11 @@ import mongoose from 'mongoose';
 describe('User mongoose model', () => {
   it('should return an instance of user the model', () => {
     const payload = {
-      _id: mongoose.Types.ObjectId(),
       firstname: 'Chibueze',
       lastname: 'Ikedi',
       username: 'cikedi',
       email: 'ikedichibueze@test.com',
-      role: {
-        _id: mongoose.Types.ObjectId(),
-        title: 'adminO'
-      },
+      role: new mongoose.Types.ObjectId(),
       password: '12345'
     };
 
@@ -28,15 +24,11 @@ describe('User mongoose model', () => {
   });
   it('should return a valid JWT', () => {
     const payload = {
-      _id: new mongoose.Types.ObjectId().toHexString(),
       firstname: 'Chibueze',
       lastname: 'Ikedi',
       username: 'cikedi',
       email: 'ikedichibueze@test.com',
-      role: {
-        _id: mongoose.Types.ObjectId(),
-        title: 'regularO'
-      },
+      role: new mongoose.Types.ObjectId(),
       password: '12345',
       isAdmin: true
     };

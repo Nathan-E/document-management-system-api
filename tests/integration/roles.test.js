@@ -15,24 +15,19 @@ let server;
 describe('/api/v1/roles', () => {
   beforeAll(async () => {
     server = app;
-    await Role.collection.bulkWrite([{
-      insertOne: {
-        title: 'admin'
-      }
+  });
+  beforeEach(async () => {
+    await Role.collection.insertMany([{
+      title: 'admin'
     }, {
-      insertOne: {
-        title: 'regular'
-      },
+      title: 'regular'
     }]);
   });
-  beforeEach(() => {
-
-  });
-  afterEach(() => {
-
+  afterEach(async () => {
+    await Role.deleteMany({});
   });
   afterAll(async () => {
-    await Role.deleteMany();
+    await Role.deleteMany({});
     server.close();
   });
   describe('GET /', () => {

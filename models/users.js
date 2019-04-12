@@ -4,7 +4,7 @@ import Joi from 'joi';
 import dotenv from 'dotenv';
 dotenv.config();
 import {
-  roleSchema
+  Role
 } from '../models/roles';
 
 //User Schema
@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
     maxlength: 50
   },
   role: {
-    type: roleSchema,
+    type: mongoose.Types.ObjectId,
+    ref: 'Role',
     required: true
   },
   username: {
@@ -75,7 +76,7 @@ const validate = user => {
   const schema = {
     firstname: Joi.string().min(5).max(50).required(),
     lastname: Joi.string().min(5).max(50).required(),
-    role_id: Joi.objectId().required(),
+    role: Joi.string().required(),
     username: Joi.string().min(5).max(25).required(),
     email: Joi.string().required().email(),
     password: Joi.string().min(5).max(225).required(),

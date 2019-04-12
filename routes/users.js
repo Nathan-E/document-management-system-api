@@ -32,7 +32,7 @@ router.post('/signup', async (req, res) => {
   });
   if (user) return res.status(400).send('User already exist');
 
-  const role = await Role.findById(req.body.role_id);
+  const role = await Role.findOne({title: req.body.role});
   if (!role) return res.status(400).send('Invalid role.');
 
   const salt = await bcrypt.genSalt(10);
@@ -41,10 +41,7 @@ router.post('/signup', async (req, res) => {
   user = new User({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
-    role: {
-      _id: role._id,
-      title: role.title
-    },
+    role: role._id,
     username: req.body.username,
     email: req.body.email,
     password: password
@@ -83,7 +80,7 @@ router.post('/logout', async (req, res) => {
 
 
 router.get('/', [auth, isAdmin], async (req, res) => {
-  const user = await User.find().sort('title');
+  const user = await User.find().sort('name');
 
   res.send(user);
 });
