@@ -15,7 +15,7 @@ import app from '../../index';
 
 let server
 
-describe('/api/v1/types', () => {
+describe('/api/v1/users', () => {
   beforeAll(() => {
     server = app;
   });
