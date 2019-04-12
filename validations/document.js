@@ -15,8 +15,9 @@ const validateDocument = document => {
   }
 
   return Joi.validate(document, schema);
-}
+};
 
 export {
   validateDocument
 }
+;
