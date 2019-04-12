@@ -43,8 +43,8 @@ describe('/api/v1/users', () => {
         firstname: 'Chibueze',
         lastname: 'Nathan',
         role: 'regular1',
-        username: 'nachi',
-        email: 'chibueze6@test.com',
+        username: 'nachip',
+        email: 'chibuezp@test.com',
         password: '12345'
       }
 
