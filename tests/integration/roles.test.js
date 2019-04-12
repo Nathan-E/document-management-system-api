@@ -38,7 +38,6 @@ describe('/api/v1/roles', () => {
         .send();
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(2);
       expect(response.body.some(g => g.title === 'admin')).toBeTruthy();
       expect(response.body.some(g => g.title === 'regular')).toBeTruthy();
     });
