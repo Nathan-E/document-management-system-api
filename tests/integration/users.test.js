@@ -301,6 +301,34 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.body.firstname).toBe('Samuel');
     });
+      it('should not update a user if the payload contains invalid fields', async () => {
+        const salt = await bcrypt.genSalt(10);
+        const password1 = '12345';
+        const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+
+        const payload = {
+          firstname: 'Chibueze54',
+          lastname: 'Nathan54',
+          role: mongoose.Types.ObjectId(),
+          username: 'nachi1e267',
+          email: 'chibueze31235@test.com',
+          password: hashedPassword1
+        };
+
+        const user = await new User(payload);
+
+        await user.save();
+
+        const response = await request(server)
+          .put(`/api/v1/users/${user._id}`)
+          .set('x-auth-token', regularToken)
+          .send({
+            firstname: 'Sam'
+          });
+
+        expect(response.status).toBe(400);
+      });
   });
   describe('DELETE /:id', () => {
     it('should delete a user if the user exist', async () => {
