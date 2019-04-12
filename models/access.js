@@ -7,7 +7,7 @@ const accessSchema = new mongoose.Schema({
     required: true
   },
   degree: {
-    type: Number,
+    type: String,
     required: true
   }
 });
