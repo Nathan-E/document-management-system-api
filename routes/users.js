@@ -108,9 +108,58 @@ router.post('/login', userController.login);
  */
 router.post('/logout', userController.logout);
 
-
+/**
+ * @swagger
+ * /api/v1/users:
+ *    get:
+ *      summary: gets all users.
+ *      tags: [/api/v1/users]
+ *      description: This should return all users
+ *      responses:
+ *        200:
+ *          description: A list of users
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Failed Request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *            type: string 
+ *        403:
+ *          description: User not an Admin 
+ *          schema:
+ *            type: string 
+ */
 router.get('/', [auth, isAdmin], userController.get);
 
+/**
+ * @swagger
+ * /api/v1/users:
+ *    get:
+ *      summary: gets a users.
+ *      tags: [/api/v1/users]
+ *      description: This should return a user
+ *      responses:
+ *        200:
+ *          description: Specific user
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Failed Request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *            type: string 
+ *        403:
+ *          description: User not an Admin 
+ *          schema:
+ *            type: string
+ */
 router.get('/:id', [validateObjectId, auth], userController.getById);
 
 router.put('/:id', validateObjectId, userController.put);
