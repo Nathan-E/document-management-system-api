@@ -16,9 +16,10 @@ import {
 } from '../models/roles';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
-import joi from 'joi';
+import Joi from 'joi';
 
 const router = express.Router();
+
 
 router.post('/signup', async (req, res) => {
   const {
@@ -54,15 +55,33 @@ router.post('/signup', async (req, res) => {
   res.send('New user created!!!');
 });
 
-function validate(req) {
+router.post('/login', async (req, res) => {
+  const {
+    error
+  } = validateLogin(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let user = await User.findOne({
+    email: req.body.email
+  });
+  if (!user) return res.status(400).send('Invalid email or password');
+
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send('Invalid email or password.');
+  
+  const token = user.generateAuthToken();
+
+  res.setHeader('x-auth-token', token);
+  res.send('User logged in');
+});
+
+function validateLogin(req) {
   const schema = {
     email: Joi.string().required().email(),
-    password: Joi.string().min(5).max(255).required()
+    password: Joi.required()
   };
-
   return Joi.validate(req, schema);
 }
-
 
 export {
   router as usersRouter
