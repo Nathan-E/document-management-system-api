@@ -135,7 +135,6 @@ router.delete('/:id', [validateObjectId, auth], async (req, res) => {
   }, {
     new: true
   });
-  if (!user) return res.status(404).send('The user with the given ID was not found.');
 
   res.status(200).send(user);
 });
