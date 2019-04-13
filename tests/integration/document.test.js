@@ -170,4 +170,32 @@ describe('/api/v1/documents', () => {
       expect(response.status).toBe(200);
     });
   });
+  describe('PUT /:id', () => {
+    it('should update an existing document if the user is authorized', async () => {
+      const paylaod = {
+        title: 'jhajdhdskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 'public',
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send({
+          title: 'Hello!!!',
+          accessRight: 'public'
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('_id');
+    });
+  });
 });
