@@ -117,7 +117,23 @@ describe('/api/v1/documents', () => {
         .send(document);
 
       expect(response.status).toBe(200);
-    }, 10000);
+    });
+    it('should create not document if in field are invlalid', async () => {
+
+      const document = {
+        title: 'Nat',
+        type: 'thesis',
+        accessRight: 2,
+        content: new Array(25).join('hi'),
+      }
+
+      const response = await request(server)
+        .post('/api/v1/documents')
+        .set('x-auth-token', token)
+        .send(document);
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('GET /', () => {
     it('should return all document if user is signed in', async () => {
@@ -158,7 +174,7 @@ describe('/api/v1/documents', () => {
         .send();
 
       expect(response.status).toBe(200);
-    }, 10000);
+    });
   });
   describe('GET /:id', () => {
     it('should return all document if user is signed in', async () => {
@@ -182,7 +198,7 @@ describe('/api/v1/documents', () => {
         .send();
 
       expect(response.status).toBe(200);
-    }, 10000);
+    });
   });
   describe('PUT /:id', () => {
     it('should update an existing document if the user is authorized', async () => {
@@ -210,7 +226,7 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
-    }, 10000);
+    });
   });
   describe('DELETE /:id', () => {
     it('should delete a doc if the user is an admin', async () => {
@@ -234,5 +250,5 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
-  }, 10000);
+  });
 });
