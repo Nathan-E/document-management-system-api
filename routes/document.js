@@ -38,23 +38,23 @@ router.post('/', auth, async (req, res) => {
   const type = await Type.findOne({
     title: req.body.type
   });
-  if (!type) return res.status(404).send('Invalid document type');
+  if (!type) return res.status(404).send('Invalid document type1');
 
   const user = await User.findById(req.user._id);
-  if (!user) return res.status(404).send('Invalid request');
+  if (!user) return res.status(404).send('Invalid request2');
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send('Invalid request');
+  if (!role) return res.status(404).send('Invalid request3');
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(404).send('Invalid request');
+  if (!userRoleInfo) return res.status(404).send('Invalid request4');
 
   const access = await Access.findOne({
     name: req.body.accessRight
   });
-  if (!access) return res.status(404).send('Invalid request');
+  if (!access) return res.status(404).send('Invalid request5');
 
   access.level = Object.values(access)[3]['level'];
   userRoleInfo.level = Object.values(userRoleInfo)[3]['level'];
@@ -77,40 +77,41 @@ router.post('/', auth, async (req, res) => {
 
 router.get('/', auth, async (req, res) => {
   const docs = await Document.find();
+
   res.send(docs);
 });
 
-router.get('/:id', auth, async (req, res) => {
+router.get('/:id', [validateObjectId, auth], async (req, res) => {
   const docs = await Document.findById(req.params.id);
   if (!docs) return res.status(400).send('Document does not exist');
 
   res.send(docs);
 });
 
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', [validateObjectId, auth], async (req, res) => {
   const {
     error
   } = validateDocumentUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
   let doc = await Document.findById(req.params.id);
-  if (!doc || doc.deleted) return res.status(401).send('Document does not exist');
+  if (!doc || doc.deleted) return res.status(400).send('Document does not exist');
 
   const type = req.body.type ? await Type.findOne({
     title: req.body.type
   }) : doc;
-  if (!type) return res.status(402).send('Invalid document type');
+  if (!type) return res.status(400).send('Invalid document type');
 
   const user = await User.findById(req.user._id);
-  if (!user) return res.status(403).send('Invalid request');
+  if (!user) return res.status(400).send('Invalid request');
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send('Invalid request');
+  if (!role) return res.status(400).send('Invalid request');
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(405).send('Invalid request');
+  if (!userRoleInfo) return res.status(400).send('Invalid request');
 
   let access;
 
@@ -122,8 +123,10 @@ router.put('/:id', auth, async (req, res) => {
     access.level = Object.values(access)[3]['level'];
     userRoleInfo.level = Object.values(userRoleInfo)[3]['level'];
 
-    if (access.level < userRoleInfo.level) return res.status(406).send('Invalid request');
+    if (access.level < userRoleInfo.level) return res.status(400).send('Invalid request');
   };
+
+  const accessRight = access ? access.name : doc.accessRight;
 
   doc = await Document.findOneAndUpdate({
     _id: req.params.id
@@ -132,7 +135,7 @@ router.put('/:id', auth, async (req, res) => {
       title: req.body.title || doc.title,
       type_id: type._id,
       content: req.body.content || doc.content,
-      accessRight: access.name || doc.accessRight,
+      accessRight: accessRight,
       modifiedAt: Date.now(),
     }
   }, {
@@ -142,7 +145,7 @@ router.put('/:id', auth, async (req, res) => {
   res.send(doc);
 });
 
-router.delete('/:id', [auth, isAdmin], async (req, res) => {
+router.delete('/:id', [validateObjectId, auth, isAdmin], async (req, res) => {
   let doc = await Document.findById(req.params.id);
   if (!doc || doc.deleted) return res.status(400).send('Document does not exist');
 

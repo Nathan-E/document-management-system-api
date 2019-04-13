@@ -41,7 +41,6 @@ describe('/api/v1/types', () => {
       const response = await request(server).get('/api/v1/types');
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(2);
       expect(response.body.some(g => g.title === 'journal')).toBeTruthy();
       expect(response.body.some(g => g.title === 'fashion')).toBeTruthy();
     });

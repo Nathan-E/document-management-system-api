@@ -201,7 +201,7 @@ describe('/api/v1/documents', () => {
   describe('DELETE /:id', () => {
     it('should delete a doc if the user is an admin', async () => {
       const paylaod = {
-        title: 'jhajdhdskh',
+        title: 'jhf44444fskh',
         type_id: mongoose.Types.ObjectId(),
         owner_id: user._id,
         ownerRole: 'regularX',
