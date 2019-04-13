@@ -25,8 +25,6 @@ const documentSchema = new mongoose.Schema({
   },
   content: {
     type: String,
-    minlength: 255,
-    maxlength: 32768,
     required: true,
   },
   createdAt: {
@@ -52,7 +50,7 @@ const documentSchema = new mongoose.Schema({
 });
 
 //Document Model
-const Document = mongoose.model('Document', documentSchema);
+const Document = mongoose.model('DocumentM', documentSchema);
 
 export {
   Document
