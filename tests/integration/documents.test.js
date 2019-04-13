@@ -256,6 +256,14 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return document if user is invalid', async () => {
+      const response = await request(server)
+        .get('/api/v1/documents')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
   });
   describe('GET /:id', () => {
     it('should return all document if user is signed in', async () => {
