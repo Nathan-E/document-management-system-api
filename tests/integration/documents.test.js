@@ -519,5 +519,15 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return 404 if document does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .delete(`/api/v1/documents/${id}`)
+        .set('x-auth-token', token)
+        .send({});
+
+      expect(response.status).toBe(404);
+    });
   });
 });
