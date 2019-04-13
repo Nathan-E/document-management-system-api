@@ -13,7 +13,7 @@ describe('document model', () => {
         _id: mongoose.Types.ObjectId()
       },
       ownerRole: 'Admin',
-      accessRight: 'private',
+      accessRight: 4,
     }
 
     const newDocument = new Document(payload);
