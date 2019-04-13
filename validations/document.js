@@ -5,7 +5,7 @@ const validateDocument = document => {
   const schema = {
     title: Joi.string().min(10).required(),
     type: Joi.string().required(),
-    content: Joi.string().max(32768).required(),
+    content: Joi.string().required(),
     accessRight: Joi.string().required(),
     modifiedAt: Joi.date(),
     userStatus: Joi.boolean(),

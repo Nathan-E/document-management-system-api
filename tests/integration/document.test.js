@@ -9,7 +9,7 @@ import {
   Access
 } from '../../models/access';
 import {
-  Document
+  DocumentM
 } from '../../models/documents';
 import {
   Type
@@ -27,7 +27,7 @@ let server;
 let user;
 let token;
 
-describe('/api/v1/users', () => {
+describe('/api/v1/documents', () => {
   beforeAll(async () => {
     server = app;
 
@@ -96,7 +96,7 @@ describe('/api/v1/users', () => {
     await Role.deleteMany({});
     await User.deleteMany({});
     await Type.deleteMany({})
-    await Document.deleteMany({});
+    await DocumentM.deleteMany({});
     await Access.deleteMany({});
     server.close();
   });
@@ -122,31 +122,33 @@ describe('/api/v1/users', () => {
   describe('GET /', () => {
     it('should return all document if user is signed in', async () => {
 
-      const payload1 = {
-        title: title,
-        type_id: type._id,
-        owner_id: user._id,
+      DocumentM.collection.insertMany([{
+        title: 'jeehwhd;q',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: mongoose.Types.ObjectId(),
+        ownerRole: 'regularX',
+        content: new Array(15).join('aw'),
+        accessRight: 'public',
+      }, {
+        title: 'kef;jsi',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: mongoose.Types.ObjectId(),
         ownerRole: 'regularX',
         content: new Array(15).join('a'),
         accessRight: 'public',
-        userStatus: user.deleted,
-      }
+      }]);
 
-      const payload2 = {
-        title: title,
-        type_id: type._id,
-        owner_id: user._id,
-        ownerRole: regularX,
-        content: new Array(15).join('a'),
-        accessRight: 'public',
-        userStatus: user.deleted,
 
-      }
+      // const doc1 = new DocumentM(payload1);
+      // const doc2 = new DocumentM(payload2);
+
+      // await doc1.save();
+      // await doc2.save();
 
       const response = await request(server)
-        .post('/api/v1/documents')
-        .set('x-auth-token', token)
-        .send(document);
+        .get('/api/v1/documents')
+        .set('x-auth-token', adminToken)
+        .send();
 
       expect(response.status).toBe(200);
     });
