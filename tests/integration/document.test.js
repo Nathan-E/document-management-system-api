@@ -160,4 +160,79 @@ describe('/api/v1/documents', () => {
       expect(response.status).toBe(200);
     });
   });
+  describe('GET /:id', () => {
+    it('should return all document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'qwertyuioer',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 4,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+  });
+  describe('PUT /:id', () => {
+    it('should update an existing document if the user is authorized', async () => {
+      const paylaod = {
+        title: 'jhajdhdskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send({
+          title: 'Hello!!!',
+          accessRight: 4
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('_id');
+    });
+  });
+  describe('DELETE /:id', () => {
+    it('should delete a doc if the user is an admin', async () => {
+      const paylaod = {
+        title: 'jhf44444fskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('at'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .delete(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+  });
 });
