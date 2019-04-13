@@ -138,15 +138,32 @@ describe('/api/v1/documents', () => {
         accessRight: 'public',
       }]);
 
-
-      // const doc1 = new Document(payload1);
-      // const doc2 = new Document(payload2);
-
-      // await doc1.save();
-      // await doc2.save();
-
       const response = await request(server)
         .get('/api/v1/documents')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+  });
+  describe('GET /:id', () => {
+    it('should return all document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'jhwah;d;jk',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: mongoose.Types.ObjectId(),
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 'public',
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
         .set('x-auth-token', adminToken)
         .send();
 
