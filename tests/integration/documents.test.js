@@ -427,11 +427,11 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(404);
     });
-    it('should not update an existing document the input fields are invalid', async () => {
+    it('should not update an existing document if user does not exist', async () => {
       const paylaod = {
-        title: 'jhajdhdskdwdwhs',
+        title: 'jhajdhddkdwdwhs',
         type_id: mongoose.Types.ObjectId(),
-        owner_id: user._id,
+        owner_id: mongoose.Types.ObjectId(),
         ownerRole: 'regularX',
         content: new Array(15).join('af'),
         accessRight: 2,
@@ -445,11 +445,9 @@ describe('/api/v1/documents', () => {
       const response = await request(server)
         .put(`/api/v1/documents/${doc._id}`)
         .set('x-auth-token', token)
-        .send({
-          createdAt: 123
-        });
+        .send({});
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(403);
     });
   });
   describe('DELETE /:id', () => {
