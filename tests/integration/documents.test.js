@@ -217,7 +217,7 @@ describe('/api/v1/documents', () => {
     });
   });
   describe('GET /', () => {
-    it('should return all document if user is signed in', async () => {
+    it('should return all document if user is Admin', async () => {
 
       await Document.collection.insertMany([{
         title: 'Queeen',
@@ -252,6 +252,14 @@ describe('/api/v1/documents', () => {
       const response = await request(server)
         .get('/api/v1/documents')
         .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should return appropriate document if user is not admin', async () => {
+      const response = await request(server)
+        .get('/api/v1/documents')
+        .set('x-auth-token', token2)
         .send();
 
       expect(response.status).toBe(200);
