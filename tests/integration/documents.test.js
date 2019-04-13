@@ -392,7 +392,64 @@ describe('/api/v1/documents', () => {
         });
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('_id');
+    });
+    it('should not update an existing document the input fields are invalid', async () => {
+      const paylaod = {
+        title: 'jhajdhdskdwdwhs',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send({
+          createdAt: 123
+        });
+
+      expect(response.status).toBe(400);
+    });
+    it('should return 404 if document does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${id}`)
+        .set('x-auth-token', token)
+        .send({});
+
+      expect(response.status).toBe(404);
+    });
+    it('should not update an existing document the input fields are invalid', async () => {
+      const paylaod = {
+        title: 'jhajdhdskdwdwhs',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send({
+          createdAt: 123
+        });
+
+      expect(response.status).toBe(400);
     });
   });
   describe('DELETE /:id', () => {
