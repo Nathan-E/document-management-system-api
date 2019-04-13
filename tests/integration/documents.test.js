@@ -274,7 +274,7 @@ describe('/api/v1/documents', () => {
     });
   });
   describe('GET /:id', () => {
-    it('should return all document if user is signed in', async () => {
+    it('should return the document if user is signed in', async () => {
 
       const paylaod = {
         title: 'qwertyuioer',
@@ -292,6 +292,76 @@ describe('/api/v1/documents', () => {
       const response = await request(server)
         .get(`/api/v1/documents/${doc._id}`)
         .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should not return  document if user is invalid', async () => {
+      const paylaod = {
+        title: 'adsdfsfdaew',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 4,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
+    it('should return 400 if document does not exist', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .get(`/api/v1/documents/${id}`)
+        .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
+    it('should return private document if user created it', async () => {
+      const paylaod = {
+        title: 'adsdfsfwdaew',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 3,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should return role document if user is of that role', async () => {
+      const paylaod = {
+        title: 'adsdfsfwdaeasw',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: mongoose.Types.ObjectId(),
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token2)
         .send();
 
       expect(response.status).toBe(200);
