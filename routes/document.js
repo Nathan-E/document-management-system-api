@@ -142,6 +142,22 @@ router.put('/:id', auth, async (req, res) => {
   res.send(doc);
 });
 
+router.delete('/:id', [auth, isAdmin], async (req, res) => {
+  let doc = await Document.findById(req.params.id);
+  if (!doc || doc.deleted) return res.status(400).send('Document does not exist');
+
+  doc = await Document.findOneAndUpdate({
+    _id: req.params.id
+  }, {
+    $set: {
+      deleted: true
+    }
+  }, {
+    new: true
+  });
+
+  res.status(200).send(doc);
+});
 
 //Validates the document fields
 function validateDocumentUpdate(document) {
