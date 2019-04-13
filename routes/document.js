@@ -82,6 +82,13 @@ router.get('/', auth, async (req, res) => {
   res.send(docs);
 });
 
+router.get('/:id', auth, async (req, res) => {
+  const docs = await Document.findById(req.params.id);
+  if(!docs) return res.status(400).send('Document does not exist');
+  
+  res.send(docs);
+});
+
 export {
   router as documentRouter
 };
