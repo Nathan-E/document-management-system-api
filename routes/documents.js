@@ -44,12 +44,10 @@ router.post("/", auth, async (req, res) => {
   if (!user) return res.status(404).send("Invalid request2");
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send("Invalid request3");
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(404).send("Invalid request4");
 
   const access = await Access.findOne({
     level: req.body.accessRight

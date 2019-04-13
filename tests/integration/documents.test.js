@@ -150,22 +150,54 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(404);
     });
-      it('should create not document user does not exist', async () => {
+    it('should create not document if user does not exist', async () => {
 
-        const document = {
-          title: 'Natural gas processing',
-          type: 'Biology',
-          accessRight: 2,
-          content: new Array(25).join('hi'),
-        }
+      const document = {
+        title: 'Natural gas processing',
+        type: 'thesis',
+        accessRight: 2,
+        content: new Array(25).join('hi'),
+      }
 
-        const response = await request(server)
-          .post('/api/v1/documents')
-          .set('x-auth-token', adminToken)
-          .send(document);
+      const response = await request(server)
+        .post('/api/v1/documents')
+        .set('x-auth-token', regularToken)
+        .send(document);
 
-        expect(response.status).toBe(404);
-      });
+      expect(response.status).toBe(404);
+    });
+    it('should create not document if the access level is invalid', async () => {
+
+      const document = {
+        title: 'Natural gas processing',
+        type: 'thesis',
+        accessRight: 5,
+        content: new Array(25).join('hi'),
+      }
+
+      const response = await request(server)
+        .post('/api/v1/documents')
+        .set('x-auth-token', token)
+        .send(document);
+
+      expect(response.status).toBe(404);
+    });
+    it('should create not document if the accessRight is passed', async () => {
+
+      const document = {
+        title: 'Natural gas processing',
+        type: 'thesis',
+        accessRight: 5,
+        content: new Array(25).join('hi'),
+      }
+
+      const response = await request(server)
+        .post('/api/v1/documents')
+        .set('x-auth-token', token)
+        .send(document);
+
+      expect(response.status).toBe(404);
+    });
   });
   describe('GET /', () => {
     it('should return all document if user is signed in', async () => {
