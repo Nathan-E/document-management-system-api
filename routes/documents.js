@@ -128,7 +128,7 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
 
   const access2 = doc.accessRight == 3 && doc.owner_id == user._id;
 
-  const access3 = doc.ownerRole == role.title && accessRight == userRoleInfo.level;
+  const access3 = doc.ownerRole == role.title && doc.accessRight == userRoleInfo.level;
 
   const access4 = userRoleInfo.level == 1;
 
