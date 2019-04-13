@@ -1,5 +1,5 @@
 import {
-  DocumentM
+  Document
 } from '../models/documents';
 import {
   validateDocument
@@ -63,7 +63,7 @@ router.post('/', auth, async (req, res) => {
 
   if (access.level < userRoleInfo.level) return res.status(401).send('Invalid request');
 
-  const document = new DocumentM({
+  const document = new Document({
     title: req.body.title,
     type_id: type._id,
     owner_id: user._id,
@@ -78,31 +78,9 @@ router.post('/', auth, async (req, res) => {
 });
 
 router.get('/', auth, async (req, res) => {
-  const docs = DocumentM.collection.find();
-    // console.log(docs.length);
-// console.log(Object.keys(docs));
-  // console.log(Object.keys(docs)[6]['Schema']);
-const result = JSON.stringify(docs, getCircularReplacer());
-console.log(result);
-// console.log(util.inspect(docs))
+  const docs = await Document.find();
   res.send(docs);
 });
-
-
-function getCircularReplacer (){
-  const seen = new WeakSet();
-  return (key, value) => {
-    if (typeof value === "object" && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
-  };
-};
-
-// JSON.stringify(circularReference, getCircularReplacer());
 
 export {
   router as documentRouter

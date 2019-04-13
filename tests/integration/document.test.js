@@ -9,7 +9,7 @@ import {
   Access
 } from '../../models/access';
 import {
-  DocumentM
+  Document
 } from '../../models/documents';
 import {
   Type
@@ -96,7 +96,7 @@ describe('/api/v1/documents', () => {
     await Role.deleteMany({});
     await User.deleteMany({});
     await Type.deleteMany({})
-    await DocumentM.deleteMany({});
+    await Document.deleteMany({});
     await Access.deleteMany({});
     server.close();
   });
@@ -122,7 +122,7 @@ describe('/api/v1/documents', () => {
   describe('GET /', () => {
     it('should return all document if user is signed in', async () => {
 
-      DocumentM.collection.insertMany([{
+      Document.collection.insertMany([{
         title: 'jeehwhd;q',
         type_id: mongoose.Types.ObjectId(),
         owner_id: mongoose.Types.ObjectId(),
@@ -139,8 +139,8 @@ describe('/api/v1/documents', () => {
       }]);
 
 
-      // const doc1 = new DocumentM(payload1);
-      // const doc2 = new DocumentM(payload2);
+      // const doc1 = new Document(payload1);
+      // const doc2 = new Document(payload2);
 
       // await doc1.save();
       // await doc2.save();

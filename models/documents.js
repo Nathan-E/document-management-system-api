@@ -50,8 +50,8 @@ const documentSchema = new mongoose.Schema({
 });
 
 //Document Model
-const DocumentM = mongoose.model('DocumentM', documentSchema);
+const Document = mongoose.model('DocumentM', documentSchema);
 
 export {
-  DocumentM
+  Document
 };
