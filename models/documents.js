@@ -33,7 +33,7 @@ const documentSchema = new mongoose.Schema({
   },
   accessRight: {
     type: Number,
-    default: '4'
+    default: 4
   },
   modifiedAt: {
     type: Date,
@@ -50,7 +50,7 @@ const documentSchema = new mongoose.Schema({
 });
 
 //Document Model
-const Document = mongoose.model('DocumentM', documentSchema);
+const Document = mongoose.model('Document', documentSchema);
 
 export {
   Document
