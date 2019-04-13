@@ -204,27 +204,47 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
   res.send(doc);
 });
 
-// router.delete("/:id", [validateObjectId, auth, isAdmin], async (req, res) => {
-//   let doc = await Document.findById(req.params.id);
-//   if (!doc || doc.deleted)
-//     return res.status(400).send("Document does not exist");
+router.delete("/:id", [validateObjectId, auth], async (req, res) => {
+  let doc = await Document.findById(req.params.id);
+  if (!doc || doc.deleted)
+    return res.status(404).send("Document does not exist");
 
-//   doc = await Document.findOneAndUpdate(
-//     {
-//       _id: req.params.id
-//     },
-//     {
-//       $set: {
-//         deleted: true
-//       }
-//     },
-//     {
-//       new: true
-//     }
-//   );
+  const user = await User.findById(req.user._id);
+  if (!user) return res.status(404).send("Invalid request");
 
-//   res.status(200).send(doc);
-// });
+  const role = await Role.findById(user.role);
+  if (!role) return res.status(404).send("Invalid request");
+
+  const userRoleInfo = await Access.findOne({
+    name: role.title
+  });
+  if (!userRoleInfo) return res.status(400).send("Invalid request");
+
+    userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
+
+
+  const compareObjectId = doc.owner_id.toString() === user._id.toString();
+  const isAdmin = userRoleInfo.level == 1;
+
+  if (!user || user.deleted || !compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
+
+
+  doc = await Document.findOneAndUpdate(
+    {
+      _id: req.params.id
+    },
+    {
+      $set: {
+        deleted: true
+      }
+    },
+    {
+      new: true
+    }
+  );
+
+  res.send(doc);
+  });
 
 //Validates the document fields
 function validateDocumentUpdate(document) {
