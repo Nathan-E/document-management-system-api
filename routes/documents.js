@@ -107,8 +107,6 @@ router.get("/", auth, async (req, res) => {
     ]
   });
 
-  if (!docs.length) return res.status(404).send("No document exist");
-
   res.send(docs);
 });
 
