@@ -198,4 +198,27 @@ describe('/api/v1/documents', () => {
       expect(response.body).toHaveProperty('_id');
     });
   });
+  describe('DELETE /:id', () => {
+    it('should delete a doc if the user is an admin', async () => {
+      const paylaod = {
+        title: 'jhajdhdskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('at'),
+        accessRight: 'public',
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .delete(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+  });
 });
