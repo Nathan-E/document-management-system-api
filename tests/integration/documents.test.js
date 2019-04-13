@@ -26,6 +26,8 @@ import app from '../../index';
 let server;
 let user;
 let token;
+let user2;
+let token2;
 
 describe('/api/v1/documents', () => {
   beforeAll(async () => {
@@ -88,6 +90,21 @@ describe('/api/v1/documents', () => {
     token = user.generateAuthToken();
 
     await user.save();
+
+    const payload2 = {
+      firstname: 'ChibuezEx',
+      lastname: 'NathaNe',
+      role: regular._id,
+      username: 'qwertdf',
+      email: 'chibuezewqr@test.com',
+      password: hashedPassword
+    };
+
+    user2 = await new User(payload2);
+
+    token2 = user2.generateAuthToken();
+    await user2.save();
+
   });
   beforeEach(async () => {});
   afterEach(async () => {});
@@ -187,16 +204,16 @@ describe('/api/v1/documents', () => {
       const document = {
         title: 'Natural gas processing',
         type: 'thesis',
-        accessRight: 5,
+        accessRight: 1,
         content: new Array(25).join('hi'),
       }
 
       const response = await request(server)
         .post('/api/v1/documents')
-        .set('x-auth-token', token)
+        .set('x-auth-token', token2)
         .send(document);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
     });
   });
   describe('GET /', () => {
