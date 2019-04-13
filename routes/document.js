@@ -145,19 +145,19 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
 
   let doc = await Document.findById(req.params.id);
   if (!doc || doc.deleted)
-    return res.status(401).send("Document does not exist");
+    return res.status(404).send("Document does not exist");
 
   const user = await User.findById(req.user._id);
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
 
-  if (!user || user.deleted || !compareObjectId) return res.status(402).send("Invalid request");
+  if (!user || user.deleted || !compareObjectId) return res.status(403).send("Invalid request");
 
   const type = req.body.type
     ? await Type.findOne({
         title: req.body.type
       })
     : doc;
-  if (!type) return res.status(403).send("Invalid document type");
+  if (!type) return res.status(404).send("Invalid document type");
 
   const role = await Role.findById(user.role);
   if (!role) return res.status(404).send("Invalid request");
@@ -165,7 +165,7 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(405).send("Invalid request");
+  if (!userRoleInfo) return res.status(404).send("Invalid request");
 
   let access;
 
@@ -178,7 +178,7 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
     userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
 
     if (access.level < userRoleInfo.level)
-      return res.status(406).send("Invalid request");
+      return res.status(400).send("Invalid request");
   }
 
   const accessRight = access ? access.level : doc.accessRight;
