@@ -153,15 +153,12 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
         title: req.body.type
       })
     : doc;
-  if (!type) return res.status(404).send("Invalid document type");
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send("Invalid request");
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(404).send("Invalid request");
 
   let access;
 

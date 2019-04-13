@@ -449,6 +449,53 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(403);
     });
+    it('should not update an existing document if update access right is higher than the user', async () => {
+      const paylaod = {
+        title: 'jhajdhdweskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user2._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token2)
+        .send({
+          type: 'proposal',
+          accessRight: 1
+        });
+
+      expect(response.status).toBe(400);
+    });
+      it('should not update an existing document if update access right is higher than the user', async () => {
+        const paylaod = {
+          title: 'jhajdhdwqweskh',
+          type_id: mongoose.Types.ObjectId(),
+          owner_id: user2._id,
+          ownerRole: 'regularX',
+          content: new Array(15).join('af'),
+          accessRight: 2,
+        };
+
+        const doc = new Document(paylaod);
+
+        await doc.save();
+
+
+        const response = await request(server)
+          .put(`/api/v1/documents/${doc._id}`)
+          .set('x-auth-token', token2)
+          .send({});
+
+        expect(response.status).toBe(200);
+      });
   });
   describe('DELETE /:id', () => {
     it('should delete a doc if the user is an admin', async () => {
