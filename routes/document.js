@@ -76,9 +76,33 @@ router.post('/', auth, async (req, res) => {
 });
 
 router.get('/', auth, async (req, res) => {
-  const docs = await Document.find();
+  const user = await User.findById(req.user._id);
+  if (!user) return res.status(400).send('Invalid request');
 
-  res.send(docs);
+  const docs = await Document.find();
+  if
+  const role = await Role.findById(user.role);
+
+  const userRoleInfo = await Access.findOne({
+    name: role.title
+  });
+
+  let access = await Access.findOne({
+    name: doc.accessRight
+  });
+
+  access.level = Object.values(access)[3]['level'];
+  userRoleInfo.level = Object.values(userRoleInfo)[3]['level'];
+
+  if (access.level < userRoleInfo.level) return res.status(400).send('Access denied');
+
+};
+
+const accessRight = access ? access.name : doc.accessRight;
+
+
+
+res.send(docs);
 });
 
 router.get('/:id', [validateObjectId, auth], async (req, res) => {
