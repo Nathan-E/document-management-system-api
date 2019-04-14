@@ -148,22 +148,22 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
 });
 
 router.put("/:id", [validateObjectId, auth], async (req, res) => {
+  //validate the request body
   const {
     error
   } = validateDocumentUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
+  //gets the document if it exist
   let doc = await Document.findById(req.params.id);
   if (!doc || doc.deleted)
     return res.status(404).send("Document does not exist");
-
+  //get the user requesting for it
   const user = await User.findById(req.user._id);
   if (!user || user.deleted) return res.status(404).send("Invalid request");
-
+  //checks if the user is the owner of the document
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
-
   if (!compareObjectId) return res.status(403).send("Invalid request");
-
+  //set the document new type
   const type = req.body.type ?
     await Type.findOne({
       title: req.body.type
@@ -171,24 +171,24 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
     doc;
 
   const role = await Role.findById(user.role);
-
+  //get the user's accesss level
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
 
   let access;
-
+  //get the access level in the request bodu if it exist
   if (req.body.accessRight) {
     access = await Access.findOne({
       level: req.body.accessRight
     });
-
+    //ensure the document new access level is set wuthin the user access level
     if (access.level < userRoleInfo.level)
       return res.status(400).send("Invalid request");
   }
-
+  //sets the access level
   const accessRight = access ? access.level : doc.accessRight;
-
+  //updates the document
   doc = await Document.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -207,25 +207,27 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
 });
 
 router.delete("/:id", [validateObjectId, auth], async (req, res) => {
+  //checks if the document exist
   let doc = await Document.findById(req.params.id);
   if (!doc || doc.deleted)
     return res.status(404).send("Document does not exist");
-
+  //checks if the user exist
   const user = await User.findById(req.user._id);
   if (!user || user.deleted) return res.status(404).send("Invalid request");
-
+  //gets the role of the user
   const role = await Role.findById(user.role);
-
+  //gets the access level of the user
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-
+  //checks if the user owns the document
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
+  //checks if the user is an admin
   const isAdmin = userRoleInfo.level === 1;
-
+  //returnss 400 if the user does not own the document nor an admin
   if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
 
-
+  //finds the document and deletes it
   doc = await Document.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -239,7 +241,7 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
   res.send(doc);
 });
 
-//Validates the document fields
+//Validates the document update fields
 function validateDocumentUpdate(document) {
   const schema = {
     title: Joi.string(),
