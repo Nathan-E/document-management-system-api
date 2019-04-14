@@ -65,7 +65,6 @@ router.post("/", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   let page = req.query.page;
   let limit = req.query.limit;
-  console.log(!limit,  !page);
   const user = await User.findById(req.user._id);
   if (!user) return res.status(400).send("Invalid request");
 
@@ -100,20 +99,21 @@ router.get("/", auth, async (req, res) => {
   if (!limit) limit = 0;
   limit = Number(limit);
 
-console.log('hi');
-
   let start = page * limit;
   let stop = start + limit;
 
   let chuncks;
-  
+
   if (!start && limit) {
     chuncks = docs.slice(0, limit)
     return res.status(200).send(chuncks);
   }
 
-  if (start && limit) {
-    chuncks = docs.slice(start, stop)
+  if (start !=0 && limit) {
+    chuncks = docs.slice(start, stop);
+    // console.log('hi');
+    console.log(!limit, !page);
+
     return res.status(200).send(chuncks);
   }
 
