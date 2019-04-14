@@ -4,17 +4,12 @@ import {
 } from "../validations/index";
 import _ from "lodash";
 import {
-  validateObjectId,
-  auth
-} from "../middlewares/index";
-import {
   Type,
   Role,
   User,
   Access,
   Document
 } from "../models/index";
-import Joi from "joi";
 
 //Document controller
 const documentController = {};

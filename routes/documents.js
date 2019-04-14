@@ -1,20 +1,9 @@
-import {
-  validateDocument
-} from "../validations/index";
 import express from "express";
 import _ from "lodash";
 import {
   validateObjectId,
   auth
 } from "../middlewares/index";
-import {
-  Type,
-  Role,
-  User,
-  Access,
-  Document
-} from "../models/index";
-import Joi from "joi";
 import { documentController } from '../controllers/index';
 
 const router = express.Router();
