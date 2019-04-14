@@ -1,7 +1,7 @@
 import {
-  validateDocument
-} from "../validations/document";
-import express from "express";
+  validateDocument,
+  validateDocumentUpdate
+} from "../validations/index";
 import _ from "lodash";
 import {
   validateObjectId,

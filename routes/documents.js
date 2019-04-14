@@ -261,21 +261,6 @@ router.put("/:id", [validateObjectId, auth], documentController.put);
  */
 router.delete("/:id", [validateObjectId, auth], documentController.delete);
 
-//Validates the document update fields
-function validateDocumentUpdate(document) {
-  const schema = {
-    title: Joi.string(),
-    type: Joi.string(),
-    content: Joi.string(),
-    accessRight: Joi.number(),
-    modifiedAt: Joi.date(),
-    userStatus: Joi.boolean(),
-    deleted: Joi.boolean()
-  };
-
-  return Joi.validate(document, schema);
-}
-
 export {
   router as documentRouter
 };

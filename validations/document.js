@@ -12,6 +12,22 @@ const validateDocument = document => {
   return Joi.validate(document, schema);
 };
 
+//Validates the document update fields
+function validateDocumentUpdate(document) {
+  const schema = {
+    title: Joi.string(),
+    type: Joi.string(),
+    content: Joi.string(),
+    accessRight: Joi.number(),
+    modifiedAt: Joi.date(),
+    userStatus: Joi.boolean(),
+    deleted: Joi.boolean()
+  };
+
+  return Joi.validate(document, schema);
+}
+
 export {
-  validateDocument
+  validateDocument,
+  validateDocumentUpdate
 };
