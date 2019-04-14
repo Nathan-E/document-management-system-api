@@ -1,29 +1,19 @@
 import {
-  Document
-} from "../models/documents";
-import {
   validateDocument
 } from "../validations/index";
-import bcrypt from "bcrypt";
 import express from "express";
 import _ from "lodash";
 import {
   validateObjectId,
-  auth,
-  isAdmin
+  auth
 } from "../middlewares/index";
 import {
-  Type
-} from "../models/types";
-import {
-  User
-} from "../models/users";
-import {
-  Role
-} from "../models/roles";
-import {
-  Access
-} from "../models/access";
+  Type,
+  Role,
+  User,
+  Access,
+  Document
+} from "../models/index";
 import Joi from "joi";
 
 const router = express.Router();

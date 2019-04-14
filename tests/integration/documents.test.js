@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import {
   User
 } from '../../models/index';
