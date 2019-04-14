@@ -6,6 +6,7 @@ const roleController = {};
 
 //GET / controller
 roleController.get = async (req, res) => {
+  //get all role document and sort bu title
   const role = await Role.find().sort('title');
 
   res.send(role);
