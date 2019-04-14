@@ -133,7 +133,31 @@ router.post("/", auth, async (req, res) => {
   res.send("document created!!!");
 });
 
-
+/**
+ * @swagger
+ * /api/v1/document:
+ *    get:
+ *      summary: returns all documents.
+ *      tags: [/api/v1/documents]
+ *      description: This should return all document
+ *      parameters:
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      responses:
+ *        200:
+ *          description: A list of document
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: invalid Request
+ *          schema:
+ *          type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *          type: string
+ */
 //Return document according to access level
 router.get("/", auth, async (req, res) => {
   //get the request queries
@@ -193,6 +217,39 @@ router.get("/", auth, async (req, res) => {
   res.status(200).send(docs);
 });
 
+/**
+ * @swagger
+ * /api/v1/documents/{id}:
+ *    get:
+ *      summary: returns the unique document with the passed id
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should return an existing document with the given id
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document requested.
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description:  success
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Invalid ID
+ *          schema:
+ *            type: string
+ */
 router.get("/:id", [validateObjectId, auth], async (req, res) => {
   //validates that the user exist
   const user = await User.findById(req.user._id);
@@ -218,6 +275,56 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
   if (access1 || access2 || access3 || access4) return res.status(200).send(doc);
 });
 
+/**
+ * @swagger
+ * /api/v1/document/{id}:
+ *    put:
+ *      summary: updates a document with the given id.
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should update an existing document
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document to edit.
+ *        - in: body 
+ *          name: title 
+ *          description: The new title of the document to be updated.
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: integer
+ *          name:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description: document updated successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Could not update the document
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        403:
+ *          description: User no an Admin
+ *          schema:
+ *          type: string
+ *        404:
+ *          description: Could not find  a document with the given ID 
+ *          schema:
+ *            type: string
+ */
 router.put("/:id", [validateObjectId, auth], async (req, res) => {
   //validate the request body
   const {
