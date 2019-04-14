@@ -86,16 +86,20 @@ userController.logout = async (req, res) => {
 };
 
 // GET /
+//returns all users
 userController.get = async (req, res) => {
+  //gets all users and sort by firstname
   const user = await User.find().sort('firstname');
 
   res.send(user);
 }
 
 // GET /:id
+//gets a specific user
 userController.getById = async (req, res) => {
+  //checks for the user
   const user = await User.findById(req.params.id);
-
+  //returns 404 if the user have been deleted or does not exist
   if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
 
   res.send(user);
