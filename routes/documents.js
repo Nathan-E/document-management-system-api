@@ -203,15 +203,13 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
     return res.status(404).send("Document does not exist");
 
   const user = await User.findById(req.user._id);
-  if (!user) return res.status(404).send("Invalid request");
+  if (!user || user.deleted) return res.status(404).send("Invalid request");
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send("Invalid request");
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(400).send("Invalid request");
 
     userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
 
@@ -219,7 +217,7 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
   const isAdmin = userRoleInfo.level == 1;
 
-  if (!user || user.deleted || !compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
+  if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
 
 
   doc = await Document.findOneAndUpdate(
