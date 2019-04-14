@@ -18,6 +18,56 @@ import Joi from "joi";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/documents:
+ *    post:
+ *      summary: creates a new document.
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should create a new document
+ *      parameters:
+ *        - in: body
+ *          name: payload
+ *          description: should contain the role's title
+ *      schema:
+ *        type: object
+ *        required:
+ *          - title
+ *          - type
+ *          - content
+ *          - accessRight
+ *        properties:
+ *          title:
+ *            type: string
+ *            example: admin
+ *          type:
+ *            type: string
+ *            example: thesis
+ *          content:
+ *            type: string
+ *          accessRight:
+ *            type: number
+ *            example: 1
+ *      responses:
+ *        200:
+ *          description: Document created successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Could not create the document
+ *          schema:
+ *            type: string
+ *        403:
+ *          description: invalid request 
+ *          schema:
+ *          type: string 
+ *        404:
+ *          description: invalid request
+ *          schema:
+ *          type: string
+ */
 //creates a document
 router.post("/", auth, async (req, res) => {
   //validates the document request body
@@ -29,10 +79,10 @@ router.post("/", auth, async (req, res) => {
   const type = await Type.findOne({
     title: req.body.type
   });
-  if (!type) return res.status(404).send("Invalid document type1");
+  if (!type) return res.status(404).send("Invalid document type");
   //chaecks if the user exist
   const user = await User.findById(req.user._id);
-  if (!user) return res.status(404).send("Invalid request2");
+  if (!user) return res.status(404).send("Invalid user");
   //gets the user role
   const role = await Role.findById(user.role);
 
@@ -43,11 +93,11 @@ router.post("/", auth, async (req, res) => {
   const access = await Access.findOne({
     level: req.body.accessRight
   });
-  if (!access) return res.status(404).send("Invalid request5");
+  if (!access) return res.status(404).send("Invalid access right");
 
   //ensures the user does not assign to the document access levels above her
   if (access.level < userRoleInfo.level)
-    return res.status(400).send("Invalid request");
+    return res.status(403).send("access level unauthorized");
   //creates the document
   const document = new Document({
     title: req.body.title,
@@ -62,6 +112,7 @@ router.post("/", auth, async (req, res) => {
 
   res.send("document created!!!");
 });
+
 
 //Return document according to access level
 router.get("/", auth, async (req, res) => {
