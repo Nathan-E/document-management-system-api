@@ -1,242 +1,255 @@
-import {
-  Document
-} from "../models/documents";
-import {
-  validateDocument
-} from "../validations/index";
-import bcrypt from "bcrypt";
 import express from "express";
 import _ from "lodash";
 import {
   validateObjectId,
-  auth,
-  isAdmin
+  auth
 } from "../middlewares/index";
-import {
-  Type
-} from "../models/types";
-import {
-  User
-} from "../models/users";
-import {
-  Role
-} from "../models/roles";
-import {
-  Access
-} from "../models/access";
-import Joi from "joi";
+import { documentController } from '../controllers/index';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/v1/documents:
+ *    post:
+ *      summary: creates a new document.
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should create a new document
+ *      parameters:
+ *        - in: body
+ *          name: title
+ *          description: the document title
+ *          example: Natural Processing
+ *        - in: body
+ *          name: type
+ *          description: the document type
+ *          example: thesis
+ *        - in: body
+ *          name: content
+ *          description: the document content
+ *          example: Use Glycol for dehydration
+ *        - in: body
+ *          name: accessRight
+ *          description: the document access right
+ *          example: 4
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      schema:
+ *        type: object
+ *        required:
+ *          - title
+ *          - type
+ *          - content
+ *          - accessRight
+ *        properties:
+ *          title:
+ *            type: string
+ *            example: admin
+ *          type:
+ *            type: string
+ *            example: thesis
+ *          content:
+ *            type: string
+ *          accessRight:
+ *            type: number
+ *            example: 1
+ *      responses:
+ *        200:
+ *          description: Document created successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Could not create the document
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        403:
+ *          description: invalid request 
+ *          schema:
+ *          type: string 
+ *        404:
+ *          description: invalid request
+ *          schema:
+ *          type: string
+ */
 //creates a document
-router.post("/", auth, async (req, res) => {
-  const {
-    error
-  } = validateDocument(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+router.post("/", auth, documentController.post);
 
-  const type = await Type.findOne({
-    title: req.body.type
-  });
-  if (!type) return res.status(404).send("Invalid document type1");
-
-  const user = await User.findById(req.user._id);
-  if (!user) return res.status(404).send("Invalid request2");
-
-  const role = await Role.findById(user.role);
-
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
-
-  const access = await Access.findOne({
-    level: req.body.accessRight
-  });
-  if (!access) return res.status(404).send("Invalid request5");
-
-  if (access.level < userRoleInfo.level)
-    return res.status(400).send("Invalid request");
-
-  const document = new Document({
-    title: req.body.title,
-    type_id: type._id,
-    owner_id: user._id,
-    ownerRole: role.title,
-    content: req.body.content,
-    accessRight: access.level
-  });
-
-  await document.save();
-
-  res.send("document created!!!");
-});
-
+/**
+ * @swagger
+ * /api/v1/document:
+ *    get:
+ *      summary: returns all documents.
+ *      tags: [/api/v1/documents]
+ *      description: This should return all document
+ *      parameters:
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      responses:
+ *        200:
+ *          description: A list of document
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: invalid Request
+ *          schema:
+ *          type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *          type: string
+ */
 //Return document according to access level
-router.get("/", auth, async (req, res) => {
-  const user = await User.findById(req.user._id);
-  if (!user) return res.status(400).send("Invalid request");
+router.get("/", auth, documentController.get);
 
-  const role = await Role.findById(user.role);
+/**
+ * @swagger
+ * /api/v1/documents/{id}:
+ *    get:
+ *      summary: returns the unique document with the passed id
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should return an existing document with the given id
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document requested.
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      schema:
+ *        type: object
+ *        required:
+ *          - name
+ *        properties:
+ *          id:
+ *            type: string
+ *      responses:
+ *        200:
+ *          description:  success
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Invalid ID
+ *          schema:
+ *            type: string
+ */
+router.get("/:id", [validateObjectId, auth], documentController.getByID);
 
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
+/**
+ * @swagger
+ * /api/v1/document/{id}:
+ *    put:
+ *      summary: updates a document with the given id.
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should update an existing document
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document requested.
+ *        - in: body
+ *          name: title
+ *          description: the document title
+ *          example: Natural Processing
+ *        - in: body
+ *          name: type
+ *          description: the document type
+ *          example: thesis
+ *        - in: body
+ *          name: content
+ *          description: the document content
+ *          example: Use Glycol for dehydration
+ *        - in: body
+ *          name: accessRight
+ *          description: the document access right
+ *          example: 4
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
+ *      schema:
+ *        type: object
+ *        properties:
+ *          title:
+ *            type: string
+ *            example: admin
+ *          type:
+ *            type: string
+ *            example: thesis
+ *          content:
+ *            type: string
+ *          accessRight:
+ *            type: number
+ *            example: 1
+ *      responses:
+ *        200:
+ *          description: document updated successfully
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: invalid request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        403:
+ *          description: invalid request
+ *          schema:
+ *          type: string
+ *        404:
+ *          description: invalid request 
+ *          schema:
+ *            type: string
+ */
+router.put("/:id", [validateObjectId, auth], documentController.put);
 
-  if (userRoleInfo.level == 1) {
-    const doc = await Document.find();
-
-    return res.status(200).send(doc);
-  }
-
-  const docs = await Document.find({
-    $or: [{
-        accessRight: 4
-      },
-      {
-        accessRight: 3,
-        owner_id: user._id
-      },
-      {
-        ownerRole: role.title,
-        accessRight: userRoleInfo.level
-      }
-    ]
-  });
-
-  res.send(docs);
-});
-
-router.get("/:id", [validateObjectId, auth], async (req, res) => {
-  const user = await User.findById(req.user._id);
-  if (!user) return res.status(400).send("Invalid request");
-
-  const role = await Role.findById(user.role);
-
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
-
-  let doc = await Document.findById(req.params.id);
-  if (!doc) return res.status(400).send("Document does not exist");
-
-  const access1 = doc.accessRight == 4;
-
-  const access2 = doc.accessRight == 3 && doc.owner_id == user._id;
-
-  const access3 = doc.ownerRole == role.title && doc.accessRight == userRoleInfo.level;
-
-  const access4 = userRoleInfo.level == 1;
-
-  if (access1 || access2 || access3 || access4) return res.status(200).send(doc);
-});
-
-router.put("/:id", [validateObjectId, auth], async (req, res) => {
-  const {
-    error
-  } = validateDocumentUpdate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  let doc = await Document.findById(req.params.id);
-  if (!doc || doc.deleted)
-    return res.status(404).send("Document does not exist");
-
-  const user = await User.findById(req.user._id);
-  if (!user || user.deleted) return res.status(404).send("Invalid request");
-
-  const compareObjectId = doc.owner_id.toString() === user._id.toString();
-
-  if (!compareObjectId) return res.status(403).send("Invalid request");
-
-  const type = req.body.type ?
-    await Type.findOne({
-      title: req.body.type
-    }) :
-    doc;
-
-  const role = await Role.findById(user.role);
-
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
-
-  let access;
-
-  if (req.body.accessRight) {
-    access = await Access.findOne({
-      level: req.body.accessRight
-    });
-
-    if (access.level < userRoleInfo.level)
-      return res.status(400).send("Invalid request");
-  }
-
-  const accessRight = access ? access.level : doc.accessRight;
-
-  doc = await Document.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      title: req.body.title || doc.title,
-      type_id: type._id,
-      content: req.body.content || doc.content,
-      accessRight: accessRight,
-      modifiedAt: Date.now()
-    }
-  }, {
-    new: true
-  });
-
-  res.send(doc);
-});
-
-router.delete("/:id", [validateObjectId, auth], async (req, res) => {
-  let doc = await Document.findById(req.params.id);
-  if (!doc || doc.deleted)
-    return res.status(404).send("Document does not exist");
-
-  const user = await User.findById(req.user._id);
-  if (!user || user.deleted) return res.status(404).send("Invalid request");
-
-  const role = await Role.findById(user.role);
-
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
-
-  const compareObjectId = doc.owner_id.toString() === user._id.toString();
-  const isAdmin = userRoleInfo.level == 1;
-
-  if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
-
-
-  doc = await Document.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      deleted: true
-    }
-  }, {
-    new: true
-  });
-
-  res.send(doc);
-});
-
-//Validates the document fields
-function validateDocumentUpdate(document) {
-  const schema = {
-    title: Joi.string(),
-    type: Joi.string(),
-    content: Joi.string(),
-    accessRight: Joi.number(),
-    modifiedAt: Joi.date(),
-    userStatus: Joi.boolean(),
-    deleted: Joi.boolean()
-  };
-
-  return Joi.validate(document, schema);
-}
+/**
+ * @swagger
+ * /api/v1/document/{id}:
+ *    put:
+ *      summary: deletes a document with the given id.
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should delete an existing document
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document to be deleted.
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
+ *      responses:
+ *        200:
+ *          description: document deleted
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: invalid request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        404:
+ *          description: invalid request 
+ *          schema:
+ *            type: string
+ */
+router.delete("/:id", [validateObjectId, auth], documentController.delete);
 
 export {
-  router as documentRouter
+  router as documentsRouter
 };

@@ -14,8 +14,8 @@ const router = express.Router();
  * @swagger
  * /api/v1/role:
  *    get:
- *      summary: gets all role.
- *      tags: [/api/v1/role]
+ *      summary: returns all roles.
+ *      tags: [/api/v1/roles]
  *      description: This should return all role
  *      responses:
  *        200:
@@ -45,8 +45,8 @@ router.get('/', [auth, isAdmin], roleController.get);
  * @swagger
  * /api/v1/role:
  *    post:
- *      summary: create a new role.
- *      tags: [/api/v1/role]
+ *      summary: creates a new role.
+ *      tags: [/api/v1/roles]
  *      consumes:
  *        - application/json
  *      description: This should create a new role
@@ -90,8 +90,8 @@ router.post('/', [auth, isAdmin], roleController.post);
  * @swagger
  * /api/v1/role/{id}:
  *    put:
- *      summary: get the role with the id for update.
- *      tags: [/api/v1/role]
+ *      summary: updates a role with the given id.
+ *      tags: [/api/v1/roles]
  *      consumes:
  *        - application/json
  *      description: This should update an existing role
@@ -142,7 +142,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
  * @swagger
  * /api/v1/roles/{id}:
  *    get:
- *      summary: gets a unique role with the passed id
+ *      summary: returns the unique role with the passed id
  *      tags: [/api/v1/roles]
  *      consumes:
  *        - application/json

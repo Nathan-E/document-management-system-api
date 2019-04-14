@@ -8,12 +8,14 @@ import {
   validateRole
 } from './roles';
 import {
-  validateDocument
+  validateDocument,
+  validateDocumentUpdate
 } from './document';
 
 export {
   usersValidator,
   validateType,
   validateRole,
-  validateDocument
+  validateDocument,
+  validateDocumentUpdate
 };
