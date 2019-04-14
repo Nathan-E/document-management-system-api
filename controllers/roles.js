@@ -5,31 +5,36 @@ import { validateRole } from '../validations/roles';
 const roleController = {};
 
 //GET / controller
+//gets all role document
 roleController.get = async (req, res) => {
   //get all role document and sort bu title
   const role = await Role.find().sort('title');
-
+  //response
   res.send(role);
 };
 
 //POST / controller
+// Creates a unique role
 roleController.post = async (req, res) => {
+  //validates request body
   const {
     error
   } = validateRole(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
+  //checks if the role exist
   let role = await Role.findOne({
     title: req.body.title
   });
+  //returns a 404 if role exist
   if (role) return res.status(400).send(`${req.body.title} already exist`);
 
+  //creates role
   role = new Role({
     title: req.body.title
   });
-
+  //save new role to database
   await role.save();
-
+  //response
   res.status(200).send('New role created!!!')
 };
 
