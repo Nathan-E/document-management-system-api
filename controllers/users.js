@@ -6,7 +6,7 @@ import {
 } from '../validations/index';
 import {
   Role
-} from '../models/roles';
+} from '../models/index';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 

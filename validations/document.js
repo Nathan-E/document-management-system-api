@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-//Validates the document fields
+//Validates the document resources
 const validateDocument = document => {
   const schema = {
     title: Joi.string().min(10).required(),
