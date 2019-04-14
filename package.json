@@ -41,6 +41,8 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.11",
     "mongoose": "^5.5.0",
-    "regenerator-runtime": "^0.13.2"
+    "regenerator-runtime": "^0.13.2",
+    "swagger-jsdoc": "^3.2.8",
+    "swagger-ui-express": "^4.0.2"
   }
 }

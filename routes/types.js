@@ -12,9 +12,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/type:
+ * /api/v1/types:
  *    get:
- *      summary: gets all type.
+ *      summary: return all types of document.
  *      tags: [/api/v1/types]
  *      description: This should return all types
  *      responses:
@@ -33,8 +33,8 @@ router.get('/', typeController.get);
  * @swagger
  * /api/v1/type:
  *    post:
- *      summary: create a new type.
- *      tags: [/api/v1/type]
+ *      summary: creates a new document type.
+ *      tags: [/api/v1/types]
  *      consumes:
  *        - application/json
  *      description: This should create a new type
@@ -70,7 +70,7 @@ router.post('/', [auth], typeController.post);
  * @swagger
  * /api/v1/types/{id}:
  *    put:
- *      summary: get the type with the id for update.
+ *      summary: updates the document type.
  *      tags: [/api/v1/types]
  *      consumes:
  *        - application/json
@@ -122,7 +122,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], typeController.put);
  * @swagger
  * /api/v1/types/{id}:
  *    get:
- *      summary: gets a unique type with the passed id
+ *      summary: returns a unique document type with the passed id
  *      tags: [/api/v1/types]
  *      consumes:
  *        - application/json

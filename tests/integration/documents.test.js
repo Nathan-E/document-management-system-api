@@ -1,19 +1,19 @@
 import 'babel-polyfill';
 import {
   User
-} from '../../models/users';
+} from '../../models/index';
 import {
   Role
-} from '../../models/roles';
+} from '../../models/index';
 import {
   Access
-} from '../../models/access';
+} from '../../models/index';
 import {
   Document
-} from '../../models/documents';
+} from '../../models/index';
 import {
   Type
-} from '../../models/types';
+} from '../../models/index';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
@@ -199,7 +199,7 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(404);
     });
-    it('should create not document if the accessRight is passed', async () => {
+    it('should create not document if an unauthorized accessRight is passed', async () => {
 
       const document = {
         title: 'Natural gas processing',
@@ -213,7 +213,7 @@ describe('/api/v1/documents', () => {
         .set('x-auth-token', token2)
         .send(document);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(403);
     });
   });
   describe('GET /', () => {
@@ -252,6 +252,50 @@ describe('/api/v1/documents', () => {
       const response = await request(server)
         .get('/api/v1/documents')
         .set('x-auth-token', token)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should return the document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'qwertyuisdr',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents?limit=1`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should return the document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'qwernmisdr',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents?limit=1&page=1`)
+        .set('x-auth-token', token2)
         .send();
 
       expect(response.status).toBe(200);
