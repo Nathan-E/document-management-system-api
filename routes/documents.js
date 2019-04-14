@@ -153,30 +153,7 @@ router.get("/", auth, documentController.get);
  *          schema:
  *            type: string
  */
-router.get("/:id", [validateObjectId, auth], async (req, res) => {
-  //validates that the user exist
-  const user = await User.findById(req.user._id);
-  if (!user) return res.status(400).send("Invalid request");
-  //get the role of the user
-  const role = await Role.findById(user.role);
-  //get the access level of the user role
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
-  //gets the document if it exist
-  let doc = await Document.findById(req.params.id);
-  if (!doc) return res.status(400).send("Document does not exist");
-  //public document
-  const access1 = doc.accessRight === 4;
-  //private document and owner is the user requesting
-  const access2 = doc.accessRight === 3 && doc.owner_id === user._id;
-  //role document and user with the role access is requesting
-  const access3 = doc.ownerRole === role.title && doc.accessRight === userRoleInfo.level;
-  //admin document
-  const access4 = userRoleInfo.level === 1;
-
-  if (access1 || access2 || access3 || access4) return res.status(200).send(doc);
-});
+router.get("/:id", [validateObjectId, auth], documentController.getByID);
 
 /**
  * @swagger
