@@ -9,7 +9,7 @@ const accessSchema = new mongoose.Schema({
   },
   //access level
   level: {
-    type: String,
+    type: Number,
     required: true
   }
 });
