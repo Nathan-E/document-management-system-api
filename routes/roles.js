@@ -1,12 +1,12 @@
 import {
-  Role,
-  validate
-} from '../models/roles';
-import { roleController } from '../controllers/roles';
+  roleController
+} from '../controllers/roles';
 import express from 'express';
-import { validateObjectId, auth, isAdmin } from '../middlewares/index';
-import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
+import {
+  validateObjectId,
+  auth,
+  isAdmin
+} from '../middlewares/index';
 
 const router = express.Router();
 

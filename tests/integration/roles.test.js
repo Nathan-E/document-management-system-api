@@ -177,7 +177,7 @@ describe('/api/v1/roles', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', newTitle);
     });
-    it('should return 404 if an invalid id is passed', async () => {
+    it('should return 400 if an invalid id is passed', async () => {
       const id = 1;
 
       const response = await request(server)
@@ -187,7 +187,7 @@ describe('/api/v1/roles', () => {
           title: 'superAdmin'
         });
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
     });
     it('should not update an existing role if the user is not an Admin', async () => {
       const role = new Role({
@@ -341,12 +341,12 @@ describe('/api/v1/roles', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', role.title);
     });
-    it('should return 404 if an invalid id is passed', async () => {
+    it('should return 400 if an invalid id is passed', async () => {
       const id = 1;
 
       const response = await request(server).get(`/api/v1/roles/${id}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
     });
     it('should return 404 if no role with the Id is found', async () => {
       const id = mongoose.Types.ObjectId();
