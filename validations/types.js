@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-//validates the type schema
+//validates the type resource
 const validateType = role => {
   const schema = {
     title: Joi.string().min(5).max(25).required()

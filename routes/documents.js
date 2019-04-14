@@ -54,9 +54,6 @@ router.post("/", auth, async (req, res) => {
   });
   if (!access) return res.status(404).send("Invalid request5");
 
-  access.level = Object.values(access)[3]["level"];
-  userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
-
   if (access.level < userRoleInfo.level)
     return res.status(400).send("Invalid request");
 
@@ -84,7 +81,6 @@ router.get("/", auth, async (req, res) => {
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
 
   if (userRoleInfo.level == 1) {
     const doc = await Document.find();
@@ -119,7 +115,6 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
 
   let doc = await Document.findById(req.params.id);
   if (!doc) return res.status(400).send("Document does not exist");
@@ -171,9 +166,6 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
       level: req.body.accessRight
     });
 
-    access.level = Object.values(access)[3]["level"];
-    userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
-
     if (access.level < userRoleInfo.level)
       return res.status(400).send("Invalid request");
   }
@@ -210,9 +202,6 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-
-  userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
-
 
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
   const isAdmin = userRoleInfo.level == 1;

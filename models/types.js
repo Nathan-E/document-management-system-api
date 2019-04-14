@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import Joi from 'joi';
 
 //Type Schema
 const typeSchema = new mongoose.Schema({
+  //title of a unique document type
   title: {
     type: String,
     min: 5,

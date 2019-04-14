@@ -193,7 +193,7 @@ describe('/api/v1/types', () => {
 
       expect(response.status).toBe(403);
     });
-    it('should return 404 if an invalid id is passed', async () => {
+    it('should return 400 if an invalid id is passed', async () => {
       const id = 1;
       const newTitle = 'social';
 
@@ -204,7 +204,7 @@ describe('/api/v1/types', () => {
           title: newTitle
         });
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
     });
     it('should return 400 if the payload, title is less than 5 characterss', async () => {
       const type = new Type({
@@ -283,12 +283,12 @@ describe('/api/v1/types', () => {
       expect(response.body).toHaveProperty('_id');
       expect(response.body).toHaveProperty('title', type.title);
     });
-    it('should return 404 if an invalid id is passed', async () => {
+    it('should return 400 if an invalid id is passed', async () => {
       const id = 1;
 
       const response = await request(server).get(`/api/v1/types/${id}`);
 
-      expect(response.status).toBe(404);
+      expect(response.status).toBe(400);
     });
     it('should return 404 if no type with the Id is found', async () => {
       const id = mongoose.Types.ObjectId();
