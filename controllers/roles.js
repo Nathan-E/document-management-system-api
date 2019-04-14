@@ -1,7 +1,9 @@
 import {
   Role
 } from '../models/roles';
-import { validateRole } from '../validations/roles';
+import {
+  validateRole
+} from '../validations/roles';
 const roleController = {};
 
 //GET / controller
@@ -70,6 +72,7 @@ roleController.put = async (req, res) => {
 //GET /:id controller
 //Returns a unique role
 roleController.getById = async (req, res) => {
+  //checks the Role document for the passed id
   const role = await Role.findById(req.params.id);
 
   if (!role) return res.status(404).send('The role with the given ID was not found.');
@@ -77,4 +80,6 @@ roleController.getById = async (req, res) => {
   res.status(200).send(role);
 }
 
-export { roleController };
+export {
+  roleController
+};
