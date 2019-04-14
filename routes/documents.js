@@ -63,6 +63,9 @@ router.post("/", auth, async (req, res) => {
 
 //Return document according to access level
 router.get("/", auth, async (req, res) => {
+  let page = req.query.page;
+  let limit = req.query.limit;
+  console.log(!limit,  !page);
   const user = await User.findById(req.user._id);
   if (!user) return res.status(400).send("Invalid request");
 
@@ -72,7 +75,7 @@ router.get("/", auth, async (req, res) => {
     name: role.title
   });
 
-  if (userRoleInfo.level == 1) {
+  if (userRoleInfo.level === 1) {
     const doc = await Document.find();
 
     return res.status(200).send(doc);
@@ -92,8 +95,29 @@ router.get("/", auth, async (req, res) => {
       }
     ]
   });
+  if (!page) page = 0;
+  page = Number(page);
+  if (!limit) limit = 0;
+  limit = Number(limit);
 
-  res.send(docs);
+console.log('hi');
+
+  let start = page * limit;
+  let stop = start + limit;
+
+  let chuncks;
+  
+  if (!start && limit) {
+    chuncks = docs.slice(0, limit)
+    return res.status(200).send(chuncks);
+  }
+
+  if (start && limit) {
+    chuncks = docs.slice(start, stop)
+    return res.status(200).send(chuncks);
+  }
+
+  res.status(200).send(docs);
 });
 
 router.get("/:id", [validateObjectId, auth], async (req, res) => {
@@ -109,13 +133,13 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
   let doc = await Document.findById(req.params.id);
   if (!doc) return res.status(400).send("Document does not exist");
 
-  const access1 = doc.accessRight == 4;
+  const access1 = doc.accessRight === 4;
 
-  const access2 = doc.accessRight == 3 && doc.owner_id == user._id;
+  const access2 = doc.accessRight === 3 && doc.owner_id === user._id;
 
-  const access3 = doc.ownerRole == role.title && doc.accessRight == userRoleInfo.level;
+  const access3 = doc.ownerRole === role.title && doc.accessRight === userRoleInfo.level;
 
-  const access4 = userRoleInfo.level == 1;
+  const access4 = userRoleInfo.level === 1;
 
   if (access1 || access2 || access3 || access4) return res.status(200).send(doc);
 });
@@ -194,7 +218,7 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
   });
 
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
-  const isAdmin = userRoleInfo.level == 1;
+  const isAdmin = userRoleInfo.level === 1;
 
   if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
 
