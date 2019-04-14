@@ -97,9 +97,9 @@ router.post('/login', userController.login);
  *        - application/json
  *      description: This should logout a user
  *      parameters:
- *        - in: body
+ *        - in: header
  *          name: payload
- *          description: should contain the user's email and password.
+ *          description: should contain users token.
  *      responses:
  *        200:
  *          description: User logged out
