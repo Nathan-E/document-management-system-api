@@ -287,29 +287,47 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
  *      parameters:
  *        - in: path
  *          name: id
- *          description: The ID of the document to edit.
- *        - in: body 
- *          name: title 
- *          description: The new title of the document to be updated.
+ *          description: The ID of the document requested.
+ *        - in: body
+ *          name: title
+ *          description: the document title
+ *          example: Natural Processing
+ *        - in: body
+ *          name: type
+ *          description: the document type
+ *          example: thesis
+ *        - in: body
+ *          name: content
+ *          description: the document content
+ *          example: Use Glycol for dehydration
+ *        - in: body
+ *          name: accessRight
+ *          description: the document access right
+ *          example: 4
  *        - in: header
  *          name: x-auth-token
  *          description: An authorization token
  *      schema:
  *        type: object
- *        required:
- *          - name
  *        properties:
- *          id:
- *            type: integer
- *          name:
+ *          title:
  *            type: string
+ *            example: admin
+ *          type:
+ *            type: string
+ *            example: thesis
+ *          content:
+ *            type: string
+ *          accessRight:
+ *            type: number
+ *            example: 1
  *      responses:
  *        200:
  *          description: document updated successfully
  *          schema:
  *            type: string
  *        400:
- *          description: Could not update the document
+ *          description: invalid request
  *          schema:
  *            type: string
  *        401:
@@ -317,11 +335,11 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
  *          schema:
  *            type: string
  *        403:
- *          description: User no an Admin
+ *          description: invalid request
  *          schema:
  *          type: string
  *        404:
- *          description: Could not find  a document with the given ID 
+ *          description: invalid request 
  *          schema:
  *            type: string
  */
@@ -384,6 +402,40 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
   res.send(doc);
 });
 
+/**
+ * @swagger
+ * /api/v1/document/{id}:
+ *    put:
+ *      summary: deletes a document with the given id.
+ *      tags: [/api/v1/documents]
+ *      consumes:
+ *        - application/json
+ *      description: This should delete an existing document
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document to be deleted.
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
+ *      responses:
+ *        200:
+ *          description: document deleted
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: invalid request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
+ *          schema:
+ *            type: string
+ *        404:
+ *          description: invalid request 
+ *          schema:
+ *            type: string
+ */
 router.delete("/:id", [validateObjectId, auth], async (req, res) => {
   //checks if the document exist
   let doc = await Document.findById(req.params.id);
