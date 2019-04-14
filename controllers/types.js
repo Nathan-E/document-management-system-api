@@ -42,12 +42,15 @@ typeController.post = async (req, res) => {
 };
 
 //PUT /:id controller
+//edits an existing document
 typeController.put = async (req, res) => {
+  //validates the request body
   const {
     error
   } = validateType(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //check if the request title property is unique
   let type = await Type.findOne({
     title: req.body.title,
   });
