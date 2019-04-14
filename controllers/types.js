@@ -1,7 +1,9 @@
 import {
   Type
 } from '../models/types';
-import { validateType } from '../validations/index';
+import {
+  validateType
+} from '../validations/index';
 
 //document types controller object
 const typeController = {};
@@ -56,7 +58,7 @@ typeController.put = async (req, res) => {
   });
   if (type) return res.status(400).send(`${req.body.title} already exist`);
 
-
+  //find and update the type
   type = await Type.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -66,18 +68,24 @@ typeController.put = async (req, res) => {
   }, {
     new: true
   });
+  //returns 404 if role doesnot exist
   if (!type) return res.status(404).send('The type with the given ID was not found.');
 
   res.status(200).send(type);
 };
 
 //GET /:id controller
+//get a type by id
 typeController.getById = async (req, res) => {
+  //finds the document type by id
   const type = await Type.findById(req.params.id);
 
+  //returns 404 is document is not found
   if (!type) return res.status(404).send('The type with the given ID was not found.');
 
   res.status(200).send(type);
 };
 
-export { typeController };
+export {
+  typeController
+};
