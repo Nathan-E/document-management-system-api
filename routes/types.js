@@ -1,7 +1,12 @@
-import { Type, validate } from '../models/types';
-import { typeController } from '../controllers/index'
+import {
+  typeController
+} from '../controllers/index'
 import express from 'express';
-import { validateObjectId, auth, isAdmin} from '../middlewares/index';
+import {
+  validateObjectId,
+  auth,
+  isAdmin
+} from '../middlewares/index';
 
 const router = express.Router();
 
@@ -151,4 +156,6 @@ router.put('/:id', [validateObjectId, auth, isAdmin], typeController.put);
  */
 router.get('/:id', validateObjectId, typeController.getById);
 
-export { router as typesRouter }
+export {
+  router as typesRouter
+}

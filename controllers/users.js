@@ -1,35 +1,43 @@
 import {
   User
-} from '../models/users';
-import { usersValidator } from '../validations/index';
-import { Role } from '../models/roles';
+} from '../models/index';
+import {
+  usersValidator
+} from '../validations/index';
+import {
+  Role
+} from '../models/index';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
-import Joi from 'joi';
 
-
+//User Controller
 const userController = {};
 
 // POST /signup
+//signs up a user
 userController.signup = async (req, res) => {
+  //validates the request input field
   const {
     error
   } = usersValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //checks if user already exist
   let user = await User.findOne({
     email: req.body.email
   });
   if (user) return res.status(400).send('User already exist');
 
+  //checks if a valid role is passed in the request body
   const role = await Role.findOne({
     title: req.body.role
   });
   if (!role) return res.status(400).send('Invalid role.');
-
+  //hashs the password
   const salt = await bcrypt.genSalt(10);
   const password = await bcrypt.hash(req.body.password, salt);
 
+  //creates the user
   user = new User({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
@@ -39,50 +47,63 @@ userController.signup = async (req, res) => {
     password: password
   })
 
+  //saves the user
   await user.save();
 
   res.send('New user created!!!');
 };
 
 // POST /login
+//Allow an authenicated user to log in
 userController.login = async (req, res) => {
+  //validates the request body
   const {
     error
   } = usersValidator.validateLogin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //checks up the user by the request body email field
   let user = await User.findOne({
     email: req.body.email
   });
   if (!user) return res.status(400).send('Invalid email or password');
 
+  //valids the user request password
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send('Invalid email or password.');
 
+  //generates a unique token for the user
   const token = user.generateAuthToken();
 
+  //set the token in the header
   res.setHeader('x-auth-token', token);
   res.send('User logged in');
 };
 
 // POST /logout
+//logs a user out
 userController.logout = async (req, res) => {
+  //deletes the token form the header
   delete req.headers['x-auth-token'];
 
   res.send('User logged out');
 };
 
 // GET /
+//returns all users
 userController.get = async (req, res) => {
+  //gets all users and sort by firstname
   const user = await User.find().sort('firstname');
 
   res.send(user);
 }
 
 // GET /:id
+//gets a specific user
 userController.getById = async (req, res) => {
+  //checks for the user
   const user = await User.findById(req.params.id);
-
+  //returns 404 if the user have been deleted or does not exist
   if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
 
   res.send(user);
@@ -90,17 +111,21 @@ userController.getById = async (req, res) => {
 
 // PUT /:id
 userController.put = async (req, res) => {
+  //validates the request body
   const {
     error
   } = usersValidator.validateUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //checks for the user
   let user = await User.findById(req.params.id);
+  //returns 400 if user does not exist
   if (!user || user.deleted) return res.status(400).send('User does not exist');
-
+  //hashs the password if it exist in the request body
   const salt = await bcrypt.genSalt(10);
   const password = req.body.password ? await bcrypt.hash(req.body.password, salt) : user.password;
 
+  //updates the user
   user = await User.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -118,9 +143,12 @@ userController.put = async (req, res) => {
 
 // DELETE /:id
 userController.delete = async (req, res) => {
+  //check for the user with the passed id
   let user = await User.findById(req.params.id);
+  //returns 400 if the user does not exist or has been deleted
   if (!user || user.deleted) return res.status(400).send('User does not exist');
 
+  //updates the user
   user = await User.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -134,4 +162,6 @@ userController.delete = async (req, res) => {
   res.status(200).send(user);
 };
 
-export { userController };
+export {
+  userController
+};

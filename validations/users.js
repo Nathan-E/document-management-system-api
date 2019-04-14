@@ -37,4 +37,6 @@ usersValidator.validateUpdate = user => {
   return Joi.validate(user, schema);
 };
 
-export { usersValidator };
+export {
+  usersValidator
+};

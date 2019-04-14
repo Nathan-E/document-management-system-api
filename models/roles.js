@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import Joi from 'joi';
 
 //Role Schema
 const roleSchema = new mongoose.Schema({
+  //title of roles (admin, regular)
   title: {
     type: String,
     min: 4,
@@ -15,4 +15,7 @@ const roleSchema = new mongoose.Schema({
 //Role Model
 const Role = mongoose.model('Role', roleSchema);
 
-export { Role, roleSchema };
+export {
+  Role,
+  roleSchema
+};
