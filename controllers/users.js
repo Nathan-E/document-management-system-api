@@ -1,8 +1,12 @@
 import {
   User
 } from '../models/users';
-import { usersValidator } from '../validations/index';
-import { Role } from '../models/roles';
+import {
+  usersValidator
+} from '../validations/index';
+import {
+  Role
+} from '../models/roles';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 
@@ -139,9 +143,12 @@ userController.put = async (req, res) => {
 
 // DELETE /:id
 userController.delete = async (req, res) => {
+  //check for the user with the passed id
   let user = await User.findById(req.params.id);
+  //returns 400 if the user does not exist or has been deleted
   if (!user || user.deleted) return res.status(400).send('User does not exist');
 
+  //updates the user
   user = await User.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -155,4 +162,6 @@ userController.delete = async (req, res) => {
   res.status(200).send(user);
 };
 
-export { userController };
+export {
+  userController
+};
