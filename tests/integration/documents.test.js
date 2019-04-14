@@ -256,6 +256,29 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return the document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'qwertyuisdr',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents?limit=1`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+  
     it('should return appropriate document if user is not admin', async () => {
       const response = await request(server)
         .get('/api/v1/documents')
