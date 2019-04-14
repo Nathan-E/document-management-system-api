@@ -5,13 +5,14 @@ import { usersValidator } from '../validations/index';
 import { Role } from '../models/roles';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
-import Joi from 'joi';
 
-
+//User Controller
 const userController = {};
 
 // POST /signup
+//signs up a user
 userController.signup = async (req, res) => {
+  //validates the request input field
   const {
     error
   } = usersValidator.validate(req.body);
