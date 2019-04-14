@@ -4,6 +4,8 @@ import {
 import {
   validateRole
 } from '../validations/roles';
+
+//role controller object
 const roleController = {};
 
 //GET / controller
