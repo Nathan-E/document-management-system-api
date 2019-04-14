@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 
 //Access schema
 const accessSchema = new mongoose.Schema({
+  //access level name
   name: {
     type: String,
     required: true
   },
-  degree: {
+  //access level
+  level: {
     type: String,
     required: true
   }
