@@ -107,17 +107,21 @@ userController.getById = async (req, res) => {
 
 // PUT /:id
 userController.put = async (req, res) => {
+  //validates the request body
   const {
     error
   } = usersValidator.validateUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //checks for the user
   let user = await User.findById(req.params.id);
+  //returns 400 if user does not exist
   if (!user || user.deleted) return res.status(400).send('User does not exist');
-
+  //hashs the password if it exist in the request body
   const salt = await bcrypt.genSalt(10);
   const password = req.body.password ? await bcrypt.hash(req.body.password, salt) : user.password;
 
+  //updates the user
   user = await User.findOneAndUpdate({
     _id: req.params.id
   }, {
