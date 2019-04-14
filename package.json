@@ -4,7 +4,7 @@
   "description": "document managemant system(API)",
   "main": "index.js",
   "scripts": {
-    "test": "export NODE_ENV=test && jest --coverage --watchAll --verbose",
+    "test": "export NODE_ENV=test && jest --runInBand --coverage --watchAll --verbose",
     "start": "nodemon --exec babel-node index.js"
   },
   "repository": {
