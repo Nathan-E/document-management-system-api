@@ -199,7 +199,7 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(404);
     });
-    it('should create not document if the accessRight is passed', async () => {
+    it('should create not document if an unauthorized accessRight is passed', async () => {
 
       const document = {
         title: 'Natural gas processing',
@@ -213,7 +213,7 @@ describe('/api/v1/documents', () => {
         .set('x-auth-token', token2)
         .send(document);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(403);
     });
   });
   describe('GET /', () => {

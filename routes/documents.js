@@ -29,8 +29,24 @@ const router = express.Router();
  *      description: This should create a new document
  *      parameters:
  *        - in: body
- *          name: payload
- *          description: should contain the role's title
+ *          name: title
+ *          description: the document title
+ *          example: Natural Processing
+ *        - in: body
+ *          name: type
+ *          description: the document type
+ *          example: thesis
+ *        - in: body
+ *          name: content
+ *          description: the document content
+ *          example: Use Glycol for dehydration
+ *        - in: body
+ *          name: accessRight
+ *          description: the document access right
+ *          example: 4
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
  *      schema:
  *        type: object
  *        required:
@@ -57,6 +73,10 @@ const router = express.Router();
  *            type: string
  *        400:
  *          description: Could not create the document
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized
  *          schema:
  *            type: string
  *        403:
