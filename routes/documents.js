@@ -44,12 +44,10 @@ router.post("/", auth, async (req, res) => {
   if (!user) return res.status(404).send("Invalid request2");
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send("Invalid request3");
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(404).send("Invalid request4");
 
   const access = await Access.findOne({
     level: req.body.accessRight
@@ -109,8 +107,6 @@ router.get("/", auth, async (req, res) => {
     ]
   });
 
-  if (!docs.length) return res.status(404).send("No document exist");
-
   res.send(docs);
 });
 
@@ -132,7 +128,7 @@ router.get("/:id", [validateObjectId, auth], async (req, res) => {
 
   const access2 = doc.accessRight == 3 && doc.owner_id == user._id;
 
-  const access3 = doc.ownerRole == role.title && accessRight == userRoleInfo.level;
+  const access3 = doc.ownerRole == role.title && doc.accessRight == userRoleInfo.level;
 
   const access4 = userRoleInfo.level == 1;
 
@@ -157,15 +153,12 @@ router.put("/:id", [validateObjectId, auth], async (req, res) => {
         title: req.body.type
       })
     : doc;
-  if (!type) return res.status(404).send("Invalid document type");
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send("Invalid request");
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(404).send("Invalid request");
 
   let access;
 
@@ -210,15 +203,13 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
     return res.status(404).send("Document does not exist");
 
   const user = await User.findById(req.user._id);
-  if (!user) return res.status(404).send("Invalid request");
+  if (!user || user.deleted) return res.status(404).send("Invalid request");
 
   const role = await Role.findById(user.role);
-  if (!role) return res.status(404).send("Invalid request");
 
   const userRoleInfo = await Access.findOne({
     name: role.title
   });
-  if (!userRoleInfo) return res.status(400).send("Invalid request");
 
     userRoleInfo.level = Object.values(userRoleInfo)[3]["level"];
 
@@ -226,7 +217,7 @@ router.delete("/:id", [validateObjectId, auth], async (req, res) => {
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
   const isAdmin = userRoleInfo.level == 1;
 
-  if (!user || user.deleted || !compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
+  if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
 
 
   doc = await Document.findOneAndUpdate(
