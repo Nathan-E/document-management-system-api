@@ -13,9 +13,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/users:
+ * /api/v1/users/signup:
  *    post:
- *      summary: create a new user.
+ *      summary: creates a new user.
  *      tags: [/api/v1/users]
  *      consumes:
  *        - application/json
@@ -55,7 +55,7 @@ router.post('/signup', userController.signup);
 
 /**
  * @swagger
- * /api/v1/users:
+ * /api/v1/users/login:
  *    post:
  *      summary: login a user.
  *      tags: [/api/v1/users]
@@ -89,7 +89,7 @@ router.post('/login', userController.login);
 
 /**
  * @swagger
- * /api/v1/users:
+ * /api/v1/users/logout:
  *    post:
  *      summary: logout a user.
  *      tags: [/api/v1/users]
@@ -112,7 +112,7 @@ router.post('/logout', userController.logout);
  * @swagger
  * /api/v1/users:
  *    get:
- *      summary: gets all users.
+ *      summary: returns all users.
  *      tags: [/api/v1/users]
  *      description: This should return all users
  *      responses:
@@ -137,9 +137,9 @@ router.get('/', [auth, isAdmin], userController.get);
 
 /**
  * @swagger
- * /api/v1/users:
+ * /api/v1/users/{id}:
  *    get:
- *      summary: gets a users.
+ *      summary: returns the user with the given id.
  *      tags: [/api/v1/users]
  *      description: This should return a user
  *      responses:
@@ -164,9 +164,9 @@ router.get('/:id', [validateObjectId, auth], userController.getById);
 
 /**
  * @swagger
- * /api/v1/users:
+ * /api/v1/users/{id}:
  *    put:
- *      summary: gets a users.
+ *      summary: updates a user with the specified id.
  *      tags: [/api/v1/users]
  *      description: This should return a user
  *      responses:
@@ -185,7 +185,7 @@ router.put('/:id', validateObjectId, userController.put);
  * @swagger
  * /api/v1/users/{id}:
  *    delete:
- *      summary: delete user with the passed id
+ *      summary: deletes a user with the passed id
  *      tags: [/api/v1/users]
  *      consumes:
  *        - application/json
