@@ -50,28 +50,36 @@ userController.signup = async (req, res) => {
 };
 
 // POST /login
+//Allow an authenicated user to log in
 userController.login = async (req, res) => {
+  //validates the request body
   const {
     error
   } = usersValidator.validateLogin(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //checks up the user by the request body email field
   let user = await User.findOne({
     email: req.body.email
   });
   if (!user) return res.status(400).send('Invalid email or password');
 
+  //valids the user request password
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) return res.status(400).send('Invalid email or password.');
 
+  //generates a unique token for the user
   const token = user.generateAuthToken();
 
+  //set the token in the header
   res.setHeader('x-auth-token', token);
   res.send('User logged in');
 };
 
 // POST /logout
+//logs a user out
 userController.logout = async (req, res) => {
+  //deletes the token form the header
   delete req.headers['x-auth-token'];
 
   res.send('User logged out');
