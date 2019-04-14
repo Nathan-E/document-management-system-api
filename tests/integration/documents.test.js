@@ -393,6 +393,31 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should update an existing document if the user does not exist', async () => {
+      const paylaod = {
+        title: 'jhajdhdhiskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', regularToken)
+        .send({
+          title: 'Hello!!!',
+          accessRight: 4
+        });
+
+      expect(response.status).toBe(404);
+    });
     it('should not update an existing document the input fields are invalid', async () => {
       const paylaod = {
         title: 'jhajdhdskdwdwhs',
