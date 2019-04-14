@@ -39,18 +39,20 @@ roleController.post = async (req, res) => {
 };
 
 //PUT /:id controller
+//Updates existing role
 roleController.put = async (req, res) => {
+  //validates the request body
   const {
     error
   } = validateRole(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
+  //checks if any role exist with the same title in request body
   let role = await Role.findOne({
     title: req.body.title,
   });
   if (role) return res.status(400).send(`${req.body.title} already exist`);
 
-
+  //find the role and updates it
   role = await Role.findOneAndUpdate({
     _id: req.params.id
   }, {
@@ -66,6 +68,7 @@ roleController.put = async (req, res) => {
 };
 
 //GET /:id controller
+//Returns a unique role
 roleController.getById = async (req, res) => {
   const role = await Role.findById(req.params.id);
 
