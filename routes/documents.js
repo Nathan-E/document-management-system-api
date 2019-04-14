@@ -259,40 +259,7 @@ router.put("/:id", [validateObjectId, auth], documentController.put);
  *          schema:
  *            type: string
  */
-router.delete("/:id", [validateObjectId, auth], async (req, res) => {
-  //checks if the document exist
-  let doc = await Document.findById(req.params.id);
-  if (!doc || doc.deleted)
-    return res.status(404).send("Document does not exist");
-  //checks if the user exist
-  const user = await User.findById(req.user._id);
-  if (!user || user.deleted) return res.status(404).send("Invalid request");
-  //gets the role of the user
-  const role = await Role.findById(user.role);
-  //gets the access level of the user
-  const userRoleInfo = await Access.findOne({
-    name: role.title
-  });
-  //checks if the user owns the document
-  const compareObjectId = doc.owner_id.toString() === user._id.toString();
-  //checks if the user is an admin
-  const isAdmin = userRoleInfo.level === 1;
-  //returnss 400 if the user does not own the document nor an admin
-  if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
-
-  //finds the document and deletes it
-  doc = await Document.findOneAndUpdate({
-    _id: req.params.id
-  }, {
-    $set: {
-      deleted: true
-    }
-  }, {
-    new: true
-  });
-
-  res.send(doc);
-});
+router.delete("/:id", [validateObjectId, auth], documentController.delete);
 
 //Validates the document update fields
 function validateDocumentUpdate(document) {
