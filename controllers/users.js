@@ -18,19 +18,22 @@ userController.signup = async (req, res) => {
   } = usersValidator.validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  //checks if user already exist
   let user = await User.findOne({
     email: req.body.email
   });
   if (user) return res.status(400).send('User already exist');
 
+  //checks if a valid role is passed in the request body
   const role = await Role.findOne({
     title: req.body.role
   });
   if (!role) return res.status(400).send('Invalid role.');
-
+  //hashs the password
   const salt = await bcrypt.genSalt(10);
   const password = await bcrypt.hash(req.body.password, salt);
 
+  //creates the user
   user = new User({
     firstname: req.body.firstname,
     lastname: req.body.lastname,
@@ -40,6 +43,7 @@ userController.signup = async (req, res) => {
     password: password
   })
 
+  //saves the user
   await user.save();
 
   res.send('New user created!!!');
