@@ -1,9 +1,8 @@
-import 'babel-polyfill';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import {
   Type
-} from '../../models/types';
+} from '../../models/index';
 import {
   adminToken,
   regularToken

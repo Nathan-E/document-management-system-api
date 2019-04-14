@@ -1,19 +1,18 @@
-import 'babel-polyfill';
 import {
   User
-} from '../../models/users';
+} from '../../models/index';
 import {
   Role
-} from '../../models/roles';
+} from '../../models/index';
 import {
   Access
-} from '../../models/access';
+} from '../../models/index';
 import {
   Document
-} from '../../models/documents';
+} from '../../models/index';
 import {
   Type
-} from '../../models/types';
+} from '../../models/index';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
