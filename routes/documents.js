@@ -251,5 +251,5 @@ router.put("/:id", [validateObjectId, auth], documentController.put);
 router.delete("/:id", [validateObjectId, auth], documentController.delete);
 
 export {
-  router as documentRouter
+  router as documentsRouter
 };
