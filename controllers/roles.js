@@ -1,6 +1,6 @@
 import {
   Role
-} from '../models/roles';
+} from '../models/index';
 import {
   validateRole
 } from '../validations/roles';

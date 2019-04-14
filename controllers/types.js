@@ -1,6 +1,6 @@
 import {
   Type
-} from '../models/types';
+} from '../models/index';
 import {
   validateType
 } from '../validations/index';

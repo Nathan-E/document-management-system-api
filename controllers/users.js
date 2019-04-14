@@ -1,6 +1,6 @@
 import {
   User
-} from '../models/users';
+} from '../models/index';
 import {
   usersValidator
 } from '../validations/index';
