@@ -1,31 +1,31 @@
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
-import Joi from 'joi';
 import dotenv from 'dotenv';
 dotenv.config();
-import {
-  Role
-} from '../models/roles';
 
 //User Schema
 const userSchema = new mongoose.Schema({
+  //users firstname
   firstname: {
     type: String,
     required: true,
     minlength: 5,
     maxlength: 50
   },
+  //user's lastname
   lastname: {
     type: String,
     required: true,
     minlength: 5,
     maxlength: 50
   },
+  //users role (admin , regualr)
   role: {
     type: mongoose.Types.ObjectId,
     ref: 'Role',
     required: true
   },
+  //user username
   username: {
     type: String,
     required: true,
@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema({
     maxlength: 25,
     unique: true
   },
+  //users email
   email: {
     type: String,
     required: true,
@@ -40,16 +41,19 @@ const userSchema = new mongoose.Schema({
     maxlength: 255,
     unique: true
   },
+  //user password
   password: {
     type: String,
     required: true,
     minlength: 5,
     maxlength: 1024
   },
+  //user status
   deleted: {
     type: Boolean,
     default: false
   },
+  //tells if a user is an admin
   isAdmin: {
     type: Boolean,
     default: false
