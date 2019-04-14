@@ -529,5 +529,47 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(404);
     });
+    it('should 404 if the user does not exist', async () => {
+      const paylaod = {
+        title: 'jhf4dd4444fskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('at'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .delete(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', regularToken)
+        .send();
+
+      expect(response.status).toBe(404);
+    });
+    it('should 400 if the user does not own the document', async () => {
+      const paylaod = {
+        title: 'jhf4dd114fskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('at'),
+        accessRight: 1,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .delete(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
   });
 });
