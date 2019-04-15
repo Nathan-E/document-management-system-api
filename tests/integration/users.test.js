@@ -2,11 +2,10 @@ import 'babel-polyfill';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import {
-  User
-} from '../../models/users';
-import {
+  User,
+  Document,
   Role
-} from '../../models/roles';
+} from '../../models/index';
 import {
   adminToken,
   regularToken
@@ -15,7 +14,7 @@ import bcrypt from 'bcrypt';
 import _ from 'lodash';
 import app from '../../index';
 
-let server
+let server;
 
 describe('/api/v1/users', () => {
   beforeAll(async () => {
@@ -29,12 +28,13 @@ describe('/api/v1/users', () => {
   beforeEach(async () => {});
   afterEach(async () => {
     await User.deleteMany({});
-
+    await Document.deleteMany({});
   });
 
   afterAll(async () => {
     await Role.deleteMany({});
     await User.deleteMany({});
+    await Document.deleteMany({});
     server.close();
   });
   describe('POST /signup', () => {
@@ -234,7 +234,7 @@ describe('/api/v1/users', () => {
     });
   });
   describe('GET /:id', () => {
-    it('should return a user if the user exist', async () => {
+    it('should return a user if the user is an admin', async () => {
       const salt = await bcrypt.genSalt(10);
       const password1 = '12345';
       const hashedPassword1 = await bcrypt.hash(password1, salt);
@@ -255,7 +255,7 @@ describe('/api/v1/users', () => {
 
       const response = await request(server)
         .get(`/api/v1/users/${user._id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', adminToken)
         .send();
 
       expect(response.status).toBe(200);
@@ -265,10 +265,181 @@ describe('/api/v1/users', () => {
 
       const response = await request(server)
         .get(`/api/v1/users/${id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', adminToken)
         .send();
 
       expect(response.status).toBe(404);
+    });
+  });
+  describe('GET /:id/documents', () => {
+    it('should return only the user\'s document if user is signed in', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password = '12345';
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const payload2 = {
+        firstname: 'tChibuezEx',
+        lastname: 'NtathaNe',
+        role: mongoose.Types.ObjectId(),
+        username: 'qwebrrtdf',
+        email: 'chibuerrzer@test.com',
+        password: hashedPassword
+      };
+
+      let user3 = await new User(payload2);
+
+      let token3 = user3.generateAuthToken();
+      await user3.save();
+
+      const paylaod = {
+        title: 'Helloojejfnk',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user3._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 4,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const paylaod2 = {
+        title: 'Kijiefjirvve',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: mongoose.Types.ObjectId(),
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc2 = new Document(paylaod2);
+
+      await doc2.save();
+
+      const response = await request(server)
+        .get(`/api/v1/users/${user3._id}/documents`)
+        .set('x-auth-token', token3)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+    });
+    it('should return 400 any document if user is invalid', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server)
+        .get(`/api/v1/users/${id}/documents`)
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
+    it('should return only the user\'s document considering the limit query parameter', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password = '12345';
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const payload2 = {
+        firstname: 'tChibuezEx',
+        lastname: 'NtathaNe',
+        role: mongoose.Types.ObjectId(),
+        username: 'qwebrrtdf',
+        email: 'chibuerrzer@test.com',
+        password: hashedPassword
+      };
+
+      let user3 = await new User(payload2);
+
+      let token3 = user3.generateAuthToken();
+      await user3.save();
+
+      const paylaod = {
+        title: 'QwwweeEdewfrrff',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user3._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 4,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const paylaod2 = {
+        title: 'Begnng3q44r43f',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user3._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc2 = new Document(paylaod2);
+
+      await doc2.save();
+
+      const response = await request(server)
+        .get(`/api/v1/users/${user3._id}/documents?limit=1`)
+        .set('x-auth-token', token3)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+    });
+    it('should return only the user\'s document considering the limit and pagination query parameters', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password = '12345';
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      const payload2 = {
+        firstname: 'tChibuezEx',
+        lastname: 'NtathaNe',
+        role: mongoose.Types.ObjectId(),
+        username: 'qwebrrtdf',
+        email: 'chibuerrzer@test.com',
+        password: hashedPassword
+      };
+
+      let user3 = await new User(payload2);
+
+      let token3 = user3.generateAuthToken();
+      await user3.save();
+
+      const paylaod = {
+        title: 'QwwweeEdewfrrff',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user3._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 4,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const paylaod2 = {
+        title: 'Begnng3q44r43f',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user3._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc2 = new Document(paylaod2);
+
+      await doc2.save();
+
+      const response = await request(server)
+        .get(`/api/v1/users/${user3._id}/documents?limit=1&page=1`)
+        .set('x-auth-token', token3)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
     });
   });
   describe('PUT /:id', () => {

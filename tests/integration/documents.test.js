@@ -1,19 +1,19 @@
 import 'babel-polyfill';
 import {
   User
-} from '../../models/users';
+} from '../../models/index';
 import {
   Role
-} from '../../models/roles';
+} from '../../models/index';
 import {
   Access
-} from '../../models/access';
+} from '../../models/index';
 import {
   Document
-} from '../../models/documents';
+} from '../../models/index';
 import {
   Type
-} from '../../models/types';
+} from '../../models/index';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
@@ -199,7 +199,7 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(404);
     });
-    it('should create not document if the accessRight is passed', async () => {
+    it('should create not document if an unauthorized accessRight is passed', async () => {
 
       const document = {
         title: 'Natural gas processing',
@@ -213,7 +213,7 @@ describe('/api/v1/documents', () => {
         .set('x-auth-token', token2)
         .send(document);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(403);
     });
   });
   describe('GET /', () => {
@@ -256,6 +256,50 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should return the document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'qwertyuisdr',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents?limit=1`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should return the document if user is signed in', async () => {
+
+      const paylaod = {
+        title: 'qwernmisdr',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 2,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents?limit=1&page=1`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
     it('should return appropriate document if user is not admin', async () => {
       const response = await request(server)
         .get('/api/v1/documents')
@@ -278,6 +322,28 @@ describe('/api/v1/documents', () => {
 
       const paylaod = {
         title: 'qwertyuioer',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user2._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('a'),
+        accessRight: 4,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(200);
+    });
+    it('should return the document if user an admin', async () => {
+
+      const paylaod = {
+        title: 'ndifhekddsoer',
         type_id: mongoose.Types.ObjectId(),
         owner_id: user._id,
         ownerRole: 'regularX',
@@ -330,7 +396,7 @@ describe('/api/v1/documents', () => {
       const paylaod = {
         title: 'adsdfsfwdaew',
         type_id: mongoose.Types.ObjectId(),
-        owner_id: user._id,
+        owner_id: user2._id,
         ownerRole: 'regularX',
         content: new Array(15).join('a'),
         accessRight: 3,
@@ -341,12 +407,12 @@ describe('/api/v1/documents', () => {
       await doc.save();
       const response = await request(server)
         .get(`/api/v1/documents/${doc._id}`)
-        .set('x-auth-token', token)
+        .set('x-auth-token', token2)
         .send();
 
       expect(response.status).toBe(200);
     });
-    it('should return role document if user is of that role', async () => {
+    it('should return the document if user is of that document role', async () => {
       const paylaod = {
         title: 'adsdfsfwdaeasw',
         type_id: mongoose.Types.ObjectId(),
@@ -499,28 +565,28 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(400);
     });
-      it('should not update an existing document if update access right is higher than the user', async () => {
-        const paylaod = {
-          title: 'jhajdhdwqweskh',
-          type_id: mongoose.Types.ObjectId(),
-          owner_id: user2._id,
-          ownerRole: 'regularX',
-          content: new Array(15).join('af'),
-          accessRight: 2,
-        };
+    it('should not update an existing document if update access right is higher than the user', async () => {
+      const paylaod = {
+        title: 'jhajdhdwqweskh',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user2._id,
+        ownerRole: 'regularX',
+        content: new Array(15).join('af'),
+        accessRight: 2,
+      };
 
-        const doc = new Document(paylaod);
+      const doc = new Document(paylaod);
 
-        await doc.save();
+      await doc.save();
 
 
-        const response = await request(server)
-          .put(`/api/v1/documents/${doc._id}`)
-          .set('x-auth-token', token2)
-          .send({});
+      const response = await request(server)
+        .put(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token2)
+        .send({});
 
-        expect(response.status).toBe(200);
-      });
+      expect(response.status).toBe(200);
+    });
   });
   describe('DELETE /:id', () => {
     it('should delete a doc if the user is an admin', async () => {

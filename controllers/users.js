@@ -1,12 +1,9 @@
 import {
-  User
+  User, Document, Role
 } from '../models/index';
 import {
   usersValidator
 } from '../validations/index';
-import {
-  Role
-} from '../models/index';
 import _ from 'lodash';
 import bcrypt from 'bcrypt';
 
@@ -107,6 +104,43 @@ userController.getById = async (req, res) => {
   if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
 
   res.send(user);
+};
+
+//GET /:id/documents
+userController.getUserDocuments = async (req, res) => {
+  //get the request queries
+  let page = req.query.page;
+  let limit = req.query.limit;
+  //checks if the user exist
+  const user = await User.findById(req.user._id);
+  if (!user) return res.status(400).send("Invalid request");
+  //returns the documents within the user access right
+  const docs = await Document.find({
+    owner_id: user._id
+  });
+  //checks if the query string is truthy
+  if (!page) page = 0;
+  page = Number(page);
+  if (!limit) limit = 0;
+  limit = Number(limit);
+
+  //set the pagination and limit
+  let start = page * limit;
+  let stop = start + limit;
+
+  let chuncks;
+  //returns document in batches according to query string limit
+  if (!start && limit) {
+    chuncks = docs.slice(0, limit)
+    return res.status(200).send(chuncks);
+  }
+  //returns document in batches according to query string limit and page set
+  if (start != 0 && limit) {
+    chuncks = docs.slice(start, stop);
+    return res.status(200).send(chuncks);
+  }
+  //returns all the found documents if no queries are specified
+  res.status(200).send(docs);
 };
 
 // PUT /:id
