@@ -112,6 +112,22 @@ describe('/api/v1/search', () => {
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(1);
     });
+    it('should get all the document if the the admin requests for it and the accessRight and role query parameter are valid and invalid respectively', async () => {
+      const response = await request(server)
+        .get('/api/v1/search?accessRight=1&role=admin1')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
+    it('should get all the document if the the admin requests for it and the role and accessRight query parameter are valid and invalid respectively', async () => {
+      const response = await request(server)
+        .get('/api/v1/search?accessRight=5&role=admin')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
     it('should return 400 if the role query parameter does not exist', async () => {
       const response = await request(server)
         .get('/api/v1/search?role=regular1')
