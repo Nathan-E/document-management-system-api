@@ -10,10 +10,14 @@ import {
 import {
   documentController
 } from './documents';
+import {
+  searchDocument
+} from './search';
 
 export {
   typeController,
   roleController,
   userController,
-  documentController
+  documentController,
+  searchDocument
 };
