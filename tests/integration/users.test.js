@@ -234,7 +234,7 @@ describe('/api/v1/users', () => {
     });
   });
   describe('GET /:id', () => {
-    it('should return a user if the user exist', async () => {
+    it('should return a user if the user is an admin', async () => {
       const salt = await bcrypt.genSalt(10);
       const password1 = '12345';
       const hashedPassword1 = await bcrypt.hash(password1, salt);
@@ -255,7 +255,7 @@ describe('/api/v1/users', () => {
 
       const response = await request(server)
         .get(`/api/v1/users/${user._id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', adminToken)
         .send();
 
       expect(response.status).toBe(200);
@@ -265,7 +265,7 @@ describe('/api/v1/users', () => {
 
       const response = await request(server)
         .get(`/api/v1/users/${id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', adminToken)
         .send();
 
       expect(response.status).toBe(404);
