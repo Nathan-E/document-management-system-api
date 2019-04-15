@@ -7,6 +7,7 @@ import {
   auth,
   isAdmin
 } from '../middlewares/index';
+import { User, Document } from '../models/index';
 
 
 const router = express.Router();
@@ -161,6 +162,74 @@ router.get('/', [auth, isAdmin], userController.get);
  *            type: string
  */
 router.get('/:id', [validateObjectId, auth], userController.getById);
+
+/**
+ * @swagger
+ * /api/v1/users/{id}/documents:
+ *    get:
+ *      summary: returns document belonging to the user with the given id.
+ *      tags: [/api/v1/users]
+ *      description: This should return a user documents
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document requested.
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      responses:
+ *        200:
+ *          description: user's document
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Failed Request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *            type: string 
+ *        403:
+ *          description: User not an Admin 
+ *          schema:
+ *            type: string
+ */
+//search for documents owned byb the specific user
+router.get('/:id/documents', [validateObjectId, auth], async (req, res) => {
+  //get the request queries
+  let page = req.query.page;
+  let limit = req.query.limit; 
+  //checks if the user exist
+  const user = await User.findById(req.user._id);
+  if (!user) return res.status(400).send("Invalid request");
+  //returns the documents within the user access right
+  const docs = await Document.find({owner_id: user._id});
+  //checks if the query string is truthy
+  if (!page) page = 0;
+  page = Number(page);
+  if (!limit) limit = 0;
+  limit = Number(limit);
+
+  //set the pagination and limit
+  let start = page * limit;
+  let stop = start + limit;
+
+  let chuncks;
+  //returns document in batches according to query string limit
+  if (!start && limit) {
+    chuncks = docs.slice(0, limit)
+    return res.status(200).send(chuncks);
+  }
+  //returns document in batches according to query string limit and page set
+  if (start != 0 && limit) {
+    chuncks = docs.slice(start, stop);
+    return res.status(200).send(chuncks);
+  }
+  //returns all the found documents if no queries are specified
+  res.status(200).send(docs);
+});
+
 
 /**
  * @swagger
