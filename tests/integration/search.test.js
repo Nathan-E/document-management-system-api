@@ -102,6 +102,14 @@ describe('/api/v1/search', () => {
 
       expect(response.status).toBe(400);
     });
+    it('should return 400 if the accessRight query parameter does not exist', async () => {
+      const response = await request(server)
+        .get('/api/v1/search?accessRight=5')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
     it('should get all the document if the the admin is request for it considering the limit query parameters', async () => {
       const response = await request(server)
         .get('/api/v1/search?limit=1')
