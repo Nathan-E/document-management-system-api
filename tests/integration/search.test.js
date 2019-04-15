@@ -76,16 +76,16 @@ describe('/api/v1/search', () => {
   });
 
   describe('GET /', () => {
-      it('should get all the document if the the admin is request for it', async() => {
+    it('should get all the document if the the admin is request for it', async () => {
       const response = await request(server)
         .get('/api/v1/search')
         .set('x-auth-token', adminToken)
         .send();
 
-        expect(response.status).toBe(200);
-        expect(response.body.length).toBe(4);
-     });
-    it('should get all the document if the the admin is request for it considering the query parameters', async () => {
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(4);
+    });
+    it('should get all the document if the the admin is request for it considering the role query parameter', async () => {
       const response = await request(server)
         .get('/api/v1/search?role=regular')
         .set('x-auth-token', adminToken)
@@ -94,7 +94,15 @@ describe('/api/v1/search', () => {
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(3);
     });
-    it('should get all the document if the the admin is request for it considering the query parameters', async () => {
+    it('should return 400 if the role query parameter does not exist', async () => {
+      const response = await request(server)
+        .get('/api/v1/search?role=regular1')
+        .set('x-auth-token', adminToken)
+        .send();
+
+      expect(response.status).toBe(400);
+    });
+    it('should get all the document if the the admin is request for it considering the limit query parameters', async () => {
       const response = await request(server)
         .get('/api/v1/search?limit=1')
         .set('x-auth-token', adminToken)
@@ -103,14 +111,14 @@ describe('/api/v1/search', () => {
       expect(response.status).toBe(200);
       expect(response.body.length).toBe(1);
     });
-      it('should get all the document if the the admin is request for it considering the query parameters', async () => {
-        const response = await request(server)
-          .get('/api/v1/search?limit=1&page=3')
-          .set('x-auth-token', adminToken)
-          .send();
+    it('should get all the document if the the admin is request for it considering the limit and pagination query parameters', async () => {
+      const response = await request(server)
+        .get('/api/v1/search?limit=1&page=3')
+        .set('x-auth-token', adminToken)
+        .send();
 
-        expect(response.status).toBe(200);
-        expect(response.body.length).toBe(1);
-      });
+      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+    });
   });
 });
