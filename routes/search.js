@@ -54,7 +54,7 @@ router.get('/', [auth, isAdmin], async (req, res) => {
     if (!access) return res.status(400).send('invalid request');
     if (!roleInfo) return res.status(400).send('invalid request');
     docs = await Document.find({
-      accessRight: access.level, ownerRole: role.title
+      accessRight: access.level, ownerRole: roleInfo.title
     }).sort('-createdAt');
   };
 
