@@ -8,7 +8,8 @@ import {
   rolesRouter,
   typesRouter,
   usersRouter,
-  documentsRouter
+  documentsRouter,
+  searchDocument
 } from './routes/index';
 dotenv.config();
 
@@ -42,6 +43,7 @@ app.use('/api/v1/roles', rolesRouter);
 app.use('/api/v1/types', typesRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/documents', documentsRouter);
+app.use('/api/v1/search', searchDocument);
 
 
 Joi.objectId = require('joi-objectid')(Joi);

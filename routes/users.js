@@ -8,7 +8,6 @@ import {
   isAdmin
 } from '../middlewares/index';
 
-
 const router = express.Router();
 
 /**
@@ -160,7 +159,50 @@ router.get('/', [auth, isAdmin], userController.get);
  *          schema:
  *            type: string
  */
-router.get('/:id', [validateObjectId, auth], userController.getById);
+router.get('/:id', [validateObjectId, auth, isAdmin], userController.getById);
+
+/**
+ * @swagger
+ * /api/v1/users/{id}/documents:
+ *    get:
+ *      summary: returns document belonging to the user with the given id.
+ *      tags: [/api/v1/users]
+ *      description: This should return a user documents
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: The ID of the document requested.
+ *        - in: query
+ *          name: limit
+ *          description: The batch limit.
+ *          required: false
+ *        - in: query
+ *          name: pages
+ *          required: false
+ *          description: The pagination.
+ *        - in: header
+ *          name: token
+ *          description: should be a valid user token
+ *      responses:
+ *        200:
+ *          description: user's document
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Failed Request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *            type: string 
+ *        403:
+ *          description: User not an Admin 
+ *          schema:
+ *            type: string
+ */
+//search for documents owned byb the specific user
+router.get('/:id/documents', [validateObjectId, auth], userController.getUserDocuments);
 
 /**
  * @swagger
