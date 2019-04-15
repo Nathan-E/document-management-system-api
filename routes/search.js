@@ -9,7 +9,7 @@ import express from 'express';
 
 const router = express.Router();
 
-//search for specific role
+//search documents considering query strings
 router.get('/', [auth, isAdmin], searchDocument.get);
 
 export {

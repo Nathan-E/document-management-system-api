@@ -6,28 +6,28 @@ import {
 
 const searchDocument = {};
 
+//search documents considering query strings
 searchDocument.get = async (req, res) => {
   //get the request queries
   let page = req.query.page;
   let limit = req.query.limit;
   let role = req.query.role;
   let accessRight = req.query.accessRight;
-  // console.log(page, limit);
-  //checks if the role is valid
+
+  //retrieves the role if its valid
   let roleInfo = await Role.findOne({
     title: role
   });
 
-
+  //retrieves the access field if its valid
   const access = await Access.findOne({
     level: accessRight
   });
 
-  //checks if the access right is valid
-
+  //stores the document retrieved
   let docs;
 
-  // executes if only the role was passed as a query
+  // executes if only the role was passed as a query parameter
   if (role && !accessRight) {
     if (!roleInfo) return res.status(400).send('invalid request');
     docs = await Document.find({
@@ -35,7 +35,7 @@ searchDocument.get = async (req, res) => {
     }).sort('-createdAt');
   };
 
-  // executes if only the accessRight was passed
+  // executes if only the accessRight was passed as a query parameter
   if (accessRight && !role) {
     if (!access) return res.status(400).send('invalid request');
     docs = await Document.find({
@@ -43,7 +43,7 @@ searchDocument.get = async (req, res) => {
     }).sort('-createdAt');
   };
 
-  // executes if the accessRight and role was passed
+  // executes if the accessRight and role was passed as query parameters
   if (accessRight && role) {
     if (!access) return res.status(400).send('invalid request');
     if (!roleInfo) return res.status(400).send('invalid request');
@@ -58,7 +58,7 @@ searchDocument.get = async (req, res) => {
     docs = await Document.find().sort('-createdAt');
   };
 
-  //checks if the query string is truthy
+  //checks if the query strings for pagination and limit was passed
   if (!page) page = 0;
   page = Number(page);
   if (!limit) limit = 0;
@@ -68,6 +68,7 @@ searchDocument.get = async (req, res) => {
   let start = page * limit;
   let stop = start + limit;
 
+  //holds the documents
   let chuncks;
   //returns document in batches according to query string limit
   if (!start && limit) {
@@ -84,4 +85,6 @@ searchDocument.get = async (req, res) => {
   res.status(200).send(docs);
 };
 
-export { searchDocument };
+export {
+  searchDocument
+};
