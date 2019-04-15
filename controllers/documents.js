@@ -137,13 +137,16 @@ documentController.getByID = async (req, res) => {
   //public document
   const access1 = doc.accessRight === 4;
   //private document and owner is the user requesting
-  const access2 = doc.accessRight === 3 && doc.owner_id === user._id;
+  const access2 = doc.accessRight === 3 && doc.owner_id.toString() === user._id.toString();
   //role document and user with the role access is requesting
   const access3 = doc.ownerRole === role.title && doc.accessRight === userRoleInfo.level;
   //admin document
   const access4 = userRoleInfo.level === 1;
 
-  if (access1 || access2 || access3 || access4) return res.status(200).send(doc);
+  if (access4) return res.status(200).send(doc);
+  if (access3) return res.status(200).send(doc);
+  if (access2) return res.status(200).send(doc);
+  if(access1) return res.status(200).send(doc);
 }
 
 //PUT /:id
