@@ -103,8 +103,8 @@ router.post('/login', userController.login);
  *      description: This should logout a user
  *      parameters:
  *        - in: header
- *          name: payload
- *          description: should contain users token.
+ *          name: token
+ *          description: logged in users token.
  *      responses:
  *        200:
  *          description: User logged out
