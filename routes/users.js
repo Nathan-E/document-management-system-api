@@ -152,15 +152,12 @@ router.get('/', [auth, isAdmin], userController.get);
 
 /**
  * @swagger
- * /api/v1/users/{id}/documents:
+ * /api/v1/users/documents:
  *    get:
  *      summary: returns document belonging to the user with the given id.
  *      tags: [/api/v1/users]
  *      description: This should return a user documents
  *      parameters:
- *        - in: path
- *          name: id
- *          description: The ID of the document requested.
  *        - in: query
  *          name: limit
  *          description: The batch limit.
@@ -170,7 +167,7 @@ router.get('/', [auth, isAdmin], userController.get);
  *          required: false
  *          description: The pagination.
  *        - in: header
- *          name: token
+ *          name: x-auth-token
  *          description: should be a valid user token
  *      responses:
  *        200:
@@ -249,7 +246,50 @@ router.get('/:id', [validateObjectId, auth, isAdmin], userController.getById);
  *          schema:
  *            type: string
  */
-router.put('/:id', validateObjectId, userController.put);
+
+ /**
+  * @swagger
+  * /api/v1/users/{id}:
+  *    put:
+  *      summary: updates a user with the specifed id.
+  *      tags: [/api/v1/users]
+  *      consumes:
+  *        - application/json
+  *      description: Updates an existing user
+  *      parameters:
+  *        - in: path
+  *          name: id
+  *          description: user's id
+  *        - in: body
+  *          name: User's details
+  *          description: user details.
+  *          schema:
+  *            type: object
+  *            required: true
+  *            properties:
+  *              password:
+  *                type: string
+  *                example: "12345"
+  *              firstname:
+  *                type: string
+  *                example: Eziokwubundu
+  *              lastname:
+  *                type: string
+  *                example: Chibueze
+  *        - in: header
+  *          name: x-auth-token
+  *          description: user's token
+  *      responses:
+  *        200:
+  *          description: User updated successfully
+  *          schema:
+  *            type: string
+  *        400:
+  *          description: Could not update the user
+  *          schema:
+  *            type: string
+  */
+router.put('/:id', [validateObjectId, auth], userController.put);
 
 /**
  * @swagger
@@ -264,15 +304,9 @@ router.put('/:id', validateObjectId, userController.put);
  *        - in: path
  *          name: id
  *          description: The ID of the user requested.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          id:
- *            type: integer
- *          name:
- *            type: string
+ *        - in: header
+ *          name: x-auth-token
+ *          description: User's token
  *      responses:
  *        200:
  *          description:  success
