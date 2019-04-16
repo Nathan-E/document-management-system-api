@@ -54,6 +54,22 @@ describe('/api/v1/users', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should not create a new user if the role input field is set to admin', async () => {
+      const payload = {
+        firstname: 'Chibueze',
+        lastname: 'Nathan',
+        role: 'admin',
+        username: 'nachip',
+        email: 'chibuezp@test.com',
+        password: '12345'
+      }
+
+      const response = await request(server)
+        .post('/api/v1/users/signup')
+        .send(payload);
+
+      expect(response.status).toBe(400);
+    });
     it('should create not a new user if the input field are invalid', async () => {
       const payload = {
         firstname: 'Chi',
