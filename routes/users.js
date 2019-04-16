@@ -10,6 +10,8 @@ import {
 
 const router = express.Router();
 
+
+
 /**
  * @swagger
  * /api/v1/users/signup:
@@ -150,43 +152,6 @@ router.get('/', [auth, isAdmin], userController.get);
 
 /**
  * @swagger
- * /api/v1/users/{id}:
- *    get:
- *      summary: returns the user with the given id.
- *      tags: [/api/v1/users]
- *      description: This should return a user
- *      parameters:
- *        - in: path
- *          name: id
- *          description: user's id.
- *          properties:
- *            id:
- *              type: string
- *        - in: header
- *          name: x-auth-token
- *          description: Admin token.
- *      responses:
- *        200:
- *          description: Specific user
- *          schema:
- *            type: string
- *        400:
- *          description: Failed Request
- *          schema:
- *            type: string
- *        401:
- *          description: Unauthorized 
- *          schema:
- *            type: string 
- *        403:
- *          description: User not an Admin 
- *          schema:
- *            type: string
- */
-router.get('/:id', [validateObjectId, auth, isAdmin], userController.getById);
-
-/**
- * @swagger
  * /api/v1/users/{id}/documents:
  *    get:
  *      summary: returns document belonging to the user with the given id.
@@ -226,7 +191,46 @@ router.get('/:id', [validateObjectId, auth, isAdmin], userController.getById);
  *            type: string
  */
 //search for documents owned byb the specific user
-router.get('/:id/documents', [validateObjectId, auth], userController.getUserDocuments);
+router.get('/documents', auth, userController.getUserDocuments);
+
+
+/**
+ * @swagger
+ * /api/v1/users/{id}:
+ *    get:
+ *      summary: returns the user with the given id.
+ *      tags: [/api/v1/users]
+ *      description: This should return a user
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: user's id.
+ *          properties:
+ *            id:
+ *              type: string
+ *        - in: header
+ *          name: x-auth-token
+ *          description: Admin token.
+ *      responses:
+ *        200:
+ *          description: Specific user
+ *          schema:
+ *            type: string
+ *        400:
+ *          description: Failed Request
+ *          schema:
+ *            type: string
+ *        401:
+ *          description: Unauthorized 
+ *          schema:
+ *            type: string 
+ *        403:
+ *          description: User not an Admin 
+ *          schema:
+ *            type: string
+ */
+router.get('/:id', [validateObjectId, auth, isAdmin], userController.getById);
+
 
 /**
  * @swagger
