@@ -18,28 +18,33 @@ const router = express.Router();
  *      tags: [/api/v1/users]
  *      consumes:
  *        - application/json
- *      description: This should create a new user
+ *      description: Creates a new user
  *      parameters:
- *        - in: body
- *          name: payload
- *          description: should contain the user's name, email and password, user, username.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          username:
- *            type: string
- *          email:
- *            type: string
- *          password:
- *            type: string
- *          firstname:
- *            type: string
- *          lastname:
- *            type: string
- *          user:
- *            type: string
+ *        - name: user
+ *          in: body
+ *          description: user details.
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              username:
+ *                type: string
+ *                example: ChbuezeE
+ *              email:
+ *                type: string
+ *                example: chibueze@test.com
+ *              password:
+ *                type: string
+ *                example: "12345"
+ *              firstname:
+ *                type: string
+ *                example: Eziokwubundu
+ *              lastname:
+ *                type: string
+ *                example: Chibueze
+ *              role:
+ *                type: string
+ *                example: regular
  *      responses:
  *        200:
  *          description: User created successfully
@@ -65,15 +70,16 @@ router.post('/signup', userController.signup);
  *        - in: body
  *          name: payload
  *          description: should contain the user's email and password.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          email:
- *            type: string
- *          password:
- *            type: string
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              email:
+ *                type: string
+ *                example: chibueze@test.com
+ *              password:
+ *                type: string
+ *                example: "12345"
  *      responses:
  *        200:
  *          description: User logged in successfully
@@ -97,13 +103,17 @@ router.post('/login', userController.login);
  *      description: This should logout a user
  *      parameters:
  *        - in: header
- *          name: payload
- *          description: should contain users token.
+ *          name: x-auth-token
+ *          description: logged in users token.
  *      responses:
  *        200:
  *          description: User logged out
  *          schema:
  *            type: string
+ *        400:
+ *          description: User logged out
+ *          schema:
+ *            type: string        
  */
 router.post('/logout', userController.logout);
 
@@ -114,6 +124,10 @@ router.post('/logout', userController.logout);
  *      summary: returns all users.
  *      tags: [/api/v1/users]
  *      description: This should return all users
+ *      parameters:
+ *        - in: header
+ *          name: x-auth-token
+ *          description: Admin token.
  *      responses:
  *        200:
  *          description: A list of users
@@ -141,6 +155,16 @@ router.get('/', [auth, isAdmin], userController.get);
  *      summary: returns the user with the given id.
  *      tags: [/api/v1/users]
  *      description: This should return a user
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: user's id.
+ *          properties:
+ *            id:
+ *              type: string
+ *        - in: header
+ *          name: x-auth-token
+ *          description: Admin token.
  *      responses:
  *        200:
  *          description: Specific user
