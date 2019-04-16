@@ -26,6 +26,7 @@ userController.signup = async (req, res) => {
   if (user) return res.status(400).send('User already exist');
 
   //checks if a valid role is passed in the request body
+  if(req.body.role === 'admin') return res.status(400).send('invalid role');
   const role = await Role.findOne({
     title: req.body.role
   });
@@ -80,9 +81,16 @@ userController.login = async (req, res) => {
 // POST /logout
 //logs a user out
 userController.logout = async (req, res) => {
-  //deletes the token form the header
-  delete req.headers['x-auth-token'];
+  //get the token from the header
+  let token = req.headers['x-auth-token'];
+  if (!token) return res.status(400).send('invalid request');
 
+  //deletes the token
+  delete req.headers['x-auth-token'];
+  //set token to empty string if deleted
+  token = '';
+
+  res.setHeader('x-auth-token', token);
   res.send('User logged out');
 };
 
