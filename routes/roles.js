@@ -12,11 +12,14 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/role:
+ * /api/v1/roles:
  *    get:
  *      summary: returns all roles.
  *      tags: [/api/v1/roles]
- *      description: This should return all role
+ *      description: This should return all roles
+ *      parameters:
+ *        - in: header
+ *          name: x-auth-token
  *      responses:
  *        200:
  *          description: A list of role
@@ -43,7 +46,7 @@ router.get('/', [auth, isAdmin], roleController.get);
 
 /**
  * @swagger
- * /api/v1/role:
+ * /api/v1/roles:
  *    post:
  *      summary: creates a new role.
  *      tags: [/api/v1/roles]
@@ -52,16 +55,18 @@ router.get('/', [auth, isAdmin], roleController.get);
  *      description: This should create a new role
  *      parameters:
  *        - in: body
- *          name: payload
- *          description: should contain the role's title
- *      schema:
- *        type: object
- *        required:
- *          - title
- *        properties:
- *          title:
- *            type: string
- *            example: admin
+ *          name: New Role
+ *          description: new role
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              title:
+ *                type: string
+ *                example: teachers
+ *        - in: header
+ *          name: x-auth-token
+ *          description: admin's token
  *      responses:
  *        200:
  *          description: Role created successfully
@@ -88,9 +93,9 @@ router.post('/', [auth, isAdmin], roleController.post);
 
 /**
  * @swagger
- * /api/v1/role/{id}:
+ * /api/v1/roles/{id}:
  *    put:
- *      summary: updates a role with the given id.
+ *      summary: updates the role.
  *      tags: [/api/v1/roles]
  *      consumes:
  *        - application/json
@@ -99,21 +104,19 @@ router.post('/', [auth, isAdmin], roleController.post);
  *        - in: path
  *          name: id
  *          description: The ID of the role to edit.
- *        - in: body 
- *          name: title 
- *          description: The new title of the role to be updated.
+ *        - in: body
+ *          name: Document role
+ *          description: new role title
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              title:
+ *                type: string
+ *                example: teachers
  *        - in: header
  *          name: x-auth-token
  *          description: An authorization token
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          id:
- *            type: integer
- *          name:
- *            type: string
  *      responses:
  *        200:
  *          description: role updated successfully
@@ -128,7 +131,7 @@ router.post('/', [auth, isAdmin], roleController.post);
  *          schema:
  *            type: string
  *        403:
- *          description: User no an Admin
+ *          description: Unauthorized
  *          schema:
  *          type: string
  *        404:
@@ -142,7 +145,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
  * @swagger
  * /api/v1/roles/{id}:
  *    get:
- *      summary: returns the unique role with the passed id
+ *      summary: returns a unique document type with the passed id
  *      tags: [/api/v1/roles]
  *      consumes:
  *        - application/json
@@ -151,15 +154,9 @@ router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
  *        - in: path
  *          name: id
  *          description: The ID of the role requested.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          id:
- *            type: integer
- *          name:
- *            type: string
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
  *      responses:
  *        200:
  *          description:  success
@@ -174,7 +171,7 @@ router.put('/:id', [validateObjectId, auth, isAdmin], roleController.put);
  *          schema:
  *            type: string
  */
-router.get('/:id', validateObjectId, roleController.getById);
+router.get('/:id', [validateObjectId, auth, isAdmin], roleController.getById);
 
 export {
   router as rolesRouter
