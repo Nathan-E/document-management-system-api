@@ -70,15 +70,16 @@ router.post('/signup', userController.signup);
  *        - in: body
  *          name: payload
  *          description: should contain the user's email and password.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          email:
- *            type: string
- *          password:
- *            type: string
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              email:
+ *                type: string
+ *                example: chibueze@test.com
+ *              password:
+ *                type: string
+ *                example: "12345"
  *      responses:
  *        200:
  *          description: User logged in successfully
