@@ -228,25 +228,6 @@ router.get('/documents', auth, userController.getUserDocuments);
  */
 router.get('/:id', [validateObjectId, auth, isAdmin], userController.getById);
 
-
-/**
- * @swagger
- * /api/v1/users/{id}:
- *    put:
- *      summary: updates a user with the specified id.
- *      tags: [/api/v1/users]
- *      description: This should return a user
- *      responses:
- *        200:
- *          description: User Updated
- *          schema:
- *            type: string
- *        400:
- *          description: Failed Request
- *          schema:
- *            type: string
- */
-
  /**
   * @swagger
   * /api/v1/users/{id}:
