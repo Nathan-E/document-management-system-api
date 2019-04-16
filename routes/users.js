@@ -18,28 +18,33 @@ const router = express.Router();
  *      tags: [/api/v1/users]
  *      consumes:
  *        - application/json
- *      description: This should create a new user
+ *      description: Creates a new user
  *      parameters:
- *        - in: body
- *          name: payload
- *          description: should contain the user's name, email and password, user, username.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          username:
- *            type: string
- *          email:
- *            type: string
- *          password:
- *            type: string
- *          firstname:
- *            type: string
- *          lastname:
- *            type: string
- *          user:
- *            type: string
+ *        - name: user
+ *          in: body
+ *          description: user details.
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              username:
+ *                type: string
+ *                example: ChbuezeE
+ *              email:
+ *                type: string
+ *                example: chibueze@test.com
+ *              password:
+ *                type: string
+ *                example: "12345"
+ *              firstname:
+ *                type: string
+ *                example: Eziokwubundu
+ *              lastname:
+ *                type: string
+ *                example: Chibueze
+ *              role:
+ *                type: string
+ *                example: regular
  *      responses:
  *        200:
  *          description: User created successfully
