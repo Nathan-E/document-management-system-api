@@ -19,43 +19,27 @@ const router = express.Router();
  *      description: This should create a new document
  *      parameters:
  *        - in: body
- *          name: title
- *          description: the document title
- *          example: Natural Processing
- *        - in: body
- *          name: type
- *          description: the document type
- *          example: thesis
- *        - in: body
- *          name: content
- *          description: the document content
- *          example: Use Glycol for dehydration
- *        - in: body
- *          name: accessRight
- *          description: the document access right
- *          example: 4
+ *          name: Document details
+ *          description: the document details
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              title:
+ *                type: string
+ *                example: admin
+ *              type:
+ *                type: string
+ *                example: thesis
+ *              content:
+ *                type: string
+ *                example: 
+ *              accessRight:
+ *                type: number
+ *                example: 4
  *        - in: header
- *          name: token
+ *          name: x-auth-token
  *          description: should be a valid user token
- *      schema:
- *        type: object
- *        required:
- *          - title
- *          - type
- *          - content
- *          - accessRight
- *        properties:
- *          title:
- *            type: string
- *            example: admin
- *          type:
- *            type: string
- *            example: thesis
- *          content:
- *            type: string
- *          accessRight:
- *            type: number
- *            example: 1
  *      responses:
  *        200:
  *          description: Document created successfully
@@ -83,14 +67,14 @@ router.post("/", auth, documentController.post);
 
 /**
  * @swagger
- * /api/v1/document:
+ * /api/v1/documents:
  *    get:
  *      summary: returns all documents.
  *      tags: [/api/v1/documents]
  *      description: This should return all document
  *      parameters:
  *        - in: header
- *          name: token
+ *          name: x-auth-token
  *          description: should be a valid user token
  *      responses:
  *        200:
