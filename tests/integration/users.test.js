@@ -296,7 +296,7 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(404);
     });
   });
-  describe('GET /:id/documents', () => {
+  describe('GET /documents', () => {
     it('should return only the user\'s document if user is signed in', async () => {
       const salt = await bcrypt.genSalt(10);
       const password = '12345';
@@ -343,7 +343,7 @@ describe('/api/v1/users', () => {
       await doc2.save();
 
       const response = await request(server)
-        .get(`/api/v1/users/${user3._id}/documents`)
+        .get(`/api/v1/users/documents`)
         .set('x-auth-token', token3)
         .send();
 
@@ -354,7 +354,7 @@ describe('/api/v1/users', () => {
       const id = mongoose.Types.ObjectId();
 
       const response = await request(server)
-        .get(`/api/v1/users/${id}/documents`)
+        .get(`/api/v1/users/documents`)
         .set('x-auth-token', adminToken)
         .send();
 
@@ -406,7 +406,7 @@ describe('/api/v1/users', () => {
       await doc2.save();
 
       const response = await request(server)
-        .get(`/api/v1/users/${user3._id}/documents?limit=1`)
+        .get(`/api/v1/users/documents?limit=1`)
         .set('x-auth-token', token3)
         .send();
 
@@ -459,7 +459,7 @@ describe('/api/v1/users', () => {
       await doc2.save();
 
       const response = await request(server)
-        .get(`/api/v1/users/${user3._id}/documents?limit=1&page=1`)
+        .get(`/api/v1/users/documents?limit=1&page=1`)
         .set('x-auth-token', token3)
         .send();
 
