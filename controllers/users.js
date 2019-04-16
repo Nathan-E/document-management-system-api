@@ -81,11 +81,13 @@ userController.login = async (req, res) => {
 //logs a user out
 userController.logout = async (req, res) => {
   //get the token from the header
-  let token = req.headers['x-auth-token']; 
+  let token = req.headers['x-auth-token'];
+  if (!token) return res.status(400).send('invalid request');
+   
   //deletes the token
   delete req.headers['x-auth-token'];
   //set token to empty string if deleted
-  if(token) token = '';
+  token = '';
 
   res.setHeader('x-auth-token', token);
   res.send('User logged out');
