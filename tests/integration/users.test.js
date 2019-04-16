@@ -220,7 +220,7 @@ describe('/api/v1/users', () => {
         .send();
 
       expect(response.status).toBe(200);
-      expect(response.header['x-auth-token']).toBe(undefined);
+      expect(response.header['x-auth-token']).toBe('');
     });
   });
   describe('GET /', () => {
