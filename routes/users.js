@@ -103,13 +103,17 @@ router.post('/login', userController.login);
  *      description: This should logout a user
  *      parameters:
  *        - in: header
- *          name: token
+ *          name: x-auth-token
  *          description: logged in users token.
  *      responses:
  *        200:
  *          description: User logged out
  *          schema:
  *            type: string
+ *        400:
+ *          description: User logged out
+ *          schema:
+ *            type: string        
  */
 router.post('/logout', userController.logout);
 
@@ -120,6 +124,10 @@ router.post('/logout', userController.logout);
  *      summary: returns all users.
  *      tags: [/api/v1/users]
  *      description: This should return all users
+ *      parameters:
+ *        - in: header
+ *          name: x-auth-token
+ *          description: Admin token.
  *      responses:
  *        200:
  *          description: A list of users
@@ -147,6 +155,16 @@ router.get('/', [auth, isAdmin], userController.get);
  *      summary: returns the user with the given id.
  *      tags: [/api/v1/users]
  *      description: This should return a user
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          description: user's id.
+ *          properties:
+ *            id:
+ *              type: string
+ *        - in: header
+ *          name: x-auth-token
+ *          description: Admin token.
  *      responses:
  *        200:
  *          description: Specific user
