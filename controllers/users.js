@@ -80,9 +80,14 @@ userController.login = async (req, res) => {
 // POST /logout
 //logs a user out
 userController.logout = async (req, res) => {
-  //deletes the token form the header
+  //get the token from the header
+  let token = req.headers['x-auth-token']; 
+  //deletes the token
   delete req.headers['x-auth-token'];
+  //set token to empty string if deleted
+  if(token) token = '';
 
+  res.setHeader('x-auth-token', token);
   res.send('User logged out');
 };
 
