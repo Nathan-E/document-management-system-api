@@ -326,7 +326,7 @@ describe('/api/v1/roles', () => {
     });
   });
   describe('GET /:id', () => {
-    it('should return an existing role', async () => {
+    it('should return an existing roles if user is an admin', async () => {
       const role = new Role({
         title: 'amate'
       });
@@ -335,7 +335,10 @@ describe('/api/v1/roles', () => {
 
       const id = role._id;
 
-      const response = await request(server).get(`/api/v1/roles/${id}`);
+      const response = await request(server)
+        .get(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken);
+;
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('_id');
@@ -348,10 +351,12 @@ describe('/api/v1/roles', () => {
 
       expect(response.status).toBe(400);
     });
-    it('should return 404 if no role with the Id is found', async () => {
+    it('should return 404 if no role exist with the Id', async () => {
       const id = mongoose.Types.ObjectId();
 
-      const response = await request(server).get(`/api/v1/roles/${id}`);
+      const response = await request(server)
+        .get(`/api/v1/roles/${id}`)
+        .set('x-auth-token', adminToken);
 
       expect(response.status).toBe(404);
     });

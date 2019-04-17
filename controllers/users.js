@@ -102,6 +102,7 @@ userController.login = async (req, res) => {
     email: req.body.email
   });
   if (!user) return res.status(400).send('Invalid email or password');
+  if (user.deleted) return res.status(400).send('User does not exist');
 
   //valids the user request password
   const validPassword = await bcrypt.compare(req.body.password, user.password);
@@ -160,6 +161,9 @@ userController.put = async (req, res) => {
   } = usersValidator.validateUpdate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  const check = req.params.id.toString() === req.user._id;
+  if(!check) return res.status(403).send('invald token');
+  
   //checks for the user
   let user = await User.findById(req.params.id);
   //returns 400 if user does not exist
