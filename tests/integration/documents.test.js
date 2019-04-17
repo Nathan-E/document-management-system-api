@@ -340,6 +340,28 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
+    it('should 401 if user is not authorized ', async () => {
+
+      const paylaod = {
+        title: 'mofnvroeinke',
+        type_id: mongoose.Types.ObjectId(),
+        owner_id: user._id,
+        ownerRole: 'adminX',
+        content: new Array(15).join('a'),
+        accessRight: 1,
+      };
+
+      const doc = new Document(paylaod);
+
+      await doc.save();
+
+      const response = await request(server)
+        .get(`/api/v1/documents/${doc._id}`)
+        .set('x-auth-token', token2)
+        .send();
+
+      expect(response.status).toBe(401);
+    });
     it('should return the document if user an admin', async () => {
 
       const paylaod = {

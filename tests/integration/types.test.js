@@ -63,7 +63,7 @@ describe('/api/v1/types', () => {
       expect(newType).not.toBeNull();
       expect(response.status).toBe(200);
     });
-    it('should allow a regular user to create a new type if it is unique', async () => {
+    it('should not allow a regular user to create a new type', async () => {
       const type = {
         title: 'journals3'
       };
@@ -77,8 +77,7 @@ describe('/api/v1/types', () => {
         title: 'journals3'
       });
 
-      expect(newType).not.toBeNull();
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(403);
     });
     it('should not create a new type if user is not logged in', async () => {
       const type = {

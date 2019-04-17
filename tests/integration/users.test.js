@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import request from 'supertest';
 import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 import {
   User,
   Document,
@@ -485,11 +486,13 @@ describe('/api/v1/users', () => {
 
       const user = await new User(payload);
 
+      const token = user.generateAuthToken();
+
       await user.save();
 
       const response = await request(server)
         .put(`/api/v1/users/${user._id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', token)
         .send({
           firstname: 'Samuel'
         });
@@ -516,11 +519,13 @@ describe('/api/v1/users', () => {
 
       await user.save();
 
+      const token = user.generateAuthToken();
+
       const password2 = '123456'
 
       const response = await request(server)
         .put(`/api/v1/users/${user._id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', token)
         .send({
           password: password2
         });
@@ -546,11 +551,13 @@ describe('/api/v1/users', () => {
 
       const user = await new User(payload);
 
+      const token = user.generateAuthToken();
+
       await user.save();
 
       const response = await request(server)
         .put(`/api/v1/users/${user._id}`)
-        .set('x-auth-token', regularToken)
+        .set('x-auth-token', token)
         .send({
           firstname: 'Sam'
         });
@@ -563,6 +570,23 @@ describe('/api/v1/users', () => {
       const response = await request(server)
         .put(`/api/v1/users/${id}`)
         .set('x-auth-token', regularToken)
+        .send({
+          firstname: 'Samuel'
+        });
+
+      expect(response.status).toBe(403);
+    });
+    it('should not update if the user does not exist', async () => {
+      const payload = {
+        _id: '5cb570d15267504fd21c5f24',
+        isAdmin: false
+      }
+      const  token = jwt.sign(payload, 'hello', {
+        expiresIn: 60 * 60
+      });
+      const response = await request(server)
+        .put(`/api/v1/users/5cb570d15267504fd21c5f24`)
+        .set('x-auth-token', token)
         .send({
           firstname: 'Samuel'
         });
@@ -581,6 +605,7 @@ describe('/api/v1/users', () => {
         firstname: 'Chibueze545',
         lastname: 'Nathan545',
         role: mongoose.Types.ObjectId(),
+
         username: 'nachi12675',
         email: 'chibueze32355@test.com',
         password: hashedPassword1

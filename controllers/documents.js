@@ -29,7 +29,7 @@ documentController.post = async (req, res) => {
   if (!type) return res.status(404).send("Invalid document type");
   //chaecks if the user exist
   const user = await User.findById(req.user._id);
-  if (!user) return res.status(404).send("Invalid user");
+  if (!user || user.deleted) return res.status(404).send("Invalid user");
   //gets the user role
   const role = await Role.findById(user.role);
 
@@ -147,6 +147,8 @@ documentController.getByID = async (req, res) => {
   if (access3) return res.status(200).send(doc);
   if (access2) return res.status(200).send(doc);
   if(access1) return res.status(200).send(doc);
+
+  res.status(401).send('Unauthorized');
 }
 
 //PUT /:id
@@ -228,10 +230,8 @@ documentController.delete = async (req, res) => {
   });
   //checks if the user owns the document
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
-  //checks if the user is an admin
-  const isAdmin = userRoleInfo.level === 1;
   //returnss 400 if the user does not own the document nor an admin
-  if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
+  if (!compareObjectId) return res.status(400).send("Invalid request");
 
   //finds the document and deletes it
   doc = await Document.findOneAndUpdate({
@@ -244,7 +244,7 @@ documentController.delete = async (req, res) => {
     new: true
   });
 
-  res.send(doc);
+  res.send('deleted');
 }
 
 

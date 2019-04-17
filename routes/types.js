@@ -31,7 +31,7 @@ router.get('/', typeController.get);
 
 /**
  * @swagger
- * /api/v1/type:
+ * /api/v1/types:
  *    post:
  *      summary: creates a new document type.
  *      tags: [/api/v1/types]
@@ -40,16 +40,18 @@ router.get('/', typeController.get);
  *      description: This should create a new type
  *      parameters:
  *        - in: body
- *          name: payload
- *          description: should contain the type's title
- *      schema:
- *        type: object
- *        required:
- *          - title
- *        properties:
- *          title:
- *            type: string
- *            example: admin
+ *          name: Document type
+ *          description: new document type title
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              title:
+ *                type: string
+ *                example: roster
+ *        - in: header
+ *          name: x-auth-token
+ *          description: admin's token
  *      responses:
  *        200:
  *          description: type created successfully
@@ -59,12 +61,12 @@ router.get('/', typeController.get);
  *          description: Could not create the type
  *          schema:
  *            type: string
- *        401:
- *          description: Access denied.No token provided
+ *        403:
+ *          description: Access denied
  *          schema:
  *            type: string
  */
-router.post('/', [auth], typeController.post);
+router.post('/', [auth, isAdmin], typeController.post);
 
 /**
  * @swagger
@@ -79,9 +81,16 @@ router.post('/', [auth], typeController.post);
  *        - in: path
  *          name: id
  *          description: The ID of the type to edit.
- *        - in: body 
- *          name: title 
- *          description: The new title of the type to be updated.
+ *        - in: body
+ *          name: Document type
+ *          description: new document type title
+ *          schema:
+ *            type: object
+ *            required: true
+ *            properties:
+ *              title:
+ *                type: string
+ *                example: roster
  *        - in: header
  *          name: x-auth-token
  *          description: An authorization token
@@ -131,15 +140,9 @@ router.put('/:id', [validateObjectId, auth, isAdmin], typeController.put);
  *        - in: path
  *          name: id
  *          description: The ID of the type requested.
- *      schema:
- *        type: object
- *        required:
- *          - name
- *        properties:
- *          id:
- *            type: integer
- *          name:
- *            type: string
+ *        - in: header
+ *          name: x-auth-token
+ *          description: An authorization token
  *      responses:
  *        200:
  *          description:  success
