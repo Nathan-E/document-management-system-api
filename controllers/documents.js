@@ -230,10 +230,8 @@ documentController.delete = async (req, res) => {
   });
   //checks if the user owns the document
   const compareObjectId = doc.owner_id.toString() === user._id.toString();
-  //checks if the user is an admin
-  const isAdmin = userRoleInfo.level === 1;
   //returnss 400 if the user does not own the document nor an admin
-  if (!compareObjectId || !isAdmin) return res.status(400).send("Invalid request");
+  if (!compareObjectId) return res.status(400).send("Invalid request");
 
   //finds the document and deletes it
   doc = await Document.findOneAndUpdate({
@@ -246,7 +244,7 @@ documentController.delete = async (req, res) => {
     new: true
   });
 
-  res.send(doc);
+  res.send('deleted');
 }
 
 
