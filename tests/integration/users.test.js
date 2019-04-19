@@ -156,8 +156,6 @@ describe('/api/v1/users', () => {
 
       await User.collection.insertOne(payload);
 
-      const token = await new User(payload).generateAuthToken();
-
       const credentials = {
         email: payload.email,
         password: password
@@ -170,6 +168,35 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.header['x-auth-token']).not.toBe(null);
     });
+ it('should return 400 if user has been deleted', async () => {
+   const salt = await bcrypt.genSalt(10);
+
+   const password = '12345'
+   const hashedPassword = await bcrypt.hash(password, salt);
+
+   const payload = {
+     firstname: 'Chibueze1',
+     lastname: 'Nathan1',
+     role: 'regular1',
+     username: 'nachi1',
+     email: 'chibueze1@test.com',
+     password: hashedPassword,
+     deleted: true
+   }
+
+   await User.collection.insertOne(payload);
+
+   const credentials = {
+     email: payload.email,
+     password: password
+   }
+
+   const response = await request(server)
+     .post('/api/v1/users/login')
+     .send(credentials);
+
+   expect(response.status).toBe(400);
+ });
     it('should not login in an invalid user', async () => {
       const credentials = {
         email: 'qwerty@gmail.com',
