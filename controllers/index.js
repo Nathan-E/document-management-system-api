@@ -8,11 +8,13 @@ import {
   userController
 } from './users';
 import {
-  documentController
+  DocumentController
 } from './documents';
 import {
   searchDocument
 } from './search';
+
+const documentController = new DocumentController;
 
 export {
   typeController,
