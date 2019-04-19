@@ -168,35 +168,35 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.header['x-auth-token']).not.toBe(null);
     });
- it('should return 400 if user has been deleted', async () => {
-   const salt = await bcrypt.genSalt(10);
+    it('should return 400 if user has been deleted', async () => {
+      const salt = await bcrypt.genSalt(10);
 
-   const password = '12345'
-   const hashedPassword = await bcrypt.hash(password, salt);
+      const password = '12345'
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-   const payload = {
-     firstname: 'Chibueze1',
-     lastname: 'Nathan1',
-     role: 'regular1',
-     username: 'nachi1',
-     email: 'chibueze1@test.com',
-     password: hashedPassword,
-     deleted: true
-   }
+      const payload = {
+        firstname: 'Chibueze1',
+        lastname: 'Nathan1',
+        role: 'regular1',
+        username: 'nachi1',
+        email: 'chibueze1@test.com',
+        password: hashedPassword,
+        deleted: true
+      }
 
-   await User.collection.insertOne(payload);
+      await User.collection.insertOne(payload);
 
-   const credentials = {
-     email: payload.email,
-     password: password
-   }
+      const credentials = {
+        email: payload.email,
+        password: password
+      }
 
-   const response = await request(server)
-     .post('/api/v1/users/login')
-     .send(credentials);
+      const response = await request(server)
+        .post('/api/v1/users/login')
+        .send(credentials);
 
-   expect(response.status).toBe(400);
- });
+      expect(response.status).toBe(400);
+    });
     it('should not login in an invalid user', async () => {
       const credentials = {
         email: 'qwerty@gmail.com',
@@ -527,6 +527,36 @@ describe('/api/v1/users', () => {
       expect(response.status).toBe(200);
       expect(response.body.firstname).toBe('Samuel');
     });
+    it('should return 400 if user has been deleted', async () => {
+      const salt = await bcrypt.genSalt(10);
+      const password1 = '12345';
+      const hashedPassword1 = await bcrypt.hash(password1, salt);
+
+      const payload = {
+        firstname: 'Chibueze54',
+        lastname: 'Nathan54',
+        role: mongoose.Types.ObjectId(),
+        username: 'nachi1267',
+        email: 'chibueze3235@test.com',
+        password: hashedPassword1,
+        deleted: true
+      };
+
+      const user = await new User(payload);
+
+      const token = user.generateAuthToken();
+
+      await user.save();
+
+      const response = await request(server)
+        .put(`/api/v1/users/${user._id}`)
+        .set('x-auth-token', token)
+        .send({
+          firstname: 'Samuel'
+        });
+
+      expect(response.status).toBe(400);
+    });
     it('should hash the password before save it', async () => {
       const salt = await bcrypt.genSalt(10);
       const password1 = '12345';
@@ -608,7 +638,7 @@ describe('/api/v1/users', () => {
         _id: '5cb570d15267504fd21c5f24',
         isAdmin: false
       }
-      const  token = jwt.sign(payload, 'hello', {
+      const token = jwt.sign(payload, 'hello', {
         expiresIn: 60 * 60
       });
       const response = await request(server)
