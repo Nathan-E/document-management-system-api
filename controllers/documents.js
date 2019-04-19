@@ -20,7 +20,7 @@ class DocumentController {
   //POST /
   //creates a new document
   async post(req, res) {
-    try { 
+    try {
       //validates the document request body
       const {
         error
@@ -62,7 +62,7 @@ class DocumentController {
       await document.save();
 
       res.send("document created!!!");
-    } catch (e){
+    } catch (e) {
       //sends an error messge
       res.status(500).send(e.message);
     }
@@ -71,61 +71,65 @@ class DocumentController {
   //GET /
   //return the documents unique to user
   async get(req, res) {
-    //get the request queries
-    let page = req.query.page;
-    let limit = req.query.limit;
-    //checks if the user exist
-    const user = await User.findById(req.user._id);
-    if (!user) return res.status(400).send("Invalid request");
-    //gets the role of the user
-    const role = await Role.findById(user.role);
-    //checks the access level of the user
-    const userRoleInfo = await Access.findOne({
-      name: role.title
-    });
-    //returns all documents if user is admin
-    if (userRoleInfo.level === 1) {
-      const doc = await Document.find();
-      return res.status(200).send(doc);
-    }
-    //returns the documents within the user access right
-    const docs = await Document.find({
-      $or: [{
-          accessRight: 4
-        },
-        {
-          accessRight: 3,
-          owner_id: user._id
-        },
-        {
-          ownerRole: role.title,
-          accessRight: userRoleInfo.level
-        }
-      ]
-    });
-    //checks if the query string is truthy
-    if (!page) page = 0;
-    page = Number(page);
-    if (!limit) limit = 0;
-    limit = Number(limit);
+    try { 
+      //get the request queries
+      let page = req.query.page;
+      let limit = req.query.limit;
+      //checks if the user exist
+      const user = await User.findById(req.user._id);
+      if (!user) return res.status(400).send("Invalid request");
+      //gets the role of the user
+      const role = await Role.findById(user.role);
+      //checks the access level of the user
+      const userRoleInfo = await Access.findOne({
+        name: role.title
+      });
+      //returns all documents if user is admin
+      if (userRoleInfo.level === 1) {
+        const doc = await Document.find();
+        return res.status(200).send(doc);
+      }
+      //returns the documents within the user access right
+      const docs = await Document.find({
+        $or: [{
+            accessRight: 4
+          },
+          {
+            accessRight: 3,
+            owner_id: user._id
+          },
+          {
+            ownerRole: role.title,
+            accessRight: userRoleInfo.level
+          }
+        ]
+      });
+      //checks if the query string is truthy
+      if (!page) page = 0;
+      page = Number(page);
+      if (!limit) limit = 0;
+      limit = Number(limit);
 
-    //set the pagination and limit
-    let start = page * limit;
-    let stop = start + limit;
+      //set the pagination and limit
+      let start = page * limit;
+      let stop = start + limit;
 
-    let chuncks;
-    //returns document in batches according to query string limit
-    if (!start && limit) {
-      chuncks = docs.slice(0, limit)
-      return res.status(200).send(chuncks);
+      let chuncks;
+      //returns document in batches according to query string limit
+      if (!start && limit) {
+        chuncks = docs.slice(0, limit)
+        return res.status(200).send(chuncks);
+      }
+      //returns document in batches according to query string limit and page set
+      if (start != 0 && limit) {
+        chuncks = docs.slice(start, stop);
+        return res.status(200).send(chuncks);
+      }
+      //returns all the found documents if no queries are specified
+      res.status(200).send(docs);
+    } catch (e) {
+      res.status(500).send(e.message);
     }
-    //returns document in batches according to query string limit and page set
-    if (start != 0 && limit) {
-      chuncks = docs.slice(start, stop);
-      return res.status(200).send(chuncks);
-    }
-    //returns all the found documents if no queries are specified
-    res.status(200).send(docs);
   };
 
   //GET /:id
