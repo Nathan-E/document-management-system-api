@@ -5,7 +5,7 @@ import {
   RoleController
 } from './roles';
 import {
-  userController
+  UserController
 } from './users';
 import {
   DocumentController
@@ -17,6 +17,7 @@ import {
 const documentController = new DocumentController;
 const roleController = new RoleController;
 const typeController = new TypeController;
+const userController = new UserController;
 
 export {
   typeController,
