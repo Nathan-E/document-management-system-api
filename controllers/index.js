@@ -1,5 +1,5 @@
 import {
-  typeController
+  TypeController
 } from './types';
 import {
   RoleController
@@ -16,6 +16,7 @@ import {
 
 const documentController = new DocumentController;
 const roleController = new RoleController;
+const typeController = new TypeController;
 
 export {
   typeController,
