@@ -11,13 +11,14 @@ import {
   DocumentController
 } from './documents';
 import {
-  searchDocument
+  Search
 } from './search';
 
 const documentController = new DocumentController;
 const roleController = new RoleController;
 const typeController = new TypeController;
 const userController = new UserController;
+const searchDocument = new Search;
 
 export {
   typeController,
