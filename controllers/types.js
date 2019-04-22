@@ -5,8 +5,10 @@ import {
   validateType
 } from '../validations/index';
 
-//document types controller object
-const typeController = {};
+class TypeController{
+  constructor(){};
+
+}
 
 //GET / contoller
 //get all the various type of document
