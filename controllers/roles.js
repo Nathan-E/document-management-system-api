@@ -5,6 +5,7 @@ import {
   validateRole
 } from '../validations/roles';
 
+//Users Roles Controller
 class RoleController {
   constructor() {};
 

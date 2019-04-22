@@ -5,6 +5,7 @@ import {
   validateType
 } from '../validations/index';
 
+//Document Types Controller
 class TypeController {
   constructor() {};
 

@@ -11,7 +11,7 @@ import {
   Document
 } from "../models/index";
 
-// //Document controller
+//Document controller
 class DocumentController {
   constructor() {};
 
