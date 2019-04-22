@@ -8,11 +8,9 @@ import {
 class TypeController{
   constructor(){};
 
-}
-
 //GET / contoller
 //get all the various type of document
-typeController.get = async (req, res) => {
+async get(req, res) {
   //find all types and sort by title
   const type = await Type.find().sort('title');
 
@@ -21,7 +19,7 @@ typeController.get = async (req, res) => {
 
 //POST / contoller
 //creates a unique document type
-typeController.post = async (req, res) => {
+async post(req, res) {
   //validates the request body
   const {
     error
@@ -44,6 +42,13 @@ typeController.post = async (req, res) => {
 
   res.status(200).send('New type created!!!')
 };
+
+
+}
+
+
+
+
 
 //PUT /:id controller
 //edits an existing document
