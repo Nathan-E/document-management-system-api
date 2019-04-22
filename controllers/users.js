@@ -8,10 +8,51 @@ import _ from 'lodash';
 import bcrypt from 'bcrypt';
 
 //User Controller
-const userController = {};
+class User{
+  constructor(){};
 
+// POST /signup
+//signs up a user
+async signup(req, res) {
+  //validates the request input field
+  const {
+    error
+  } = usersValidator.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  //checks if user already exist
+  let user = await User.findOne({
+    email: req.body.email
+  });
+  if (user) return res.status(400).send('User already exist');
+
+  //checks if a valid role is passed in the request body
+  if (req.body.role === 'admin') return res.status(400).send('invalid role');
+  const role = await Role.findOne({
+    title: req.body.role
+  });
+  if (!role) return res.status(400).send('Invalid role.');
+  //hashs the password
+  const salt = await bcrypt.genSalt(10);
+  const password = await bcrypt.hash(req.body.password, salt);
+
+  //creates the user
+  user = new User({
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    role: role._id,
+    username: req.body.username,
+    email: req.body.email,
+    password: password
+  })
+
+  //saves the user
+  await user.save();
+
+  res.send('New user created!!!');
+};
 //GET /: id / documents
-userController.getUserDocuments = async (req, res) => {
+async getUserDocuments(req, res) {
   //get the request queries
   let page = req.query.page;
   let limit = req.query.limit;
@@ -46,47 +87,11 @@ userController.getUserDocuments = async (req, res) => {
   //returns all the found documents if no queries are specified
   res.status(200).send(docs);
 };
+}
 
-// POST /signup
-//signs up a user
-userController.signup = async (req, res) => {
-  //validates the request input field
-  const {
-    error
-  } = usersValidator.validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
 
-  //checks if user already exist
-  let user = await User.findOne({
-    email: req.body.email
-  });
-  if (user) return res.status(400).send('User already exist');
 
-  //checks if a valid role is passed in the request body
-  if(req.body.role === 'admin') return res.status(400).send('invalid role');
-  const role = await Role.findOne({
-    title: req.body.role
-  });
-  if (!role) return res.status(400).send('Invalid role.');
-  //hashs the password
-  const salt = await bcrypt.genSalt(10);
-  const password = await bcrypt.hash(req.body.password, salt);
 
-  //creates the user
-  user = new User({
-    firstname: req.body.firstname,
-    lastname: req.body.lastname,
-    role: role._id,
-    username: req.body.username,
-    email: req.body.email,
-    password: password
-  })
-
-  //saves the user
-  await user.save();
-
-  res.send('New user created!!!');
-};
 
 // POST /login
 //Allow an authenicated user to log in
