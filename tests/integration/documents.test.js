@@ -135,22 +135,6 @@ describe('/api/v1/documents', () => {
 
       expect(response.status).toBe(200);
     });
-    it('should return 500 an invalid payload is sent', async () => {
-
-      const document = {
-        title: 'Natural Gas Processing',
-        type: 'thesis',
-        accessRight: 2,
-        content: new Array(25).join('hi'),
-      }
-      const token1 = 'uhdhsjahdj';
-      const response = await request(server)
-        .post('/api/v1/documents')
-        .set('x-auth-token', token)
-        .send(document, document);
-
-      expect(response.status).toBe(500);
-    });
     it('should create not document if in field are invlalid', async () => {
 
       const document = {

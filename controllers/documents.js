@@ -12,15 +12,12 @@ import {
 } from "../models/index";
 
 // //Document controller
-// const documentController = {};
-
 class DocumentController {
   constructor() {};
 
   //POST /
   //creates a new document
   async post(req, res) {
-    try {
       //validates the document request body
       const {
         error
@@ -62,16 +59,11 @@ class DocumentController {
       await document.save();
 
       res.send("document created!!!");
-    } catch (e) {
-      //sends an error messge
-      res.status(500).send(e.message);
-    }
   };
 
   //GET /
   //return the documents unique to user
   async get(req, res) {
-    try { 
       //get the request queries
       let page = req.query.page;
       let limit = req.query.limit;
@@ -127,9 +119,6 @@ class DocumentController {
       }
       //returns all the found documents if no queries are specified
       res.status(200).send(docs);
-    } catch (e) {
-      res.status(500).send(e.message);
-    }
   };
 
   //GET /:id
