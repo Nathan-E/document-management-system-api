@@ -90,5 +90,5 @@ class SearchController{
 };
 
 export {
-  Search
+  SearchController
 };
