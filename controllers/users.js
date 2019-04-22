@@ -51,6 +51,35 @@ async signup(req, res) {
 
   res.send('New user created!!!');
 };
+
+// POST /login
+//Allow an authenicated user to log in
+async login(req, res) {
+  //validates the request body
+  const {
+    error
+  } = usersValidator.validateLogin(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  //checks up the user by the request body email field
+  let user = await User.findOne({
+    email: req.body.email
+  });
+  if (!user) return res.status(400).send('Invalid email or password');
+  if (user.deleted) return res.status(400).send('User does not exist');
+
+  //valids the user request password
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) return res.status(400).send('Invalid email or password.');
+
+  //generates a unique token for the user
+  const token = user.generateAuthToken();
+
+  //set the token in the header
+  res.setHeader('x-auth-token', token);
+  res.send('User logged in');
+};
+
 //GET /: id / documents
 async getUserDocuments(req, res) {
   //get the request queries
@@ -93,33 +122,7 @@ async getUserDocuments(req, res) {
 
 
 
-// POST /login
-//Allow an authenicated user to log in
-userController.login = async (req, res) => {
-  //validates the request body
-  const {
-    error
-  } = usersValidator.validateLogin(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
 
-  //checks up the user by the request body email field
-  let user = await User.findOne({
-    email: req.body.email
-  });
-  if (!user) return res.status(400).send('Invalid email or password');
-  if (user.deleted) return res.status(400).send('User does not exist');
-
-  //valids the user request password
-  const validPassword = await bcrypt.compare(req.body.password, user.password);
-  if (!validPassword) return res.status(400).send('Invalid email or password.');
-
-  //generates a unique token for the user
-  const token = user.generateAuthToken();
-
-  //set the token in the header
-  res.setHeader('x-auth-token', token);
-  res.send('User logged in');
-};
 
 // POST /logout
 //logs a user out
