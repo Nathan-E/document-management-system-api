@@ -1,6 +1,6 @@
 import {
   roleController
-} from '../controllers/roles';
+} from '../controllers/index';
 import express from 'express';
 import {
   validateObjectId,
