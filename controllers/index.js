@@ -2,7 +2,7 @@ import {
   typeController
 } from './types';
 import {
-  roleController
+  RoleController
 } from './roles';
 import {
   userController
@@ -15,6 +15,7 @@ import {
 } from './search';
 
 const documentController = new DocumentController;
+const roleController = new RoleController;
 
 export {
   typeController,

@@ -7,6 +7,7 @@ import {
 
 class RoleController {
   constructor() {};
+
   //GET / controller
   //gets all role document
   async get(req, res) {
@@ -40,6 +41,7 @@ class RoleController {
     //response
     res.status(200).send('New role created!!!')
   };
+
   //PUT /:id controller
   //Updates existing role
   async put(req, res) {
@@ -69,19 +71,18 @@ class RoleController {
     res.status(200).send(role);
   };
 
+  //GET /:id controller
+  //Returns a unique role
+  async getById(req, res) {
+    //checks the Role document for the passed id
+    const role = await Role.findById(req.params.id);
+
+    if (!role) return res.status(404).send('The role with the given ID was not found.');
+
+    res.status(200).send(role);
+  };
 };
 
-//GET /:id controller
-//Returns a unique role
-roleController.getById = async (req, res) => {
-  //checks the Role document for the passed id
-  const role = await Role.findById(req.params.id);
-
-  if (!role) return res.status(404).send('The role with the given ID was not found.');
-
-  res.status(200).send(role);
-}
-
 export {
-  roleController
+  RoleController
 };
