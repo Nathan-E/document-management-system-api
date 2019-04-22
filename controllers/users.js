@@ -80,6 +80,42 @@ async login(req, res) {
   res.send('User logged in');
 };
 
+// POST /logout
+//logs a user out
+async logout(req, res) {
+  //get the token from the header
+  let token = req.headers['x-auth-token'];
+  if (!token) return res.status(400).send('invalid request');
+
+  //deletes the token
+  delete req.headers['x-auth-token'];
+  //set token to empty string if deleted
+  token = '';
+
+  res.setHeader('x-auth-token', token);
+  res.send('User logged out');
+};
+
+// GET /
+//returns all users
+async get(req, res) {
+  //gets all users and sort by firstname
+  const user = await User.find().sort('firstname');
+
+  res.send(user);
+};
+
+// GET /:id
+//gets a specific user
+async getById(req, res) {
+  //checks for the user
+  const user = await User.findById(req.params.id);
+  //returns 404 if the user have been deleted or does not exist
+  if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
+
+  res.send(user);
+};
+
 //GET /: id / documents
 async getUserDocuments(req, res) {
   //get the request queries
@@ -124,41 +160,8 @@ async getUserDocuments(req, res) {
 
 
 
-// POST /logout
-//logs a user out
-userController.logout = async (req, res) => {
-  //get the token from the header
-  let token = req.headers['x-auth-token'];
-  if (!token) return res.status(400).send('invalid request');
 
-  //deletes the token
-  delete req.headers['x-auth-token'];
-  //set token to empty string if deleted
-  token = '';
 
-  res.setHeader('x-auth-token', token);
-  res.send('User logged out');
-};
-
-// GET /
-//returns all users
-userController.get = async (req, res) => {
-  //gets all users and sort by firstname
-  const user = await User.find().sort('firstname');
-
-  res.send(user);
-}
-
-// GET /:id
-//gets a specific user
-userController.getById = async (req, res) => {
-  //checks for the user
-  const user = await User.findById(req.params.id);
-  //returns 404 if the user have been deleted or does not exist
-  if (!user || user.deleted) return res.status(404).send('The user with the given ID was not found.');
-
-  res.send(user);
-};
 
 
 // PUT /:id
