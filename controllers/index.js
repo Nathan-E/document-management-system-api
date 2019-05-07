@@ -1,18 +1,24 @@
 import {
-  typeController
+  TypeController
 } from './types';
 import {
-  roleController
+  RoleController
 } from './roles';
 import {
-  userController
+  UserController
 } from './users';
 import {
-  documentController
+  DocumentController
 } from './documents';
 import {
-  searchDocument
+  SearchController
 } from './search';
+
+const documentController = new DocumentController;
+const roleController = new RoleController;
+const typeController = new TypeController;
+const userController = new UserController;
+const searchDocument = new SearchController;
 
 export {
   typeController,

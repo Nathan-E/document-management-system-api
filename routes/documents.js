@@ -130,7 +130,7 @@ router.get("/", auth, documentController.get);
  *          schema:
  *            type: string
  */
-router.get("/:id", [validateObjectId, auth], documentController.getByID);
+router.get("/:id", [validateObjectId, auth], documentController.getById);
 
 /**
  * @swagger
