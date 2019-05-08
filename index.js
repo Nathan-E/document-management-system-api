@@ -31,10 +31,11 @@ const options = {
 const specs = swaggerJsdoc(options);
 
 //environment variable
-let db = process.env.DATABASE;
+let db = process.env.REMOTE_DATABASE;
 let jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
 if (process.env.NODE_ENV === 'test') db = process.env.TEST_DATABASE;
+if (process.env.NODE_ENV === 'development') db = process.env.REMOTE_DATABASE;
 
 //middlewares
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
@@ -55,7 +56,8 @@ mongoose.connect(db, {
     useNewUrlParser: true,
     useCreateIndex: true
   })
-  .then(() => console.log(`Connected to ${db}...`));
+  .then(() => console.log(`Connected to ${db}...`))
+  .catch((e) =>{console.log(e.message)});
 
 if (!jwtPrivateKey) {
   throw new Error('FATAL ERROR: jwtPrivateKey is not defined.');
