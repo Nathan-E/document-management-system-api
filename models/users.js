@@ -9,14 +9,12 @@ const userSchema = new mongoose.Schema({
   firstname: {
     type: String,
     required: true,
-    minlength: 5,
     maxlength: 50
   },
   //user's lastname
   lastname: {
     type: String,
     required: true,
-    minlength: 5,
     maxlength: 50
   },
   //users role (admin , regualr)
@@ -29,7 +27,6 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    minlength: 5,
     maxlength: 25,
     unique: true
   },
@@ -37,7 +34,6 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    minlength: 5,
     maxlength: 255,
     unique: true
   },
@@ -45,7 +41,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    minlength: 5,
     maxlength: 1024
   },
   //user status
