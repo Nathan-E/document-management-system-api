@@ -62,17 +62,18 @@ http://localhost:5000/api-docs/
 
 ## Overview
 
-EndPoint                        Functionality
-POST /users/login               Logs a user in.
-POST /users/logout              Logs a user out.
-POST /users/                    Creates a new user.
-GET /users/                     Find matching instances of user.
-GET /users/<id>                 Find user.
-PUT /users/<id>                 Update user attributes.
-DELETE /users/<id>              Delete user.
-POST /documents/                Creates a new document instance.
-GET /documents/                 Find matching instances of document.
-GET /documents/<id>             Find document.
-PUT /documents/<id>             Update document attributes.
-DELETE /documents/<id>          Delete document.
-GET /users/<id>/documents       Find all documents belonging to the user .
+|EndPoint                       | Functionality|
+| :---            |          :--- |
+|POST /users/login              | Logs a user in.|
+|POST /users/logout             | Logs a user out.|
+|POST /users/                   | Creates a new user.|
+|GET /users/                    | Find matching instances of user.|
+|GET /users/<id>                | Find user.|
+|PUT /users/<id>                | Update user attributes.|
+|DELETE /users/<id>             | Delete user.|
+|POST /documents/               | Creates a new document instance.|
+|GET /documents/                | Find matching instances of document.|
+|GET /documents/<id>            | Find document.|
+|PUT /documents/<id>            | Update document attributes.|
+|DELETE /documents/<id>         | Delete document.|
+|GET /users/<id>/documents      | Find all documents belonging to the user.|
