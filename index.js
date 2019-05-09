@@ -1,9 +1,12 @@
+import 'express-async-errors';
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Joi from 'joi';
-const swaggerJsdoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+import logger from './startup/logger';
+import { errorHandler } from './middlewares/index';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import {
   rolesRouter,
   typesRouter,
@@ -15,9 +18,9 @@ dotenv.config();
 
 const app = express();
 
+//API documentation using Swagger
 const options = {
   swaggerDefinition: {
-    // Like the one described here: https://swagger.io/specification/#infoObject
     info: {
       title: 'Document Management System',
       version: '1.0.0',
@@ -35,7 +38,6 @@ let db = process.env.REMOTE_DATABASE;
 let jwtPrivateKey = process.env.JWT_PRIVATE_KEY;
 
 if (process.env.NODE_ENV === 'test') db = process.env.TEST_DATABASE;
-if (process.env.NODE_ENV === 'development') db = process.env.REMOTE_DATABASE;
 
 //middlewares
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
@@ -45,7 +47,7 @@ app.use('/api/v1/types', typesRouter);
 app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/documents', documentsRouter);
 app.use('/api/v1/search', searchDocument);
-
+app.use(errorHandler);
 
 Joi.objectId = require('joi-objectid')(Joi);
 
@@ -56,8 +58,8 @@ mongoose.connect(db, {
     useNewUrlParser: true,
     useCreateIndex: true
   })
-  .then(() => console.log(`Connected to ${db}...`))
-  .catch((e) =>{console.log(e.message)});
+  .then(() => logger.info(`Connected to ${db}...`))
+  .catch((e) =>{logger.info(e.message)});
 
 if (!jwtPrivateKey) {
   throw new Error('FATAL ERROR: jwtPrivateKey is not defined.');
@@ -68,7 +70,7 @@ const port = process.env.PORT;
 
 //app listens on the specified PORT
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(port, () => console.log(`Listening on port ${port}...`));
+  app.listen(port, () => logger.info(`Listening on port ${port}...`));
 }
 
 export default app;
