@@ -7,15 +7,11 @@ Users are categorized by roles. Each user must have a role defined for them.
 
 ## Installation
 
-* [First install [node.js](http://nodejs.org/) and [mongodb](https://www.mongodb.org/downloads).]
+* First install [node.js](http://nodejs.org/) and [mongodb](https://www.mongodb.org/downloads).
 
 ## Database Setup
 
 Either [MongoDB Compass](https://docs.mongodb.com/compass/master/install/) or [Mongo Atlas](https://www.mongodb.com/cloud/atlas) can be used to store data. Follow the link to set them up.
-
-```javascript
-// Using Node.js `require()`
-const mongoose = require('mongoose');
 
 ## Setup
 * Open up  the terminal in the root directory of the clone repository. Then run
