@@ -64,16 +64,26 @@ http://localhost:5000/api-docs/
 
 |EndPoint                       | Functionality|
 | :---            |          :--- |
-|POST /users/login              | Logs a user in.|
-|POST /users/logout             | Logs a user out.|
-|POST /users/                   | Creates a new user.|
-|GET /users/                    | Find matching instances of user.|
-|GET /users/<id>                | Find user.|
-|PUT /users/<id>                | Update user attributes.|
-|DELETE /users/<id>             | Delete user.|
-|POST /documents/               | Creates a new document instance.|
-|GET /documents/                | Find matching instances of document.|
-|GET /documents/<id>            | Find document.|
-|PUT /documents/<id>            | Update document attributes.|
-|DELETE /documents/<id>         | Delete document.|
-|GET /users/<id>/documents      | Find all documents belonging to the user.|
+|POST /api/v1/users/login              | Logs a user in.|
+|POST /api/v1/users/logout             | Logs a user out.|
+|POST /api/v1/users/signup                   | Creates a new user.|
+|GET /api/v1/users/                    | Find matching instances of user.|
+|GET /api/v1/users/documents                   | Find matching instances of user's unique documents.|
+|GET /api/v1/users/<id>                | Find user.|
+|PUT /api/v1/users/<id>                | Update user attributes.|
+|DELETE /api/v1/users/<id>             | Delete user.|
+|POST /api/v1/documents/               | Creates a new document instance.|
+|GET /api/v1/documents/                | Find matching instances of document.|
+|GET /api/v1/documents/<id>            | Find document.|
+|PUT /api/v1/documents/<id>            | Update document attributes.|
+|DELETE /api/v1/documents/<id>         | Delete document.|
+|GET /api/v1/users/<id>/documents      | Find all documents belonging to the user.|
+|POST /api/v1/roles/               | Creates a new role instance.|
+|GET /api/v1/roles/                | returns all roles.|
+|GET /api/v1/roles/<id>            | Find role.|
+|PUT /api/v1/roles/<id>            | Update document attributes.|
+|POST /api/v1/types/               | Creates a new role instance.|
+|GET /api/v1/types/                | returns all roles.|
+|GET /api/v1/types/<id>            | Find role.|
+|PUT /api/v1/types/<id>            | Update document attributes.|
+
