@@ -6,7 +6,7 @@
   "scripts": {
     "test": "export NODE_ENV=test && jest --runInBand --coverage --watchAll --verbose",
     "start": "export NODE_ENV=development && nodemon --exec babel-node index.js",
-    "seed": "nodemon --exec babel-node seeder.js",
+    "seed": "nodemon --exec babel-node db_seeder/seeder.js",
     "refresh-seed": "nodemon --exec babel-node db_seeder/refresh_seeder.js"
   },
   "repository": {
