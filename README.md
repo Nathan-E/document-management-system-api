@@ -55,14 +55,15 @@ $ npm seed
 $ npm start
 ```
 * Visit the app on your browser by visiting the url below
+and then create a new user.
 
 ```sh
 http://localhost:5000/api-docs/
 ```
 
 ## Overview
-
-|EndPoint                       | Functionality|
+* API endpoints
+|End-Points                       | Functionality|
 | :---            |          :--- |
 |POST /api/v1/users/login              | Logs a user in.|
 |POST /api/v1/users/logout             | Logs a user out.|
@@ -86,4 +87,6 @@ http://localhost:5000/api-docs/
 |GET /api/v1/types/                | returns all roles.|
 |GET /api/v1/types/<id>            | Find role.|
 |PUT /api/v1/types/<id>            | Update document attributes.|
+
+
 
