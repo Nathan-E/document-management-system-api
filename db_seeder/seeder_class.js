@@ -9,12 +9,14 @@ import {
   User
 } from "../models/index";
 
+//various roles in the system
 const roles = [{
   title: 'admin'
 }, {
   title: 'regular'
 }];
 
+//various level of accesses to document
 const access = [{
   name: 'admin',
   level: 1
@@ -29,6 +31,7 @@ const access = [{
   level: 4
 }];
 
+//various types of documents
 const types = [{
     title: "thesis"
   },
@@ -49,9 +52,11 @@ const types = [{
   }
 ];
 
-class seed {
+//Seed Class: populates the database with faked data
+class Seed {
   constructor() {};
 
+  //populates the Users Collection
   async seedUsers(nums) {
     const users = [];
     const adminRole = await Role.findOne({
@@ -63,17 +68,19 @@ class seed {
 
     for (let i = 0; i < nums; i++) {
       let role = regularRole._id;
+      //censures only two admins are created
       if (i < 2) role = adminRole._id;
 
+      //user data
       let firstname = faker.name.firstName();
       let lastname = faker.name.lastName();
-      // let role = userRole._id;
       let username = firstname.slice(0, 3) + lastname.slice(0, 3);
-      let email = firstname + lastname[0] + '@test.com';
+      let email = `${firstname}${lastname[0]}@test.com`;
       let password = '123456';
       let deleted = false;
       let isAdmin = false;
 
+      //hashes the password
       const salt = await bcrypt.genSalt(10);
       password = await bcrypt.hash(password, salt);
 
@@ -92,6 +99,7 @@ class seed {
     await User.collection.insertMany(users);
   };
 
+  //populates the Document Collection
   async seedDocuments(nums) {
     const documents = [];
 
@@ -104,9 +112,11 @@ class seed {
     const types = await Type.find();
 
     for (let i = 0; i < nums; i++) {
+      //gets a random user
       const user = users[Math.floor(users.length * Math.random())];
       const role = await Role.findById(user.role);
 
+      //generate documents data
       let title = randomstring.generate({
         length: 12,
         charset: 'alphabetic'
@@ -120,6 +130,7 @@ class seed {
       });
       let createdAt = Date.now();
       let accessRight = access[Math.floor(access.length * Math.random())].level;
+
       const document = {
         title,
         type_id,
@@ -131,9 +142,41 @@ class seed {
       }
       documents.push(document);
     };
+    //inserts the documents into the collection
     await Document.collection.insertMany(documents);
   }
 };
 
+//Instance of the Seeder class
+const seeder = new Seed();
 
-export {seed, roles, access, types};
+
+//populates the database with fresh data
+async function populateDatabase() {
+  const role = await Role.find();
+  const accesses = await Access.find();
+  const type = await Type.find();
+  if (role.length <= 0) await Role.collection.insertMany(roles);
+  if (accesses.length <= 0) await Access.collection.insertMany(access);
+  if (type.length <= 0) await Type.collection.insertMany(types);
+
+  //populates the user collection
+  await seeder.seedUsers(20); 
+  //populates the document collection
+  await seeder.seedDocuments(100);
+};
+
+//drops the database and repopulates it
+async function repopulate() {
+  //deletes all the fields i the collection
+  await Document.deleteMany({});
+  await User.deleteMany({});
+
+  //repopulates the database
+  await populateDatabase();
+};
+
+export {
+  populateDatabase,
+  repopulate
+};
