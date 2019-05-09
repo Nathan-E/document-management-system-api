@@ -62,7 +62,8 @@ http://localhost:5000/api-docs/
 ```
 
 ## Overview
-* API endpoints
+* API endpoints.
+
 |End-Points                       | Functionality|
 | :---            |          :--- |
 |POST /api/v1/users/login              | Logs a user in.|
