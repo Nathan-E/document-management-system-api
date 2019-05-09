@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "export NODE_ENV=test && jest --runInBand --coverage --watchAll --verbose",
-    "start": "nodemon --exec babel-node index.js"
+    "start": "export NODE_ENV=development && nodemon --exec babel-node index.js",
+    "seed": "nodemon --exec babel-node db_seeder/seeder.js",
+    "refresh-seed": "nodemon --exec babel-node db_seeder/refresh_seeder.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +28,7 @@
     "@babel/core": "^7.4.3",
     "@babel/node": "^7.2.2",
     "@babel/preset-env": "^7.4.3",
+    "faker": "^4.1.0",
     "jest": "^24.7.1",
     "supertest": "^4.0.2"
   },
@@ -41,6 +44,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.11",
     "mongoose": "^5.5.0",
+    "randomstring": "^1.1.5",
     "regenerator-runtime": "^0.13.2",
     "swagger-jsdoc": "^3.2.8",
     "swagger-ui-express": "^4.0.2"

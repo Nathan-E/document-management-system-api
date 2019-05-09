@@ -5,12 +5,12 @@ const usersValidator = {};
 //Validates the user payload
 usersValidator.validate = user => {
   const schema = {
-    firstname: Joi.string().min(5).max(50).required(),
-    lastname: Joi.string().min(5).max(50).required(),
+    firstname: Joi.string().max(50).required(),
+    lastname: Joi.string().max(50).required(),
     role: Joi.string().required(),
-    username: Joi.string().min(5).max(25).required(),
+    username: Joi.string().max(25).required(),
     email: Joi.string().required().email(),
-    password: Joi.string().min(5).max(225).required(),
+    password: Joi.string().max(225).required(),
     deleted: Joi.boolean()
   }
 
