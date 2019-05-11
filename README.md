@@ -74,10 +74,11 @@ and then create a new user. Set the port
 http://localhost:<PORT>/api-docs/
 ```
 ```sh
-http://127.0.0.1:5000/api-docs/
+http://127.0.0.1:<PORT>/api-docs/
 ```
 
 ## Data Model
+* Relationship between the various database collection
 ![Relationship between the various database collection](https://github.com/Nathan-E/document-managment-system-api/blob/master/img/dataModelRelations.png)
 
 ## Overview
