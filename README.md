@@ -67,11 +67,14 @@ $ npm seed
 ```sh
 $ npm start
 ```
-* Visit the app on your browser by visiting the url below
+* Visit the app on your browser by visiting any of the url below
 and then create a new user. Set the port 
 
 ```sh
 http://localhost:<PORT>/api-docs/
+```
+```sh
+http://127.0.0.1:5000/api-docs/
 ```
 
 ## Data Model
