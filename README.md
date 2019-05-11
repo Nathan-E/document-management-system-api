@@ -17,6 +17,9 @@ Install the following if you do not have them on your local system
 Either [MongoDB Compass](https://docs.mongodb.com/compass/master/install/) or [Mongo Atlas](https://www.mongodb.com/cloud/atlas) can be used to store data. Follow the link to set them up.
 
 ## Setup
+* Download and install an IDE.
+* You can download [Visual Studio Code - Mac, Linux, Windows](https://code.visualstudio.com/download) IDE.
+
 * Clone the repository by running the command in your terminal
 
 ```sh
