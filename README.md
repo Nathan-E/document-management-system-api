@@ -62,7 +62,7 @@ http://localhost:5000/api-docs/
 ```
 
 ## Data Model
-![Relationship between the various database collection](https://raw.github.com/Nathan-E/document-managment-system-api/master/img/dataModelRelations.png)
+![Relationship between the various database collection](dataModelRelations.png)
 
 ## Overview
 * API endpoints.
